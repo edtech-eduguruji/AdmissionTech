@@ -1,0 +1,27 @@
+.bimage_home {
+  background-image: url('bg.jpg');
+  height: 100;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+.flex {
+  flex: 1;
+}
+.alignCenter {
+  display: flex;
+  align-items: center;
+}
+.center {
+  text-align: center;
+}
+.pad10 {
+  padding: 10px !important;
+}
+.right {
+  text-align: right;
+}
+.darkBlueColor {
+  color: #0000b3;
+}
