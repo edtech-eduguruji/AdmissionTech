@@ -1,0 +1,9 @@
+{
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    "prettier.semi": false,
+    "prettier.singleQuote": true,
+    "prettier.requireConfig": true,
+    "editor.formatOnSave": true
+}

@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/bcsclkxe/public_html/edubuild
+    - /bin/cp -R * $DEPLOYPATH
