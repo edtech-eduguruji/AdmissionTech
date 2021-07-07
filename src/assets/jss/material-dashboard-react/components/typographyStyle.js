@@ -11,7 +11,7 @@ import {
 const typographyStyle = {
   defaultFontStyle: {
     ...defaultFont,
-    fontSize: '14px',
+    fontSize: '20px',
   },
   defaultHeaderMargins: {
     marginTop: '20px',

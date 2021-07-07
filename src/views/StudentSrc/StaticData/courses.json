@@ -1,0 +1,62 @@
+[
+    {
+        "faculty": "BBA-BCA",
+        "courseType": "Under Graduate",
+        "course": "BBA"
+    },
+    {
+        "faculty": "BBA-BCA",
+        "courseType": "Under Graduate",
+        "course": "BCA"
+    },
+    {
+        "faculty": "Commerce",
+        "courseType": "Under Graduate",
+        "course": "B.Com"
+    },
+    {
+        "faculty": "Arts",
+        "courseType": "Under Graduate",
+        "course": "BA"
+    },
+    {
+        "faculty": "Arts",
+        "courseType": "Post Graduate",
+        "course": "MA"
+    },
+    {
+        "faculty": "Arts",
+        "courseType": "Under Graduate",
+        "course": "Ba.LLB(5 Year)"
+    },
+    {
+        "faculty": "Science",
+        "courseType": "Under Graduate",
+        "course": "Bsc. Maths"
+    },
+    {
+        "faculty": "Science",
+        "courseType": "Under Graduate",
+        "course": "Bsc. Bio"
+    },
+    {
+        "faculty": "Science",
+        "courseType": "Post Graduate",
+        "course": "Msc"
+    },
+    {
+        "faculty": "Bio-Tech",
+        "courseType": "Under Graduate",
+        "course": "Bsc. Bio Tech."
+    },
+    {
+        "faculty": "Law",
+        "courseType": "LLB",
+        "course": "LLB"
+    },
+    {
+        "faculty": "LLM",
+        "courseType": "LLM",
+        "course": "LLM"
+    }
+]

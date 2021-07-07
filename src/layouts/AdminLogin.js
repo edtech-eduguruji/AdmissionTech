@@ -32,7 +32,7 @@ const useStyles = (theme) => ({
     marginTop: 50,
     width: '100px',
     height: '100px',
-  }
+  },
 })
 
 class Login extends Component {
@@ -47,7 +47,7 @@ class Login extends Component {
   }
 
   handleLogin = () => {
-    const {username, password}=this.state
+    const { username, password } = this.state
     const data = {
       username: username,
       password: password,
@@ -88,57 +88,53 @@ class Login extends Component {
   render() {
     const { classes } = this.props
     return (
-        <div>
-          <Container component="main" maxWidth="xs">
-            <CssBaseline />
-            <div className="center">
-              <img
-                alt="logo"
-                src='agracollege.png'
-                className={classes.logo}
-              />
-            </div>
-            <Card>
-              <CardBody elevation={2} className={classes.paper}>
-                <Typography component="h1" variant="h5">
-                  LOGIN
-                </Typography>
-                <div className={classes.form} noValidate>
-                  <Grid container spacing={2} alignItems="flex-end">
-                    <Grid item xs={2}>
-                      <EmailOutlinedIcon />
-                    </Grid>
-                    <Grid item xs={10}>
-                      <CustomInput
-                        labelText="Username / Mobile"
-                        formControlProps={{
-                          fullWidth: true,
-                        }}
-                        inputProps={{
-                          name: 'username',
-                          onKeyDown: this.handleKeyDown,
-                        }}
-                        handleChange={this.handleChangeFields}
-                      />
-                    </Grid>
-                    <Grid item xs={2}>
-                      <FingerprintOutlined />
-                    </Grid>
-                    <Grid item xs={10}>
-                      <CustomInput
-                        labelText="Password"
-                        formControlProps={{
-                          fullWidth: true,
-                        }}
-                        inputProps={{
-                          type: 'password',
-                          name: 'password',
-                          onKeyDown: this.handleKeyDown,
-                        }}
-                        handleChange={this.handleChangeFields}
-                      />
-                    </Grid>
-                    <Grid container item xs={8} justify='flex-end'>
+      <div>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <div className="center">
+            <img alt="logo" src="agracollege.png" className={classes.logo} />
+          </div>
+          <Card>
+            <CardBody elevation={2} className={classes.paper}>
+              <Typography component="h1" variant="h5">
+                LOGIN
+              </Typography>
+              <div className={classes.form} noValidate>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={2}>
+                    <EmailOutlinedIcon />
+                  </Grid>
+                  <Grid item xs={10}>
+                    <CustomInput
+                      labelText="Username / Mobile"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        name: 'username',
+                        onKeyDown: this.handleKeyDown,
+                      }}
+                      handleChange={this.handleChangeFields}
+                    />
+                  </Grid>
+                  <Grid item xs={2}>
+                    <FingerprintOutlined />
+                  </Grid>
+                  <Grid item xs={10}>
+                    <CustomInput
+                      labelText="Password"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        type: 'password',
+                        name: 'password',
+                        onKeyDown: this.handleKeyDown,
+                      }}
+                      handleChange={this.handleChangeFields}
+                    />
+                  </Grid>
+                  <Grid container item xs={8} justify="flex-end">
                     <RegularButton
                       color="primary"
                       variant="contained"
@@ -147,17 +143,22 @@ class Login extends Component {
                     >
                       SIGN IN
                     </RegularButton>
-                    </Grid>
-                  <Grid container item xs={4} justify='flex-end'>
-                   <RegularButton color='transparent' size='sm'    
-                   onClick={()=> this.props.history.push('/Register')}>Register ?</RegularButton>
-                   </Grid> 
                   </Grid>
-                </div>   
-              </CardBody>
-            </Card>
-          </Container>
-        </div>
+                  <Grid container item xs={4} justify="flex-end">
+                    <RegularButton
+                      color="transparent"
+                      size="sm"
+                      onClick={() => this.props.history.push('/Register')}
+                    >
+                      Register ?
+                    </RegularButton>
+                  </Grid>
+                </Grid>
+              </div>
+            </CardBody>
+          </Card>
+        </Container>
+      </div>
     )
   }
 }

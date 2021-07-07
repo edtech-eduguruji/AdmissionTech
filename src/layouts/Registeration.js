@@ -35,34 +35,40 @@ const useStyles = (theme) => ({
 })
 
 class Registeration extends Component {
-  constructor(){
+  constructor() {
     super()
     this.state = {
-     name: '',
-     email: '',
-     mobileNo: '',
-     password: '',
-     confirmPassword: ''
+      name: '',
+      email: '',
+      mobileNo: '',
+      password: '',
+      confirmPassword: '',
     }
   }
   handleSubmit = () => {
     const { name, email, mobileNo, password, confirmPassword } = this.state
-      if (name !== '' && email !== '' && mobileNo !== '' && password !== '' && confirmPassword !== '') {
-        if (password === confirmPassword) {
+    if (
+      name !== '' &&
+      email !== '' &&
+      mobileNo !== '' &&
+      password !== '' &&
+      confirmPassword !== ''
+    ) {
+      if (password === confirmPassword) {
         const data = new FormData()
         data.append('name', name)
         data.append('email', email)
         data.append('mobile', mobileNo)
         data.append('password', password)
-        RegisterApi.StudentRegister(data).then((res)=>{
-        if(!res.data.error) {
-          this.props.history.push('/login')
-        }
+        RegisterApi.StudentRegister(data).then((res) => {
+          if (!res.data.error) {
+            this.props.history.push('/login')
+          }
         })
       } else {
         addErrorMsg('Entered passwords does not match')
       }
-    } else{
+    } else {
       addErrorMsg('Please enter all fields')
     }
   }
@@ -80,12 +86,8 @@ class Registeration extends Component {
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <div className="center">
-              <img
-                alt="logo"
-                src='agracollege.png'
-                className={classes.logo}
-              />
-            </div>
+            <img alt="logo" src="agracollege.png" className={classes.logo} />
+          </div>
           <Card>
             <CardBody elevation={2} className={classes.paper}>
               <Typography component="h1" variant="h5">
@@ -140,47 +142,47 @@ class Registeration extends Component {
                     />
                   </Grid>
                   <Grid item xs={2}>
-                      <FingerprintOutlined />
-                    </Grid>
-                    <Grid item xs={10}>
-                      <CustomInput
-                        labelText="Enter Password"
-                        formControlProps={{
-                          fullWidth: true,
-                        }}
-                        inputProps={{
-                          type: 'password',
-                          name: 'password',
-                        }}
-                        handleChange={this.handleChangeFields}
-                      />
-                    </Grid>
-                    <Grid item xs={2}>
-                      <FingerprintOutlined />
-                    </Grid>
-                    <Grid item xs={10}>
-                      <CustomInput
-                        labelText="Confirm Password"
-                        formControlProps={{
-                          fullWidth: true,
-                        }}
-                        inputProps={{
-                          type: 'password',
-                          name: 'confirmPassword',
-                        }}
-                        handleChange={this.handleChangeFields}
-                      />
-                    </Grid>
-                    <Grid container item xs={12} justify='center'>
+                    <FingerprintOutlined />
+                  </Grid>
+                  <Grid item xs={10}>
+                    <CustomInput
+                      labelText="Enter Password"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        type: 'password',
+                        name: 'password',
+                      }}
+                      handleChange={this.handleChangeFields}
+                    />
+                  </Grid>
+                  <Grid item xs={2}>
+                    <FingerprintOutlined />
+                  </Grid>
+                  <Grid item xs={10}>
+                    <CustomInput
+                      labelText="Confirm Password"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        type: 'password',
+                        name: 'confirmPassword',
+                      }}
+                      handleChange={this.handleChangeFields}
+                    />
+                  </Grid>
+                  <Grid container item xs={12} justify="center">
                     <RegularButton
-                    color="primary"
-                    variant="contained"
-                    className="sub"
-                    onClick={this.handleSubmit}
-                  >
-                    REGISTER
-                  </RegularButton>
-                    </Grid>
+                      color="primary"
+                      variant="contained"
+                      className="sub"
+                      onClick={this.handleSubmit}
+                    >
+                      REGISTER
+                    </RegularButton>
+                  </Grid>
                 </Grid>
               </div>
             </CardBody>

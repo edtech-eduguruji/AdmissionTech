@@ -92,7 +92,7 @@ export default function AdminNavbarLinks(props) {
               <ClickAwayListener onClickAway={handleCloseProfile}>
                 <MenuList role="menu">
                   {routes.map((item) => {
-                    if (!item.isSidebar) {
+                    if (item.isNavbar) {
                       return (
                         <div>
                           <MenuItem

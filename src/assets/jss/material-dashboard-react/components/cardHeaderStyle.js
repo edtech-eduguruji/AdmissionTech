@@ -21,13 +21,9 @@ const cardHeaderStyle = {
         position: 'relative',
         color: whiteColor,
       },
-    '&:first-child': {
-      borderRadius: 'calc(.25rem - 1px) calc(.25rem - 1px) 0 0',
-    },
     '&$warningCardHeader,&$successCardHeader,&$dangerCardHeader,&$infoCardHeader,&$primaryCardHeader,&$roseCardHeader':
       {
         '&:not($cardHeaderIcon)': {
-          borderRadius: '3px',
           marginTop: '0px',
           padding: '15px',
         },
@@ -111,7 +107,7 @@ const cardHeaderStyle = {
   },
   primaryCardHeader: {
     color: 'white',
-    backgroundColor: '#cccc00',
+    backgroundColor: 'darkblue',
   },
   roseCardHeader: {
     color: whiteColor,

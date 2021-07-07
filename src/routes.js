@@ -4,20 +4,34 @@ import LocalLibraryIcon from '@material-ui/icons/LocalLibrary'
 import { ROLES_KEY } from './constants/Constants'
 import asyncComponent from './layouts/AsyncComponent'
 
-const Home = asyncComponent(() => import('views/StudentSrc/Home'))
+const FormSubmitted = asyncComponent(() =>
+  import('./views/StudentSrc/FormSubmitted')
+)
 const Courses = asyncComponent(() => import('views/AdminSrc/Course/Courses'))
 const NewForms = asyncComponent(() => import('views/AdminSrc/Forms/NewForms'))
 
 const dashboardRoutes = [
+  // {
+  //   path: '/admission',
+  //   name: 'Admission',
+  //   id: 'sAdmission',
+  //   icon: DynamicFeedIcon,
+  //   component: Home,
+  //   layout: '/student',
+  //   role: [ROLES_KEY.STUDENT],
+  //   isSidebar: true,
+  //   isNavbar: false,
+  // },
   {
-    path: '/admission',
-    name: 'Admission',
-    id: 'sAdmission',
+    path: '/formSubmmited',
+    name: 'Form Submitted',
+    id: 'sFormSubmit',
     icon: DynamicFeedIcon,
-    component: Home,
+    component: FormSubmitted,
     layout: '/student',
     role: [ROLES_KEY.STUDENT],
-    isSidebar: true,
+    isSidebar: false,
+    isNavbar: false,
   },
   {
     path: '/courseMgt',
@@ -28,6 +42,7 @@ const dashboardRoutes = [
     layout: '/admin',
     role: [ROLES_KEY.ADMIN],
     isSidebar: true,
+    isNavbar: false,
   },
   {
     path: '/newForms',
@@ -38,6 +53,7 @@ const dashboardRoutes = [
     layout: '/admin',
     role: [ROLES_KEY.ADMIN],
     isSidebar: true,
+    isNavbar: false,
   },
 ]
 

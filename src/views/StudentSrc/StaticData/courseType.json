@@ -1,0 +1,18 @@
+[
+    {
+        "faculty": ["Science","BBA-BCA","Arts","Bio-Tech","Commerce"],
+        "courseType":"Under Graduate"
+    },
+    {
+        "faculty": ["Arts","Science"],
+        "courseType":"Post Graduate"
+    },
+    {
+        "faculty": ["Law"],
+        "courseType":"LLB"
+    },
+    {
+        "faculty": ["LLM"],
+        "courseType":"LLM"
+    }
+]

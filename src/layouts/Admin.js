@@ -92,7 +92,7 @@ class Admin extends React.Component {
       <div className={classes.wrapper}>
         <Sidebar
           routes={userDefineRoutes}
-          logoText="AdmissionTech"
+          logoText="ADMISSION-TECH"
           logo={'logo'}
           handleDrawerToggle={this.handleDrawerToggle}
           open={mobileOpen}

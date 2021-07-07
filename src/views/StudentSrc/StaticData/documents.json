@@ -1,0 +1,56 @@
+{
+    "UG": 
+    [
+        {
+            "documentType": "highSchool",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "inter",
+            "document": "",
+            "isDelete": 0
+        }
+    ],
+    "PG": 
+    [
+        {
+            "documentType": "highSchool",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "inter",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "gDegree",
+            "document": "",
+            "isDelete": 0
+        }
+    ],
+    "LLM": 
+    [
+        {
+            "documentType": "highSchool",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "inter",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "gDegree",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "pgDegree",
+            "document": "",
+            "isDelete": 0
+        }
+    ]
+}
