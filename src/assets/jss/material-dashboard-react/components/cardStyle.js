@@ -38,6 +38,9 @@ const cardStyle = {
       paddingTop: '0px',
     },
   },
+  cardFullHeight: {
+    height: '92%'
+  }
 }
 
 export default cardStyle

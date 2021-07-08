@@ -4,6 +4,7 @@ import React from 'react'
 import { HashRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { validateUser } from 'utils/Utils'
 import asyncComponent from './AsyncComponent'
+import ForgotPassword from './ForgotPassword'
 
 const AdminLogin = asyncComponent(() => import('./AdminLogin'))
 const StudentLogin = asyncComponent(() => import('./StudentLogin'))
@@ -34,15 +35,11 @@ const App = () => {
   return (
     <React.Fragment>
       <HashRouter>
-        {verify()}
         <Switch>
           <Route path="/aLogin" component={AdminLogin} />
           <Route path="/login" component={StudentLogin} />
           <Route path="/form" component={Form} />
-          {/* <Route path="/Register" component={Registeration} /> */}
-          {/* <Route path="/admin" component={withLoggedIn(AdminAsync)} /> */}
-          {/* <Route path="/student" component={withLoggedIn(AdminAsync)} /> */}
-          {/* <Route path="/submitted" component={FormSubmitted} /> */}
+          <Route path="/forgotpassword" component={ForgotPassword} />
         </Switch>
       </HashRouter>
     </React.Fragment>

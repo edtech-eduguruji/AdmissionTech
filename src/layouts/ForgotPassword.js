@@ -31,7 +31,7 @@ const useStyles = (theme) => ({
   },
 })
 
-class Login extends Component {
+class ForgotPassword extends Component {
   constructor(){
     super()
     this.state = {
@@ -92,17 +92,16 @@ class Login extends Component {
     const { classes } = this.props
     return (
       <div>
-        <Container component="main" maxWidth="md">
+        <Container component="main" maxWidth="xs">
           <CssBaseline />
           <div className="center">
             <img alt="logo" src="agracollege.png" className={classes.logo} />
           </div>
-          <Grid container spacing={2}>
-            <Grid item md={6} lg={6}>
-              <Card cardFullHeight>
+          
+            <Card cardFullHeight>
                 <CardBody elevation={2} className={classes.paper}>
                   <Typography component="h1" variant="h5">
-                    For already existing user
+                    Please enter details below
                   </Typography>
                   <div className={classes.form} noValidate>
                     <Grid container spacing={2} alignItems="center">
@@ -111,7 +110,7 @@ class Login extends Component {
                       </Grid>
                       <Grid item xs={10}>
                         <CustomInput
-                          labelText="Registration No"
+                          labelText="Mobile No"
                           formControlProps={{
                             fullWidth: true,
                           }}
@@ -134,6 +133,7 @@ class Login extends Component {
                             type: 'date',
                             name: 'dob',
                             onKeyDown: this.handleKeyDown,
+                            helperText: "Date of birth"
                           }}
                           handleChange={this.handleChangeFields}
                         />
@@ -145,64 +145,17 @@ class Login extends Component {
                           className="sub"
                           onClick={this.handleSubmit}
                         >
-                          SIGN IN
+                          Submit
                         </RegularButton>
                       </Grid>
                     </Grid>
                   </div>
                 </CardBody>
               </Card>
-            </Grid>
-            <Grid item md={6} lg={6}>
-              <Card cardFullHeight>
-                <CardBody elevation={2} className={classes.paper}>
-                  
-                  <div className={classes.form} noValidate>
-                    <Grid container spacing={2}>
-                      <Grid container item xs={12} justify="center">
-                        <Typography component="h1" variant="h5">
-                          New User Registration
-                        </Typography>
-                      </Grid>
-                      <Grid container item xs={12} justify="center">
-                        <RegularButton
-                          color="primary"
-                          variant="contained"
-                          className="sub"
-                          onClick={() => this.props.history.push('/form')}
-                        >
-                          Registration
-                        </RegularButton>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Divider/>
-                      </Grid>
-                      <Grid container item xs={12} justify="center">
-                        <Typography component="h1" variant="h5">
-                          Forgot registration details ?
-                        </Typography>
-                      </Grid>
-                      <Grid container item xs={12} justify="center">
-                        <RegularButton
-                          color="primary"
-                          variant="contained"
-                          className="sub"
-                          onClick={() => this.props.history.push('/forgotpassword')}
-                        >
-                          Forgot Password ?
-                        </RegularButton>
-                      </Grid>
-                      
-                    </Grid>
-                  </div>
-                </CardBody>
-              </Card>
-            </Grid>
-          </Grid>
         </Container>
       </div>
     )
   }
 }
 
-export default withRouter(withStyles(useStyles)(Login))
+export default withRouter(withStyles(useStyles)(ForgotPassword))

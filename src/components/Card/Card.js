@@ -20,6 +20,7 @@ export default function Card(props) {
     profile,
     chart,
     cardNoSpace,
+    cardFullHeight,
     ...rest
   } = props
   const cardClasses = classNames({
@@ -28,6 +29,7 @@ export default function Card(props) {
     [classes.cardProfile]: profile,
     [classes.cardChart]: chart,
     [classes.cardNoSpace]: cardNoSpace,
+    [classes.cardFullHeight]: cardFullHeight,
     [className]: className !== undefined,
   })
   return (
@@ -43,5 +45,6 @@ Card.propTypes = {
   profile: PropTypes.bool,
   chart: PropTypes.bool,
   cardNoSpace: PropTypes.bool,
+  cardFullHeight: PropTypes.bool,
   children: PropTypes.node,
 }
