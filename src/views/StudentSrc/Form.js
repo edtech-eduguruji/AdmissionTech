@@ -371,7 +371,7 @@ class Form extends React.Component {
               fullWidth
               variant="outlined"
               name="mediumOfInstitution"
-              label={mandatoryField('Medium of Teaching')}
+              label={mandatoryField('Medium of Teaching and Examination')}
               value={mediumOfInstitution}
               onChange={this.handleChangeFields}
             >
@@ -428,7 +428,7 @@ class Form extends React.Component {
               <Grid container item xs={12} justify="center">
                 <div className="alignCenter">
                   <Typography>
-                    Upload University Web Registration PDF. &nbsp;
+                    Upload University Web Registration (PDF) &nbsp;
                   </Typography>
                   <FileUploader
                     buttonLabel="Upload Form"
@@ -471,7 +471,6 @@ class Form extends React.Component {
             >
               <MenuItem value="Mr.">Mr.</MenuItem>
               <MenuItem value="Ms.">Ms.</MenuItem>
-              <MenuItem value="Km.">Km.</MenuItem>
             </TextField>
           </Grid>
           <Grid item md={11} xs={8}>
@@ -611,7 +610,7 @@ class Form extends React.Component {
           </Grid>
           <Grid item xs={6}>
             <CustomInput
-              labelText={mandatoryField('Mobile No. of Parent')}
+              labelText={mandatoryField('Mobile No. of Parents')}
               formControlProps={{
                 fullWidth: true,
               }}
@@ -649,12 +648,12 @@ class Form extends React.Component {
           </Grid>
           <Grid item xs={12} className="headBg">
             <Typography variant="subtitle1">
-              Parent & Guardian Details
+              Parents & Guardian Details
             </Typography>
           </Grid>
           <Grid item xs={6}>
             <CustomInput
-              labelText={mandatoryField("Father's / Husband Name")}
+              labelText={mandatoryField("Father's Name")}
               formControlProps={{
                 fullWidth: true,
               }}
@@ -783,7 +782,7 @@ class Form extends React.Component {
             <TextField
               select
               fullWidth
-              label={mandatoryField('Select City')}
+              label={mandatoryField('Select City/District')}
               variant="outlined"
               name="city"
               value={city}
@@ -868,7 +867,7 @@ class Form extends React.Component {
             <TextField
               select
               fullWidth
-              label="Select City"
+              label="Select City/District"
               variant="outlined"
               name="cCity"
               value={cCity}
@@ -1062,7 +1061,7 @@ class Form extends React.Component {
           )}
           <Grid item xs={12} className="headBg">
             <Typography variant="subtitle1">
-              Upload Documents (Only allowed jpg,png,jpeg or pdf.)
+              Upload Documents (allowed jpg,png,jpeg or pdf only.)
             </Typography>
           </Grid>
           {courseType !== '' ? (
