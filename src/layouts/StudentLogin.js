@@ -1,3 +1,4 @@
+import { Divider } from '@material-ui/core'
 import Container from '@material-ui/core/Container'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Grid from '@material-ui/core/Grid'
@@ -11,11 +12,10 @@ import Card from '../components/Card/Card'
 import CardBody from '../components/Card/CardBody'
 import RegularButton from '../components/CustomButtons/Button'
 import CustomInput from '../components/CustomInput/CustomInput'
-import { Divider } from '@material-ui/core'
 
 const useStyles = (theme) => ({
   paper: {
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(3),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -32,11 +32,11 @@ const useStyles = (theme) => ({
 })
 
 class Login extends Component {
-  constructor(){
+  constructor() {
     super()
     this.state = {
       registrationNo: null,
-      dob: null
+      dob: null,
     }
   }
   handleSubmit = () => {
@@ -55,30 +55,6 @@ class Login extends Component {
       registrationNo: registrationNo,
       dob: dob,
     }
-    // LoginApi.userLogin(data)
-    //   .then((response) => {
-    //     if (response && response.status === 200 && response.data.length > 0) {
-    //       let user = response.data[0]
-    //       if (config.ROLES.includes(user.role)) {
-    //         return user
-    //       } else {
-    //         throw new Error('Login details are invalid.')
-    //       }
-    //     }
-    //   })
-    //   .then((user) => {
-    //     if (user) {
-    //       LocalStorage.setUser(user)
-    //       if (user.role === ROLES_KEY.STUDENT) {
-            this.props.history.push('/form')
-    //       } else {
-    //         this.props.history.push('/admin')
-    //       }
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     addErrorMsg(err.message)
-    //   })
   }
 
   handleChangeFields = (event) => {
@@ -100,9 +76,9 @@ class Login extends Component {
           <Grid container spacing={2}>
             <Grid item md={6} lg={6}>
               <Card cardFullHeight>
-                <CardBody elevation={2} className={classes.paper}>
-                  <Typography component="h1" variant="h5">
-                    For already existing user
+                <CardBody className={classes.paper}>
+                  <Typography component="h1" variant="h6">
+                    For Existing User
                   </Typography>
                   <div className={classes.form} noValidate>
                     <Grid container spacing={2} alignItems="center">
@@ -134,6 +110,7 @@ class Login extends Component {
                             type: 'date',
                             name: 'dob',
                             onKeyDown: this.handleKeyDown,
+                            helperText: 'Date of Birth',
                           }}
                           handleChange={this.handleChangeFields}
                         />
@@ -155,46 +132,44 @@ class Login extends Component {
             </Grid>
             <Grid item md={6} lg={6}>
               <Card cardFullHeight>
-                <CardBody elevation={2} className={classes.paper}>
-                  
-                  <div className={classes.form} noValidate>
-                    <Grid container spacing={2}>
-                      <Grid container item xs={12} justify="center">
-                        <Typography component="h1" variant="h5">
-                          New User Registration
-                        </Typography>
-                      </Grid>
-                      <Grid container item xs={12} justify="center">
-                        <RegularButton
-                          color="primary"
-                          variant="contained"
-                          className="sub"
-                          onClick={() => this.props.history.push('/form')}
-                        >
-                          Registration
-                        </RegularButton>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Divider/>
-                      </Grid>
-                      <Grid container item xs={12} justify="center">
-                        <Typography component="h1" variant="h5">
-                          Forgot registration details ?
-                        </Typography>
-                      </Grid>
-                      <Grid container item xs={12} justify="center">
-                        <RegularButton
-                          color="primary"
-                          variant="contained"
-                          className="sub"
-                          onClick={() => this.props.history.push('/forgotpassword')}
-                        >
-                          Forgot Password ?
-                        </RegularButton>
-                      </Grid>
-                      
+                <CardBody className={classes.paper}>
+                  <Grid container spacing={2}>
+                    <Grid container item xs={12} justify="center">
+                      <Typography component="h1" variant="h6">
+                        New User Registration
+                      </Typography>
                     </Grid>
-                  </div>
+                    <Grid container item xs={12} justify="center">
+                      <RegularButton
+                        color="primary"
+                        variant="contained"
+                        className="sub"
+                        onClick={() => this.props.history.push('/form')}
+                      >
+                        Registration
+                      </RegularButton>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Divider />
+                    </Grid>
+                    <Grid container item xs={12} justify="center">
+                      <Typography component="h1" variant="h6">
+                        Forgot Registration Details ?
+                      </Typography>
+                    </Grid>
+                    <Grid container item xs={12} justify="center">
+                      <RegularButton
+                        color="primary"
+                        variant="contained"
+                        className="sub"
+                        onClick={() =>
+                          this.props.history.push('/forgotpassword')
+                        }
+                      >
+                        Forgot Registration No. ?
+                      </RegularButton>
+                    </Grid>
+                  </Grid>
                 </CardBody>
               </Card>
             </Grid>

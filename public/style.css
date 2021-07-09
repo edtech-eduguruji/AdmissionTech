@@ -32,3 +32,14 @@
 .makeRed {
   color: red;
 }
+.childContainer {
+  max-width: 1130px;
+  margin: 0 auto;
+}
+@media (max-width: 768px) {
+  .childContainer {
+    max-width: 100% !important;
+    margin: 0 auto;
+    padding: 0;
+  }
+}

@@ -1,11 +1,11 @@
 [
     {
-        "faculty": "BBA-BCA",
+        "faculty": "BBA",
         "courseType": "Under Graduate",
         "course": "BBA"
     },
     {
-        "faculty": "BBA-BCA",
+        "faculty": "BCA",
         "courseType": "Under Graduate",
         "course": "BCA"
     },
@@ -51,12 +51,17 @@
     },
     {
         "faculty": "Law",
-        "courseType": "LLB",
+        "courseType": "Under Graduate",
         "course": "LLB"
     },
     {
-        "faculty": "LLM",
-        "courseType": "LLM",
+        "faculty": "Law",
+        "courseType": "Post Graduation",
         "course": "LLM"
+    },
+    {
+        "faculty": "BED",
+        "courseType": "Post Graduation",
+        "course": "BED"
     }
 ]

@@ -19,7 +19,6 @@ const customInputStyle = {
     },
   },
   labelRoot: {
-    color: 'silver' + ' !important',
     fontSize: '10px',
   },
   feedback: {
