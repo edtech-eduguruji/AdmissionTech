@@ -289,6 +289,127 @@ class Form extends React.Component {
     })
   }
 
+  handleSubmitForm = () => {
+    const {
+      faculty,
+      courseType,
+      course,
+      vaccinated,
+      nameTitle,
+      name,
+      dob,
+      gender,
+      caste,
+      religion,
+      personalMobile,
+      parentMobile,
+      fatherName,
+      motherName,
+      parentsOccupation,
+      wrn,
+      form,
+      photo,
+      houseNo,
+      street,
+      pincode,
+      postOffice,
+      state,
+      city,
+      cHouseNo,
+      cStreet,
+      cPincode,
+      cPostOffice,
+      cState,
+      cCity,
+      aadharNo,
+      email,
+      category,
+      subCategory,
+      categoryCertificate,
+      subCategoryCertificate,
+      academicDetails,
+      guardianName,
+      relationOfApplicant,
+      documents,
+      nationalCompetition,
+      nationalCertificate,
+      otherCompetition,
+      otherCertificate,
+      ncc,
+      nccCertificate,
+      freedomFighter,
+      nationalSevaScheme,
+      nssDocument,
+      roverRanger,
+      otherRoverRanger,
+      rrDocument,
+      bcom,
+      other,
+      totalMeritCount,
+      mediumOfInstitution,
+      signature,
+    } = this.state
+    const data = new FormData()
+    data.append('faculty', faculty)
+    data.append('courseType', courseType)
+    data.append('course', course)
+    data.append('mediumOfInstitution', mediumOfInstitution)
+    data.append('vaccinated', vaccinated)
+    data.append('nameTitle', nameTitle)
+    data.append('name', name)
+    data.append('dob', dob)
+    data.append('gender', gender)
+    data.append('caste', caste)
+    data.append('religion', religion)
+    data.append('personalMobile', personalMobile)
+    data.append('parentMobile', parentMobile)
+    data.append('fatherName', fatherName)
+    data.append('motherName', motherName)
+    data.append('parentsOccupation', parentsOccupation)
+    data.append('wrn', wrn)
+    data.append('form', form)
+    data.append('photo', photo)
+    data.append('houseNo', houseNo)
+    data.append('street', street)
+    data.append('pincode', pincode)
+    data.append('postOffice', postOffice)
+    data.append('state', state)
+    data.append('city', city)
+    data.append('cHouseNo', cHouseNo)
+    data.append('cStreet', cStreet)
+    data.append('cPincode', cPincode)
+    data.append('cPostOffice', cPostOffice)
+    data.append('cState', cState)
+    data.append('cCity', cCity)
+    data.append('aadharNo', aadharNo)
+    data.append('email', email)
+    data.append('category', category)
+    data.append('subCategory', subCategory)
+    data.append('categoryCertificate', categoryCertificate)
+    data.append('subCategoryCertificate', subCategoryCertificate)
+    data.append('academicDetails', JSON.stringify(academicDetails))
+    data.append('documents', JSON.stringify(documents))
+    data.append('guardianName', guardianName)
+    data.append('relationOfApplicant', relationOfApplicant)
+    data.append('nationalCompetition', nationalCompetition)
+    data.append('nationalCertificate', nationalCertificate)
+    data.append('otherCompetition', otherCompetition)
+    data.append('otherCertificate', otherCertificate)
+    data.append('ncc', ncc)
+    data.append('nccCertificate', nccCertificate)
+    data.append('freedomFighter', freedomFighter)
+    data.append('nationalSevaScheme', nationalSevaScheme)
+    data.append('nssDocument', nssDocument)
+    data.append('roverRanger', roverRanger)
+    data.append('otherRoverRanger', otherRoverRanger)
+    data.append('rrDocument', rrDocument)
+    data.append('bcom', bcom)
+    data.append('other', other)
+    data.append('totalMeritCount', totalMeritCount)
+    data.append('signature', signature)
+    FormApi.submitForm(data).then((respone) => {})
+  }
+
   render() {
     const { classes } = this.props
     const {
@@ -1667,7 +1788,9 @@ class Form extends React.Component {
               <RegularButton color="primary">Save Draft</RegularButton>
             </Grid>
             <Grid item xs={6}>
-              <RegularButton color="primary">Submit</RegularButton>
+              <RegularButton color="primary" onClick={this.handleSubmitForm}>
+                Submit
+              </RegularButton>
             </Grid>
           </Grid>
         </CardContainer>

@@ -166,7 +166,7 @@ class Login extends Component {
                           this.props.history.push('/forgotpassword')
                         }
                       >
-                        Forgot Registration No. ?
+                        Forgot Registration No.
                       </RegularButton>
                     </Grid>
                   </Grid>
