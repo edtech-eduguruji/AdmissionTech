@@ -11,8 +11,8 @@ class FormApi {
       return res
     })
   }
-  fetchForm(data) {
-    return BaseApi.getWithParams(URLS.FETCHFORM, data)
+  getForm(data) {
+    return BaseApi.getWithParams(URLS.GETFORM, data)
   }
 }
 

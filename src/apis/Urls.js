@@ -5,7 +5,7 @@ const URLS = {
   BASE_URL: BASE_URL,
   LOGIN: API_URL + 'Login.php',
   SUBMITFORM: API_URL + 'studentapi/SubmitForm.php',
-  FETCHFORM: API_URL + 'studentapi/FetchForm.php',
+  GETFORM: API_URL + 'studentapi/getForm.php',
   STUDENTREGISTER: API_URL + 'studentapi/StudentRegister.php',
 }
 

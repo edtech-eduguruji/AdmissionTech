@@ -31,6 +31,8 @@ import facultyData from './StaticData/faculty.json'
 import religionData from './StaticData/religion.json'
 import statesData from './StaticData/states.json'
 import subCategoryData from './StaticData/subCategory.json'
+import FormApi from '../../apis/FormApi'
+import LocalStorage from '../../common/LocalStorage'
 
 const styles = {
   profilePhoto: {
@@ -118,6 +120,20 @@ class Form extends React.Component {
       mediumOfInstitution: '',
       signature: '',
     }
+  }
+
+  componentDidMount() {
+    let data = {
+      registrationNo: LocalStorage.getUser() && LocalStorage.getUser().user_id
+    }
+    FormApi.getForm(data).then((response)=>{
+      if(response.data) {
+        console.log(response.data);
+        response.data.academicDetails = JSON.parse(response.data.academicDetails)
+        response.data.documents = []
+        this.setState({...response.data})
+      }
+    })
   }
 
   handleUpload = (file, index, name) => {
@@ -578,7 +594,7 @@ class Form extends React.Component {
                 <Grid item md={3} xs={5}>
                   <img
                     className={classes.profilePhoto}
-                    src={photo !== '' ? URL.createObjectURL(photo) : 'user.png'}
+                    src={photo !== '' ? (photo) : 'user.png'}
                   />
                 </Grid>
                 <Grid item md={9} xs={7}>
@@ -1390,7 +1406,7 @@ class Form extends React.Component {
                         {item.document !== '' && (
                           <img
                             className={classes.photo}
-                            src={URL.createObjectURL(item.document)}
+                            src={(item.document)}
                           />
                         )}
                       </Grid>
@@ -1772,14 +1788,15 @@ class Form extends React.Component {
                   buttonLabel="Upload"
                   accept="image/jpg,image/jpeg,image/png"
                   maxSize={2}
-                  handleChange={this.handleUploadSignature}
-                  id="applicantSignature"
+                  handleChange={this.handleUpload}
+                  id="signature"
+                  name="signature"
                 />
                 &nbsp;&nbsp;
                 {signature !== '' && (
                   <img
                     className={classes.photo}
-                    src={URL.createObjectURL(signature)}
+                    src={(signature)}
                   />
                 )}
               </div>

@@ -12,6 +12,9 @@ import Card from '../components/Card/Card'
 import CardBody from '../components/Card/CardBody'
 import RegularButton from '../components/CustomButtons/Button'
 import CustomInput from '../components/CustomInput/CustomInput'
+import FormApi from '../apis/FormApi'
+import LoginApi from '../apis/LoginApi'
+import LocalStorage from '../common/LocalStorage'
 
 const useStyles = (theme) => ({
   paper: {
@@ -52,9 +55,17 @@ class Login extends Component {
   handleLogin = () => {
     const { registrationNo, dob } = this.state
     const data = {
-      registrationNo: registrationNo,
-      dob: dob,
+      username: registrationNo,
+      password: dob,
     }
+    LoginApi.userLogin(data).then((response)=>{
+      console.log(response);
+      
+      if(response.data && response.data.length>0){
+        LocalStorage.setUser(response.data[0])
+        this.props.history.push("/form")
+      }
+    })
   }
 
   handleChangeFields = (event) => {
@@ -136,7 +147,7 @@ class Login extends Component {
                   <Grid container spacing={2}>
                     <Grid container item xs={12} justify="center">
                       <Typography component="h1" variant="h6">
-                        New User Registration
+                        New User Registration for Admission
                       </Typography>
                     </Grid>
                     <Grid container item xs={12} justify="center">
