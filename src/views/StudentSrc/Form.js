@@ -15,10 +15,13 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import GetAppIcon from '@material-ui/icons/GetApp'
 import React from 'react'
 import { withRouter } from 'react-router-dom'
+import FormApi from '../../apis/FormApi'
 import CardContainer from '../../common/CardContainer'
 import FileUploader from '../../common/FileUploader/FileUploader'
+import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import CustomInput from '../../components/CustomInput/CustomInput'
+import Success from '../../components/Typography/Success'
 import { mandatoryField } from '../../utils/Utils'
 import academicDetailsStatic from './StaticData/academic.json'
 import academicData from './StaticData/academicData.json'
@@ -31,8 +34,6 @@ import facultyData from './StaticData/faculty.json'
 import religionData from './StaticData/religion.json'
 import statesData from './StaticData/states.json'
 import subCategoryData from './StaticData/subCategory.json'
-import FormApi from '../../apis/FormApi'
-import LocalStorage from '../../common/LocalStorage'
 
 const styles = {
   profilePhoto: {
@@ -124,14 +125,16 @@ class Form extends React.Component {
 
   componentDidMount() {
     let data = {
-      registrationNo: LocalStorage.getUser() && LocalStorage.getUser().user_id
+      registrationNo: LocalStorage.getUser() && LocalStorage.getUser().user_id,
     }
-    FormApi.getForm(data).then((response)=>{
-      if(response.data) {
-        console.log(response.data);
-        response.data.academicDetails = JSON.parse(response.data.academicDetails)
+    FormApi.getForm(data).then((response) => {
+      if (response.data) {
+        console.log(response.data)
+        response.data.academicDetails = JSON.parse(
+          response.data.academicDetails
+        )
         response.data.documents = []
-        this.setState({...response.data})
+        this.setState({ ...response.data })
       }
     })
   }
@@ -405,6 +408,12 @@ class Form extends React.Component {
     data.append('subCategoryCertificate', subCategoryCertificate)
     data.append('academicDetails', JSON.stringify(academicDetails))
     data.append('documents', JSON.stringify(documents))
+
+    documents.map(
+      (item, index) =>
+        item.document !== '' && data.append('document' + index, item.document)
+    )
+
     data.append('guardianName', guardianName)
     data.append('relationOfApplicant', relationOfApplicant)
     data.append('nationalCompetition', nationalCompetition)
@@ -594,7 +603,13 @@ class Form extends React.Component {
                 <Grid item md={3} xs={5}>
                   <img
                     className={classes.profilePhoto}
-                    src={photo !== '' ? (photo) : 'user.png'}
+                    src={
+                      photo === ''
+                        ? 'user.png'
+                        : typeof photo === 'object'
+                        ? URL.createObjectURL(photo)
+                        : ASSETS.url + photo
+                    }
                   />
                 </Grid>
                 <Grid item md={9} xs={7}>
@@ -650,7 +665,7 @@ class Form extends React.Component {
                   </div>
                 </Grid>
                 <Grid container item xs={12} justify="center">
-                  {form !== '' && <Typography>{form.name}</Typography>}
+                  {form !== '' && <Success>Uploaded.</Success>}
                 </Grid>
               </Grid>
             </Grid>
@@ -821,9 +836,7 @@ class Form extends React.Component {
                   id="categoryCertificate"
                   name="categoryCertificate"
                 />
-                <Typography>
-                  {categoryCertificate !== '' && categoryCertificate.name}
-                </Typography>
+                {categoryCertificate !== '' && <Success>Uploaded.</Success>}
               </div>
             </Grid>
             <Grid container item md={6} xs={12} justify="center">
@@ -836,9 +849,7 @@ class Form extends React.Component {
                   id="subCategoryCertificate"
                   name="subCategoryCertificate"
                 />
-                <Typography>
-                  {subCategoryCertificate !== '' && subCategoryCertificate.name}
-                </Typography>
+                {subCategoryCertificate !== '' && <Success>Uploaded.</Success>}
               </div>
             </Grid>
             <Grid item xs={6}>
@@ -1403,12 +1414,7 @@ class Form extends React.Component {
                         />
                       </Grid>
                       <Grid item md={4} xs={12}>
-                        {item.document !== '' && (
-                          <img
-                            className={classes.photo}
-                            src={(item.document)}
-                          />
-                        )}
+                        {item.document !== '' && <Success>Uploaded.</Success>}
                       </Grid>
                       <Grid item md={1} xs={12}>
                         {item.isDelete === 1 && (
@@ -1497,9 +1503,7 @@ class Form extends React.Component {
                     />
                   </Grid>
                   <Grid item md={4} xs={6}>
-                    {nationalCertificate !== '' && (
-                      <Typography>{nationalCertificate.name}</Typography>
-                    )}
+                    {nationalCertificate !== '' && <Success>Uploaded.</Success>}
                   </Grid>
                   {courseType === 'Post Graduate' && (
                     <Grid item md={6} xs={12}>
@@ -1538,9 +1542,7 @@ class Form extends React.Component {
                   )}
                   {courseType === 'Post Graduate' && (
                     <Grid item md={4} xs={6}>
-                      {otherCertificate !== '' && (
-                        <Typography>{otherCertificate.name}</Typography>
-                      )}
+                      {otherCertificate !== '' && <Success>Uploaded.</Success>}
                     </Grid>
                   )}
                   <Grid item md={6} xs={12}>
@@ -1577,9 +1579,7 @@ class Form extends React.Component {
                     />
                   </Grid>
                   <Grid item md={4} xs={6}>
-                    {nccCertificate !== '' && (
-                      <Typography>{nccCertificate.name}</Typography>
-                    )}
+                    {nccCertificate !== '' && <Success>Uploaded.</Success>}
                   </Grid>
                   {courseType === 'Under Graduate' && (
                     <Grid item xs={12}>
@@ -1624,9 +1624,7 @@ class Form extends React.Component {
                     )}
                   </Grid>
                   <Grid item md={6} xs={6}>
-                    {nssDocument !== '' && (
-                      <Typography>{nssDocument.name}</Typography>
-                    )}
+                    {nssDocument !== '' && <Success>Uploaded.</Success>}
                   </Grid>
                   {courseType === 'Post Graduate' && (
                     <Grid item md={6} xs={12}>
@@ -1668,9 +1666,7 @@ class Form extends React.Component {
                   )}
                   {courseType === 'Post Graduate' && (
                     <Grid item md={4} xs={6}>
-                      {rrDocument !== '' && (
-                        <Typography>{rrDocument.name}</Typography>
-                      )}
+                      {rrDocument !== '' && <Success>Uploaded.</Success>}
                     </Grid>
                   )}
                   {courseType === 'Post Graduate' && (
@@ -1796,7 +1792,11 @@ class Form extends React.Component {
                 {signature !== '' && (
                   <img
                     className={classes.photo}
-                    src={(signature)}
+                    src={
+                      typeof signature === 'object'
+                        ? URL.createObjectURL(signature)
+                        : ASSETS.url + signature
+                    }
                   />
                 )}
               </div>
