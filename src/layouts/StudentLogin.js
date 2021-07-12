@@ -8,13 +8,12 @@ import CakeIcon from '@material-ui/icons/Cake'
 import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber'
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
+import LoginApi from '../apis/LoginApi'
+import LocalStorage from '../common/LocalStorage'
 import Card from '../components/Card/Card'
 import CardBody from '../components/Card/CardBody'
 import RegularButton from '../components/CustomButtons/Button'
 import CustomInput from '../components/CustomInput/CustomInput'
-import FormApi from '../apis/FormApi'
-import LoginApi from '../apis/LoginApi'
-import LocalStorage from '../common/LocalStorage'
 
 const useStyles = (theme) => ({
   paper: {
@@ -58,10 +57,10 @@ class Login extends Component {
       username: registrationNo,
       password: dob,
     }
-    LoginApi.userLogin(data).then((response)=>{
-      if(response.data && response.data.length>0){
+    LoginApi.userLogin(data).then((response) => {
+      if (response.data && response.data.length > 0) {
         LocalStorage.setUser(response.data[0])
-        this.props.history.push("/form")
+        this.props.history.push('/form')
       }
     })
   }
@@ -86,17 +85,24 @@ class Login extends Component {
             <Grid item xs={12}>
               <Card cardFullHeight>
                 <CardBody>
-                  <Typography variant="h6">
-                      Important Instructions
-                  </Typography>
+                  <Typography variant="h6">Important Instructions</Typography>
                   <Typography>
                     <ul>
-                    <li>If you didn't remember your 'REGISTERED ID' then click the button 'FORGET REGISTRATION'</li>
-                    <li>Candidate has to First Register with University Website, Univerirty Web Registration is Compulsary</li>
-                    <li>A Unique Registration Number will be Provided</li>
-                    <li>For Registration Adhar Number is Compulsary</li>
-                    <li>Disable Popup blocker</li>
-                    <li>Here registration fees Rs. 252/- will be submitted online</li>
+                      <li>
+                        If you didn't remember your 'REGISTERED ID' then click
+                        the button 'FORGET REGISTRATION'
+                      </li>
+                      <li>
+                        Candidate has to First Register with University Website,
+                        Univerirty Web Registration is Compulsary
+                      </li>
+                      <li>A Unique Registration Number will be Provided</li>
+                      <li>For Registration Adhar Number is Compulsary</li>
+                      <li>Disable Popup blocker</li>
+                      <li>
+                        Here registration fees Rs. 252/- will be submitted
+                        online
+                      </li>
                     </ul>
                   </Typography>
                 </CardBody>

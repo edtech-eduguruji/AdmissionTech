@@ -1,6 +1,7 @@
 import {
   Box,
   Checkbox,
+  Divider,
   FormControlLabel,
   Grid,
   Hidden,
@@ -8,12 +9,13 @@ import {
   Switch,
   TextField,
   Typography,
-  Divider,
 } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import AddIcon from '@material-ui/icons/Add'
 import DeleteIcon from '@material-ui/icons/Delete'
 import GetAppIcon from '@material-ui/icons/GetApp'
+import html2canvas from 'html2canvas'
+import { jsPDF } from 'jspdf'
 import React from 'react'
 import { withRouter } from 'react-router-dom'
 import FormApi from '../../apis/FormApi'
@@ -24,7 +26,7 @@ import RegularButton from '../../components/CustomButtons/Button'
 import CustomInput from '../../components/CustomInput/CustomInput'
 import Success from '../../components/Typography/Success'
 import { ASSETS } from '../../constants/Constants'
-import { mandatoryField, errorDialog } from '../../utils/Utils'
+import { errorDialog, mandatoryField } from '../../utils/Utils'
 import academicDetailsStatic from './StaticData/academic.json'
 import academicData from './StaticData/academicData.json'
 import categoryData from './StaticData/category.json'
@@ -131,14 +133,17 @@ class Form extends React.Component {
     }
     FormApi.getForm(data).then((response) => {
       if (response.data) {
-        if(response.data.submitted == '1' 
-        || response.data.submitted == 1 ){
+        if (
+          response.data.submitted == '1' &&
+          response.data.payment == '0' &&
+          !this.props.location.state.isPreview
+        ) {
           this.props.history.push('/formsubmitted')
         } else {
           response.data.academicDetails = JSON.parse(
             response.data.academicDetails
           )
-          response.data.documents = []
+          response.data.documents = JSON.parse(response.data.documents)
           this.setState({ ...response.data })
         }
       }
@@ -267,7 +272,10 @@ class Form extends React.Component {
       : 17
     if (event.target.name === 'otherRoverRanger') {
       var { totalMerit } = this.state
-      totalMerit.roverRanger = 0
+      if (totalMerit.roverRanger !== 0) {
+        total = total - totalMerit.roverRanger
+        totalMerit.roverRanger = 0
+      }
       this.setState({
         roverRanger: '',
         [event.target.name]: event.target.checked,
@@ -314,7 +322,7 @@ class Form extends React.Component {
     })
   }
 
-  handleSubmitForm = (btnValue) =>() => {
+  handleSubmitForm = (btnValue) => () => {
     const {
       faculty,
       courseType,
@@ -375,7 +383,10 @@ class Form extends React.Component {
       signature,
     } = this.state
     const data = new FormData()
-    data.append('registrationNo', LocalStorage.getUser() ? LocalStorage.getUser().user_id : '')
+    data.append(
+      'registrationNo',
+      LocalStorage.getUser() ? LocalStorage.getUser().user_id : ''
+    )
     data.append('faculty', faculty)
     data.append('courseType', courseType)
     data.append('course', course)
@@ -415,12 +426,10 @@ class Form extends React.Component {
     data.append('subCategoryCertificate', subCategoryCertificate)
     data.append('academicDetails', JSON.stringify(academicDetails))
     data.append('documents', JSON.stringify(documents))
-
     documents.map(
       (item, index) =>
         item.document !== '' && data.append('document' + index, item.document)
     )
-
     data.append('guardianName', guardianName)
     data.append('relationOfApplicant', relationOfApplicant)
     data.append('nationalCompetition', nationalCompetition)
@@ -440,17 +449,34 @@ class Form extends React.Component {
     data.append('totalMeritCount', totalMeritCount)
     data.append('signature', signature)
     data.append('submit', btnValue)
-
     FormApi.submitForm(data).then((response) => {
-      if(response && response.data) {
+      if (response && response.data) {
         LocalStorage.setUser(response.data)
-        if(btnValue == 1) {
-          errorDialog("Your application is submitted successfully", "Form")
+        if (btnValue == 1) {
+          errorDialog('Your application is submitted successfully', 'Form')
           this.props.history.push('/formsubmitted')
         } else {
-          errorDialog(`Your application is saved. Your registration no. is ${response.data.user_id}`, "Form")
+          errorDialog(
+            `Your application is saved. Your registration no. is ${response.data.user_id}`,
+            'Form'
+          )
         }
       }
+    })
+  }
+
+  handleDownloadForm = () => {
+    const input = document.getElementById('form1234')
+    html2canvas(input).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png')
+      var width = input.offsetWidth
+      var height = input.offsetHeight
+      const pdf = new jsPDF({
+        unit: 'pt',
+        format: [height - 30, width - 30],
+      })
+      pdf.addImage(imgData, 'PNG', 0, 0)
+      pdf.save('form' + '.pdf')
     })
   }
 
@@ -499,7 +525,24 @@ class Form extends React.Component {
       other,
       totalMeritCount,
       signature,
+      wrn,
+      name,
+      personalMobile,
+      parentMobile,
+      aadharNo,
+      email,
+      fatherName,
+      motherName,
+      parentsOccupation,
+      guardianName,
+      relationOfApplicant,
+      houseNo,
+      street,
+      pincode,
+      postOffice,
+      submitted,
     } = this.state
+    const preview = submitted === '1' ? true : false
     return (
       <div className="childContainer">
         <CardContainer
@@ -507,33 +550,68 @@ class Form extends React.Component {
           subTitle="Fill Up the Form"
           buttons={[
             <Hidden xsDown>
-              <RegularButton size="sm" color="danger" key="dp">
-                Download Prospectus &nbsp;&nbsp; <GetAppIcon />
+              <RegularButton
+                size="sm"
+                color="danger"
+                key="dp"
+                onClick={
+                  preview
+                    ? this.handleDownloadForm
+                    : this.handleDownloadProspectus
+                }
+              >
+                {preview ? 'Download Form' : 'Download Prospectus'}
+                &nbsp;&nbsp; <GetAppIcon />
               </RegularButton>
             </Hidden>,
           ]}
         >
-          <Grid container spacing={2} alignItems="center">
+          <Grid container spacing={2} alignItems="center" id="form1234">
             <Hidden smUp>
               <Grid container item xs={12} justify="center">
-                <RegularButton size="sm" color="danger" key="dp">
-                  Download Prospectus &nbsp;&nbsp; <GetAppIcon />
+                <RegularButton
+                  size="sm"
+                  color="danger"
+                  key="dp"
+                  onClick={
+                    preview
+                      ? this.handleDownloadForm
+                      : this.handleDownloadProspectus
+                  }
+                >
+                  {preview ? 'Download Form' : 'Download Prospectus'}
+                  &nbsp;&nbsp; <GetAppIcon />
                 </RegularButton>
               </Grid>
             </Hidden>
-            <Grid item xs={12}>
-            <Typography variant="h6">Please read all the instructions before fill up form</Typography>
-            <Divider/>
-              <Typography variant="caption">
-                <ul>
-                  <li>Please verify your form details once before click on 'Submit' button</li>
-                  <li>After submitting FORM, you cannot modified or change any details</li>
-                  <li>Please note down your registration id after click on 'Save Draft' button</li>
-                  <li>Your photo and signature must be image format</li>
-                  <li>Any other uploads can be image(png/jpg/jpeg) or pdf </li>
-                </ul>
-              </Typography>
-            </Grid>
+            {!preview && (
+              <Grid item xs={12}>
+                <Typography variant="h6">
+                  Please read all the instructions before fill up form
+                </Typography>
+                <Divider />
+                <Typography variant="caption">
+                  <ul>
+                    <li>
+                      Please verify your form details once before click on
+                      'Submit' button
+                    </li>
+                    <li>
+                      After submitting FORM, you cannot modified or change any
+                      details
+                    </li>
+                    <li>
+                      Please note down your registration id after click on 'Save
+                      Draft' button
+                    </li>
+                    <li>Your photo and signature must be image format</li>
+                    <li>
+                      Any other uploads can be image(png/jpg/jpeg) or pdf{' '}
+                    </li>
+                  </ul>
+                </Typography>
+              </Grid>
+            )}
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">
                 Faculty & Courses Details
@@ -541,11 +619,13 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                disabled={preview}
                 InputLabelProps={{
                   classes: {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 fullWidth
                 select
                 label={mandatoryField('Select Faculty')}
@@ -566,6 +646,7 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 fullWidth
                 select
                 label={mandatoryField('Select Course Type')}
@@ -591,6 +672,7 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 fullWidth
                 select
                 label={mandatoryField('Select Course')}
@@ -615,6 +697,7 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 select
                 fullWidth
                 variant="outlined"
@@ -645,14 +728,16 @@ class Form extends React.Component {
                   />
                 </Grid>
                 <Grid item md={9} xs={7}>
-                  <FileUploader
-                    buttonLabel="Upload Photo"
-                    accept="image/jpg,image/jpeg,image/png"
-                    maxSize={2}
-                    handleChange={this.handleUpload}
-                    id="profile"
-                    name="photo"
-                  />
+                  {!preview && (
+                    <FileUploader
+                      buttonLabel="Upload Photo"
+                      accept="image/jpg,image/jpeg,image/png"
+                      maxSize={2}
+                      handleChange={this.handleUpload}
+                      id="profile"
+                      name="photo"
+                    />
+                  )}
                   <Box paddingTop="10px">
                     <Typography variant="caption">
                       Upload Passport size photo with white background.
@@ -677,6 +762,8 @@ class Form extends React.Component {
                     }}
                     inputProps={{
                       name: 'wrn',
+                      value: wrn,
+                      disabled: preview,
                     }}
                     handleChange={this.handleChangeFields}
                   />
@@ -686,14 +773,16 @@ class Form extends React.Component {
                     <Typography>
                       Upload University Web Registration (PDF) &nbsp;
                     </Typography>
-                    <FileUploader
-                      buttonLabel="Upload Form"
-                      accept="image/jpg,image/jpeg,image/png,application/pdf"
-                      maxSize={2}
-                      handleChange={this.handleUpload}
-                      id="uploadForm"
-                      name="form"
-                    />
+                    {!preview && (
+                      <FileUploader
+                        buttonLabel="Upload Form"
+                        accept="image/jpg,image/jpeg,image/png,application/pdf"
+                        maxSize={2}
+                        handleChange={this.handleUpload}
+                        id="uploadForm"
+                        name="form"
+                      />
+                    )}
                   </div>
                 </Grid>
                 <Grid container item xs={12} justify="center">
@@ -705,6 +794,7 @@ class Form extends React.Component {
               <FormControlLabel
                 control={
                   <Switch
+                    disabled={preview}
                     name="vaccinated"
                     checked={vaccinated}
                     color="primary"
@@ -722,6 +812,7 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 fullWidth
                 select
                 margin="dense"
@@ -744,6 +835,8 @@ class Form extends React.Component {
                 }}
                 inputProps={{
                   name: 'name',
+                  value: name,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -755,6 +848,7 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 fullWidth
                 type="date"
                 value={dob}
@@ -770,6 +864,7 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 fullWidth
                 select
                 label={mandatoryField('Gender')}
@@ -790,6 +885,7 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 fullWidth
                 select
                 label={mandatoryField('Religion')}
@@ -810,6 +906,7 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 fullWidth
                 label={mandatoryField('Caste')}
                 value={caste}
@@ -825,6 +922,7 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 select
                 fullWidth
                 variant="outlined"
@@ -845,6 +943,7 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 select
                 fullWidth
                 variant="outlined"
@@ -860,27 +959,31 @@ class Form extends React.Component {
             </Grid>
             <Grid container item md={6} xs={12} justify="center">
               <div className="center">
-                <FileUploader
-                  buttonLabel="Upload Category Certificate"
-                  accept="image/jpg,image/jpeg,image/png,application/pdf"
-                  maxSize={2}
-                  handleChange={this.handleUpload}
-                  id="categoryCertificate"
-                  name="categoryCertificate"
-                />
+                {!preview && (
+                  <FileUploader
+                    buttonLabel="Upload Category Certificate"
+                    accept="image/jpg,image/jpeg,image/png,application/pdf"
+                    maxSize={2}
+                    handleChange={this.handleUpload}
+                    id="categoryCertificate"
+                    name="categoryCertificate"
+                  />
+                )}
                 {categoryCertificate !== '' && <Success>Uploaded.</Success>}
               </div>
             </Grid>
             <Grid container item md={6} xs={12} justify="center">
               <div className="center">
-                <FileUploader
-                  buttonLabel="Upload Sub-Category Certificate"
-                  accept="image/jpg,image/jpeg,image/png,application/pdf"
-                  maxSize={2}
-                  handleChange={this.handleUpload}
-                  id="subCategoryCertificate"
-                  name="subCategoryCertificate"
-                />
+                {!preview && (
+                  <FileUploader
+                    buttonLabel="Upload Sub-Category Certificate"
+                    accept="image/jpg,image/jpeg,image/png,application/pdf"
+                    maxSize={2}
+                    handleChange={this.handleUpload}
+                    id="subCategoryCertificate"
+                    name="subCategoryCertificate"
+                  />
+                )}
                 {subCategoryCertificate !== '' && <Success>Uploaded.</Success>}
               </div>
             </Grid>
@@ -894,6 +997,8 @@ class Form extends React.Component {
                 inputProps={{
                   name: 'personalMobile',
                   type: 'number',
+                  value: personalMobile,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -908,6 +1013,8 @@ class Form extends React.Component {
                 inputProps={{
                   name: 'parentMobile',
                   type: 'number',
+                  value: parentMobile,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -922,6 +1029,8 @@ class Form extends React.Component {
                 inputProps={{
                   name: 'aadharNo',
                   type: 'number',
+                  value: aadharNo,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -935,6 +1044,8 @@ class Form extends React.Component {
                 }}
                 inputProps={{
                   name: 'email',
+                  value: email,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -953,6 +1064,8 @@ class Form extends React.Component {
                 }}
                 inputProps={{
                   name: 'fatherName',
+                  value: fatherName,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -966,6 +1079,8 @@ class Form extends React.Component {
                 }}
                 inputProps={{
                   name: 'motherName',
+                  value: motherName,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -979,6 +1094,8 @@ class Form extends React.Component {
                 }}
                 inputProps={{
                   name: 'parentsOccupation',
+                  value: parentsOccupation,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -992,6 +1109,8 @@ class Form extends React.Component {
                 }}
                 inputProps={{
                   name: 'guardianName',
+                  value: guardianName,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -1005,6 +1124,8 @@ class Form extends React.Component {
                 }}
                 inputProps={{
                   name: 'relationOfApplicant',
+                  value: relationOfApplicant,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -1021,6 +1142,8 @@ class Form extends React.Component {
                 }}
                 inputProps={{
                   name: 'houseNo',
+                  value: houseNo,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -1034,6 +1157,8 @@ class Form extends React.Component {
                 }}
                 inputProps={{
                   name: 'street',
+                  value: street,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -1048,6 +1173,8 @@ class Form extends React.Component {
                 inputProps={{
                   name: 'pincode',
                   type: 'number',
+                  value: pincode,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -1061,6 +1188,8 @@ class Form extends React.Component {
                 }}
                 inputProps={{
                   name: 'postOffice',
+                  value: postOffice,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -1072,6 +1201,7 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 select
                 fullWidth
                 variant="outlined"
@@ -1092,6 +1222,7 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 select
                 fullWidth
                 label={mandatoryField('Select City')}
@@ -1130,6 +1261,7 @@ class Form extends React.Component {
                 inputProps={{
                   name: 'cHouseNo',
                   value: cHouseNo,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -1144,6 +1276,7 @@ class Form extends React.Component {
                 inputProps={{
                   name: 'cStreet',
                   value: cStreet,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -1159,6 +1292,7 @@ class Form extends React.Component {
                   name: 'cPincode',
                   value: cPincode,
                   type: 'number',
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -1173,6 +1307,7 @@ class Form extends React.Component {
                 inputProps={{
                   name: 'cPostOffice',
                   value: cPostOffice,
+                  disabled: preview,
                 }}
                 handleChange={this.handleChangeFields}
               />
@@ -1184,6 +1319,7 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 select
                 fullWidth
                 variant="outlined"
@@ -1204,6 +1340,7 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 select
                 fullWidth
                 label="Select City"
@@ -1253,6 +1390,7 @@ class Form extends React.Component {
                           inputProps={{
                             name: 'board',
                             value: item.board,
+                            disabled: preview,
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
@@ -1267,6 +1405,7 @@ class Form extends React.Component {
                           inputProps={{
                             name: 'institution',
                             value: item.institution,
+                            disabled: preview,
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
@@ -1281,6 +1420,7 @@ class Form extends React.Component {
                           inputProps={{
                             name: 'year',
                             value: item.year,
+                            disabled: preview,
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
@@ -1295,6 +1435,7 @@ class Form extends React.Component {
                           inputProps={{
                             name: 'rollNo',
                             value: item.rollNo,
+                            disabled: preview,
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
@@ -1310,6 +1451,7 @@ class Form extends React.Component {
                             name: 'totalMarks',
                             value: item.totalMarks,
                             type: 'number',
+                            disabled: preview,
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
@@ -1325,6 +1467,7 @@ class Form extends React.Component {
                             name: 'marksObtained',
                             value: item.marksObtained,
                             type: 'number',
+                            disabled: preview,
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
@@ -1339,6 +1482,7 @@ class Form extends React.Component {
                           inputProps={{
                             name: 'percentage',
                             value: item.percentage,
+                            disabled: preview,
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
@@ -1353,12 +1497,13 @@ class Form extends React.Component {
                           inputProps={{
                             name: 'subjects',
                             value: item.subjects,
+                            disabled: preview,
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                       </Grid>
                       <Grid item md={1} xs={6}>
-                        {item.isDelete === 1 && (
+                        {item.isDelete === 1 && !preview && (
                           <RegularButton
                             fab
                             size="sm"
@@ -1370,7 +1515,7 @@ class Form extends React.Component {
                         )}
                       </Grid>
                       <Grid container item md={12} xs={6} justify="flex-end">
-                        {academicDetails.length - 1 === i && (
+                        {academicDetails.length - 1 === i && !preview && (
                           <Box pr="10px" pb="5px">
                             <div className="alignCenter">
                               <Typography>
@@ -1415,6 +1560,7 @@ class Form extends React.Component {
                               root: classes.labelRoot,
                             },
                           }}
+                          disabled={preview}
                           fullWidth
                           select
                           disabled={item.isDelete === 0}
@@ -1435,21 +1581,23 @@ class Form extends React.Component {
                           <MenuItem value="other">Others</MenuItem>
                         </TextField>
                       </Grid>
-                      <Grid item md={3} xs={12}>
-                        <FileUploader
-                          buttonLabel="Upload Document"
-                          accept="image/jpg,image/jpeg,image/png,application/pdf"
-                          maxSize={2}
-                          handleChange={this.handleUploadEnclosure}
-                          id={'uploadDocument' + i}
-                          index={i}
-                        />
-                      </Grid>
+                      {!preview && (
+                        <Grid item md={3} xs={12}>
+                          <FileUploader
+                            buttonLabel="Upload Document"
+                            accept="image/jpg,image/jpeg,image/png,application/pdf"
+                            maxSize={2}
+                            handleChange={this.handleUploadEnclosure}
+                            id={'uploadDocument' + i}
+                            index={i}
+                          />
+                        </Grid>
+                      )}
                       <Grid item md={4} xs={12}>
                         {item.document !== '' && <Success>Uploaded.</Success>}
                       </Grid>
                       <Grid item md={1} xs={12}>
-                        {item.isDelete === 1 && (
+                        {item.isDelete === 1 && !preview && (
                           <RegularButton
                             fab
                             size="sm"
@@ -1461,7 +1609,7 @@ class Form extends React.Component {
                         )}
                       </Grid>
                       <Grid container item md={12} xs={6} justify="flex-end">
-                        {documents.length - 1 === i && (
+                        {documents.length - 1 === i && !preview && (
                           <Box pr="10px" pb="5px">
                             <div className="alignCenter">
                               <Typography>
@@ -1510,6 +1658,7 @@ class Form extends React.Component {
                           root: classes.labelRoot,
                         },
                       }}
+                      disabled={preview}
                       select
                       fullWidth
                       variant="outlined"
@@ -1518,22 +1667,25 @@ class Form extends React.Component {
                       value={nationalCompetition}
                       onChange={this.handleCalculateMerit}
                     >
+                      <MenuItem value="none,0">None</MenuItem>
                       <MenuItem value="Ist,5">Ist</MenuItem>
                       <MenuItem value="IInd,4">IInd</MenuItem>
                       <MenuItem value="IIIrd,3">IIIrd</MenuItem>
                       <MenuItem value="Participant,2">Participant</MenuItem>
                     </TextField>
                   </Grid>
-                  <Grid item md={2} xs={6}>
-                    <FileUploader
-                      buttonLabel="Upload Document"
-                      accept="image/jpg,image/jpeg,image/png,application/pdf"
-                      maxSize={2}
-                      handleChange={this.handleUpload}
-                      id={'nationalCompetition'}
-                      name="nationalCertificate"
-                    />
-                  </Grid>
+                  {!preview && (
+                    <Grid item md={2} xs={6}>
+                      <FileUploader
+                        buttonLabel="Upload Document"
+                        accept="image/jpg,image/jpeg,image/png,application/pdf"
+                        maxSize={2}
+                        handleChange={this.handleUpload}
+                        id={'nationalCompetition'}
+                        name="nationalCertificate"
+                      />
+                    </Grid>
+                  )}
                   <Grid item md={4} xs={6}>
                     {nationalCertificate !== '' && <Success>Uploaded.</Success>}
                   </Grid>
@@ -1545,6 +1697,7 @@ class Form extends React.Component {
                             root: classes.labelRoot,
                           },
                         }}
+                        disabled={preview}
                         select
                         fullWidth
                         variant="outlined"
@@ -1553,6 +1706,7 @@ class Form extends React.Component {
                         value={otherCompetition}
                         onChange={this.handleCalculateMerit}
                       >
+                        <MenuItem value="none,0">None</MenuItem>
                         <MenuItem value="Ist,8">Ist</MenuItem>
                         <MenuItem value="IInd,7">IInd</MenuItem>
                         <MenuItem value="IIIrd,6">IIIrd</MenuItem>
@@ -1560,7 +1714,7 @@ class Form extends React.Component {
                       </TextField>
                     </Grid>
                   )}
-                  {courseType === 'Post Graduate' && (
+                  {courseType === 'Post Graduate' && !preview && (
                     <Grid item md={2} xs={6}>
                       <FileUploader
                         buttonLabel="Upload Document"
@@ -1584,6 +1738,7 @@ class Form extends React.Component {
                           root: classes.labelRoot,
                         },
                       }}
+                      disabled={preview}
                       select
                       fullWidth
                       variant="outlined"
@@ -1592,6 +1747,7 @@ class Form extends React.Component {
                       value={ncc}
                       onChange={this.handleCalculateMerit}
                     >
+                      <MenuItem value="none,0">None</MenuItem>
                       <MenuItem value="NCC(B)/G-1,8">NCC(C)/G-2</MenuItem>
                       <MenuItem value="NCC(B)/G-1,6">NCC(B)/G-1</MenuItem>
                       <MenuItem value="NCC Worked(240 Hours) and Participated in 2 Camps but didn't passed any exam,3">
@@ -1600,16 +1756,18 @@ class Form extends React.Component {
                       </MenuItem>
                     </TextField>
                   </Grid>
-                  <Grid item md={2} xs={6}>
-                    <FileUploader
-                      buttonLabel="Upload Document"
-                      accept="image/jpg,image/jpeg,image/png,application/pdf"
-                      maxSize={2}
-                      handleChange={this.handleUpload}
-                      id={'nccDoc'}
-                      name="nccCertificate"
-                    />
-                  </Grid>
+                  {!preview && (
+                    <Grid item md={2} xs={6}>
+                      <FileUploader
+                        buttonLabel="Upload Document"
+                        accept="image/jpg,image/jpeg,image/png,application/pdf"
+                        maxSize={2}
+                        handleChange={this.handleUpload}
+                        id={'nccDoc'}
+                        name="nccCertificate"
+                      />
+                    </Grid>
+                  )}
                   <Grid item md={4} xs={6}>
                     {nccCertificate !== '' && <Success>Uploaded.</Success>}
                   </Grid>
@@ -1623,6 +1781,7 @@ class Form extends React.Component {
                             onChange={this.handleCalculateMeritCheck}
                             name="freedomFighter"
                             color="primary"
+                            disabled={preview}
                           />
                         }
                         label="Freedom Fighter ?"
@@ -1638,13 +1797,14 @@ class Form extends React.Component {
                           onChange={this.handleCalculateMeritCheck}
                           name="nationalSevaScheme"
                           color="primary"
+                          disabled={preview}
                         />
                       }
                       label="(NSS) National Seva Scheme ?"
                     />
                   </Grid>
                   <Grid item md={2} xs={6}>
-                    {nationalSevaScheme && (
+                    {nationalSevaScheme && !preview && (
                       <FileUploader
                         buttonLabel="Upload Document"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -1666,6 +1826,7 @@ class Form extends React.Component {
                             root: classes.labelRoot,
                           },
                         }}
+                        disabled={preview}
                         select
                         fullWidth
                         disabled={otherRoverRanger}
@@ -1675,6 +1836,7 @@ class Form extends React.Component {
                         value={roverRanger}
                         onChange={this.handleCalculateMerit}
                       >
+                        <MenuItem value="none,0">None</MenuItem>
                         <MenuItem value="Ist,5">Ist</MenuItem>
                         <MenuItem value="IInd,4">IInd</MenuItem>
                         <MenuItem value="IIIrd,3">IIIrd</MenuItem>
@@ -1684,7 +1846,7 @@ class Form extends React.Component {
                   )}
                   {courseType === 'Post Graduate' && (
                     <Grid item md={2} xs={6}>
-                      {!otherRoverRanger && (
+                      {!otherRoverRanger && !preview && (
                         <FileUploader
                           buttonLabel="Upload Document"
                           accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -1716,6 +1878,7 @@ class Form extends React.Component {
                             onChange={this.handleCalculateMeritCheck}
                             name="otherRoverRanger"
                             color="primary"
+                            disabled={preview}
                           />
                         }
                         label="Team Members of Rover Rangers to Participate in Rally from Other University"
@@ -1732,6 +1895,7 @@ class Form extends React.Component {
                             onChange={this.handleCalculateMeritCheck}
                             name="bcom"
                             color="primary"
+                            disabled={preview}
                           />
                         }
                         label="Inter 10+2 with Commerce ?"
@@ -1748,6 +1912,7 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                disabled={preview}
                 select
                 fullWidth
                 variant="outlined"
@@ -1756,6 +1921,7 @@ class Form extends React.Component {
                 value={other}
                 onChange={this.handleCalculateMerit}
               >
+                <MenuItem value="none,0">None</MenuItem>
                 <MenuItem
                   value="डॉ. भीमराव आंबेडकर विश्वविद्यालय और सम्बद्ध महाविद्यालयों में
                 सेवारत एवं स्ववित पोषित संस्थान के विश्वविद्यालय द्वारा अनुमोदित
@@ -1812,14 +1978,16 @@ class Form extends React.Component {
             <Grid item xs={12}>
               <Typography variant="body1">APPLICANT SIGNATURE</Typography>
               <div className="alignCenter">
-                <FileUploader
-                  buttonLabel="Upload"
-                  accept="image/jpg,image/jpeg,image/png"
-                  maxSize={2}
-                  handleChange={this.handleUpload}
-                  id="signature"
-                  name="signature"
-                />
+                {!preview && (
+                  <FileUploader
+                    buttonLabel="Upload"
+                    accept="image/jpg,image/jpeg,image/png"
+                    maxSize={2}
+                    handleChange={this.handleUpload}
+                    id="signature"
+                    name="signature"
+                  />
+                )}
                 &nbsp;&nbsp;
                 {signature !== '' && (
                   <img
@@ -1833,15 +2001,26 @@ class Form extends React.Component {
                 )}
               </div>
             </Grid>
-            <Grid container item xs={6} justify="flex-end">
-              <RegularButton color="primary" 
-              onClick={this.handleSubmitForm(0)}>Save Draft</RegularButton>
-            </Grid>
-            <Grid item xs={6}>
-              <RegularButton color="primary" onClick={this.handleSubmitForm(1)}>
-                Submit
-              </RegularButton>
-            </Grid>
+            {!preview && (
+              <Grid container item xs={6} justify="flex-end">
+                <RegularButton
+                  color="primary"
+                  onClick={this.handleSubmitForm(0)}
+                >
+                  Save Draft
+                </RegularButton>
+              </Grid>
+            )}
+            {!preview && (
+              <Grid item xs={6}>
+                <RegularButton
+                  color="primary"
+                  onClick={this.handleSubmitForm(1)}
+                >
+                  Submit
+                </RegularButton>
+              </Grid>
+            )}
           </Grid>
         </CardContainer>
       </div>
