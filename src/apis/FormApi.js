@@ -5,9 +5,6 @@ import URLS from './Urls'
 class FormApi {
   submitForm(formData) {
     return BaseApi.postFormData(URLS.SUBMITFORM, formData).then((res) => {
-      if (res.status === 200) {
-        addSuccessMsg('Form Submitted Successfully.')
-      }
       return res
     })
   }

@@ -8,6 +8,7 @@ import {
   Switch,
   TextField,
   Typography,
+  Divider,
 } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import AddIcon from '@material-ui/icons/Add'
@@ -23,7 +24,7 @@ import RegularButton from '../../components/CustomButtons/Button'
 import CustomInput from '../../components/CustomInput/CustomInput'
 import Success from '../../components/Typography/Success'
 import { ASSETS } from '../../constants/Constants'
-import { mandatoryField } from '../../utils/Utils'
+import { mandatoryField, errorDialog } from '../../utils/Utils'
 import academicDetailsStatic from './StaticData/academic.json'
 import academicData from './StaticData/academicData.json'
 import categoryData from './StaticData/category.json'
@@ -203,9 +204,9 @@ class Form extends React.Component {
         list[index]['totalMarks'] !== '' &&
         list[index]['marksObtained'] !== ''
       ) {
-        var totalMarks = list[index]['totalMarks']
-        var marksObtained = list[index]['marksObtained']
-        var p = parseFloat((marksObtained / totalMarks) * 100)
+        let totalMarks = list[index]['totalMarks']
+        let marksObtained = list[index]['marksObtained']
+        let p = parseFloat((marksObtained / totalMarks) * 100).toFixed(2)
         list[index]['percentage'] = p + '%'
       }
     }
@@ -443,8 +444,11 @@ class Form extends React.Component {
     FormApi.submitForm(data).then((response) => {
       if(response && response.data) {
         LocalStorage.setUser(response.data)
-        if(btnValue == 1){
+        if(btnValue == 1) {
+          errorDialog("Your application is submitted successfully", "Form")
           this.props.history.push('/formsubmitted')
+        } else {
+          errorDialog(`Your application is saved. Your registration no. is ${response.data.user_id}`, "Form")
         }
       }
     })
@@ -517,6 +521,19 @@ class Form extends React.Component {
                 </RegularButton>
               </Grid>
             </Hidden>
+            <Grid item xs={12}>
+            <Typography variant="h6">Please read all the instructions before fill up form</Typography>
+            <Divider/>
+              <Typography variant="caption">
+                <ul>
+                  <li>Please verify your form details once before click on 'Submit' button</li>
+                  <li>After submitting FORM, you cannot modified or change any details</li>
+                  <li>Please note down your registration id after click on 'Save Draft' button</li>
+                  <li>Your photo and signature must be image format</li>
+                  <li>Any other uploads can be image(png/jpg/jpeg) or pdf </li>
+                </ul>
+              </Typography>
+            </Grid>
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">
                 Faculty & Courses Details

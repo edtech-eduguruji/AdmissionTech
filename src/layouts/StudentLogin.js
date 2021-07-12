@@ -83,11 +83,30 @@ class Login extends Component {
             <img alt="logo" src="agracollege.png" className={classes.logo} />
           </div>
           <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Card cardFullHeight>
+                <CardBody>
+                  <Typography variant="h6">
+                      Important Instructions
+                  </Typography>
+                  <Typography>
+                    <ul>
+                    <li>If you didn't remember your 'REGISTERED ID' then click the button 'FORGET REGISTRATION'</li>
+                    <li>Candidate has to First Register with University Website, Univerirty Web Registration is Compulsary</li>
+                    <li>A Unique Registration Number will be Provided</li>
+                    <li>For Registration Adhar Number is Compulsary</li>
+                    <li>Disable Popup blocker</li>
+                    <li>Here registration fees Rs. 252/- will be submitted online</li>
+                    </ul>
+                  </Typography>
+                </CardBody>
+              </Card>
+            </Grid>
             <Grid item md={6} lg={6}>
               <Card cardFullHeight>
                 <CardBody className={classes.paper}>
                   <Typography component="h1" variant="h6">
-                    For Existing User
+                    For already registered users
                   </Typography>
                   <div className={classes.form} noValidate>
                     <Grid container spacing={2} alignItems="center">

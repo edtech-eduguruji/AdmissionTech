@@ -43,6 +43,7 @@ const typographyStyle = {
     color: infoColor[0],
   },
   successText: {
+    fontWeight: 600,
     color: successColor[0],
   },
   warningText: {
