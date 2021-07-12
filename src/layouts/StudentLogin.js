@@ -59,8 +59,6 @@ class Login extends Component {
       password: dob,
     }
     LoginApi.userLogin(data).then((response)=>{
-      console.log(response);
-      
       if(response.data && response.data.length>0){
         LocalStorage.setUser(response.data[0])
         this.props.history.push("/form")

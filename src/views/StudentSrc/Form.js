@@ -130,12 +130,16 @@ class Form extends React.Component {
     }
     FormApi.getForm(data).then((response) => {
       if (response.data) {
-        console.log(response.data)
-        response.data.academicDetails = JSON.parse(
-          response.data.academicDetails
-        )
-        response.data.documents = []
-        this.setState({ ...response.data })
+        if(response.data.submitted == '1' 
+        || response.data.submitted == 1 ){
+          this.props.history.push('/formsubmitted')
+        } else {
+          response.data.academicDetails = JSON.parse(
+            response.data.academicDetails
+          )
+          response.data.documents = []
+          this.setState({ ...response.data })
+        }
       }
     })
   }
@@ -309,7 +313,7 @@ class Form extends React.Component {
     })
   }
 
-  handleSubmitForm = () => {
+  handleSubmitForm = (btnValue) =>() => {
     const {
       faculty,
       courseType,
@@ -370,6 +374,7 @@ class Form extends React.Component {
       signature,
     } = this.state
     const data = new FormData()
+    data.append('registrationNo', LocalStorage.getUser() ? LocalStorage.getUser().user_id : '')
     data.append('faculty', faculty)
     data.append('courseType', courseType)
     data.append('course', course)
@@ -433,7 +438,16 @@ class Form extends React.Component {
     data.append('other', other)
     data.append('totalMeritCount', totalMeritCount)
     data.append('signature', signature)
-    FormApi.submitForm(data).then((respone) => {})
+    data.append('submit', btnValue)
+
+    FormApi.submitForm(data).then((response) => {
+      if(response && response.data) {
+        LocalStorage.setUser(response.data)
+        if(btnValue == 1){
+          this.props.history.push('/formsubmitted')
+        }
+      }
+    })
   }
 
   render() {
@@ -1803,10 +1817,11 @@ class Form extends React.Component {
               </div>
             </Grid>
             <Grid container item xs={6} justify="flex-end">
-              <RegularButton color="primary">Save Draft</RegularButton>
+              <RegularButton color="primary" 
+              onClick={this.handleSubmitForm(0)}>Save Draft</RegularButton>
             </Grid>
             <Grid item xs={6}>
-              <RegularButton color="primary" onClick={this.handleSubmitForm}>
+              <RegularButton color="primary" onClick={this.handleSubmitForm(1)}>
                 Submit
               </RegularButton>
             </Grid>
