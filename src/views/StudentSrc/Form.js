@@ -54,6 +54,9 @@ const styles = {
   labelRoot: {
     fontSize: 12,
   },
+  disabled: {
+    color: 'black',
+  },
 }
 
 class Form extends React.Component {
@@ -467,15 +470,16 @@ class Form extends React.Component {
 
   handleDownloadForm = () => {
     const input = document.getElementById('form1234')
-    html2canvas(input).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png')
-      var width = input.offsetWidth
-      var height = input.offsetHeight
-      const pdf = new jsPDF({
-        unit: 'pt',
-        format: [height - 30, width - 30],
-      })
-      pdf.addImage(imgData, 'PNG', 0, 0)
+    html2canvas(input, { useCORS: true }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/jpeg')
+      const pdf = new jsPDF()
+      pdf.addImage(
+        imgData,
+        0,
+        0,
+        pdf.internal.pageSize.width,
+        pdf.internal.pageSize.height
+      )
       pdf.save('form' + '.pdf')
     })
   }
@@ -584,7 +588,7 @@ class Form extends React.Component {
                 </RegularButton>
               </Grid>
             </Hidden>
-            {!preview && (
+            {!preview ? (
               <Grid item xs={12}>
                 <Typography variant="h6">
                   Please read all the instructions before fill up form
@@ -611,6 +615,11 @@ class Form extends React.Component {
                   </ul>
                 </Typography>
               </Grid>
+            ) : (
+              <Grid container item xs={12} justify="center">
+                <Typography variant="h6">ADMISSION FORM</Typography>
+                <Divider />
+              </Grid>
             )}
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">
@@ -625,13 +634,17 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
-                disabled={preview}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
                 fullWidth
                 select
                 label={mandatoryField('Select Faculty')}
                 value={faculty}
                 onChange={this.handleChangeFields}
-                variant="outlined"
+                variant={preview ? 'standard' : 'outlined'}
                 name="faculty"
               >
                 {facultyData.map((item) => (
@@ -646,13 +659,18 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
                 disabled={preview}
                 fullWidth
                 select
                 label={mandatoryField('Select Course Type')}
                 value={courseType}
                 onChange={this.handleChangeFields}
-                variant="outlined"
+                variant={preview ? 'standard' : 'outlined'}
                 name="courseType"
               >
                 {courseTypeData.map(
@@ -672,13 +690,18 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
                 disabled={preview}
                 fullWidth
                 select
                 label={mandatoryField('Select Course')}
                 value={course}
                 onChange={this.handleChangeFields}
-                variant="outlined"
+                variant={preview ? 'standard' : 'outlined'}
                 name="course"
               >
                 {coursesData.map(
@@ -697,10 +720,15 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
                 disabled={preview}
                 select
                 fullWidth
-                variant="outlined"
+                variant={preview ? 'standard' : 'outlined'}
                 name="mediumOfInstitution"
                 label={mandatoryField('Medium of Teaching')}
                 value={mediumOfInstitution}
@@ -722,7 +750,7 @@ class Form extends React.Component {
                       photo === ''
                         ? 'user.png'
                         : typeof photo === 'object'
-                        ? URL.createObjectURL(photo)
+                        ? URL.createObjectURL(ASSETS.url + photo)
                         : ASSETS.url + photo
                     }
                   />
@@ -812,6 +840,11 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
                 disabled={preview}
                 fullWidth
                 select
@@ -819,7 +852,7 @@ class Form extends React.Component {
                 label={mandatoryField('Title')}
                 value={nameTitle}
                 onClick={this.handleChangeFields}
-                variant="outlined"
+                variant={preview ? 'standard' : 'outlined'}
                 name="nameTitle"
               >
                 <MenuItem value="Mr.">Mr.</MenuItem>
@@ -832,6 +865,7 @@ class Form extends React.Component {
                 labelText={mandatoryField('Full Name')}
                 formControlProps={{
                   fullWidth: true,
+                  isForm: true,
                 }}
                 inputProps={{
                   name: 'name',
@@ -846,6 +880,11 @@ class Form extends React.Component {
                 InputLabelProps={{
                   classes: {
                     root: classes.labelRoot,
+                  },
+                }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
                   },
                 }}
                 disabled={preview}
@@ -864,13 +903,18 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
                 disabled={preview}
                 fullWidth
                 select
                 label={mandatoryField('Gender')}
                 value={gender}
                 onClick={this.handleChangeFields}
-                variant="outlined"
+                variant={preview ? 'standard' : 'outlined'}
                 name="gender"
               >
                 <MenuItem value="male">Male</MenuItem>
@@ -885,13 +929,18 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
                 disabled={preview}
                 fullWidth
                 select
                 label={mandatoryField('Religion')}
                 value={religion}
                 onClick={this.handleChangeFields}
-                variant="outlined"
+                variant={preview ? 'standard' : 'outlined'}
                 name="religion"
               >
                 {religionData.map((item) => (
@@ -906,12 +955,17 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
                 disabled={preview}
                 fullWidth
                 label={mandatoryField('Caste')}
                 value={caste}
                 onChange={this.handleChangeFields}
-                variant="outlined"
+                variant={preview ? 'standard' : 'outlined'}
                 name="caste"
               />
             </Grid>
@@ -922,10 +976,15 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
                 disabled={preview}
                 select
                 fullWidth
-                variant="outlined"
+                variant={preview ? 'standard' : 'outlined'}
                 name="category"
                 label={mandatoryField('Category')}
                 value={category}
@@ -943,10 +1002,15 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
                 disabled={preview}
                 select
                 fullWidth
-                variant="outlined"
+                variant={preview ? 'standard' : 'outlined'}
                 name="subCategory"
                 label={mandatoryField('Sub-Category')}
                 value={subCategory}
@@ -1201,10 +1265,15 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
                 disabled={preview}
                 select
                 fullWidth
-                variant="outlined"
+                variant={preview ? 'standard' : 'outlined'}
                 label={mandatoryField('Select State')}
                 name="state"
                 value={state}
@@ -1222,11 +1291,16 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
                 disabled={preview}
                 select
                 fullWidth
                 label={mandatoryField('Select City')}
-                variant="outlined"
+                variant={preview ? 'standard' : 'outlined'}
                 name="city"
                 value={city}
                 onChange={this.handleChangeFields}
@@ -1242,13 +1316,15 @@ class Form extends React.Component {
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">
                 Correspondence Address &nbsp;&nbsp;
-                <RegularButton
-                  color="primary"
-                  size="sm"
-                  onClick={this.handleFillCorrespondenceAddress}
-                >
-                  Same as Permanent Address ?
-                </RegularButton>
+                {!preview && (
+                  <RegularButton
+                    color="primary"
+                    size="sm"
+                    onClick={this.handleFillCorrespondenceAddress}
+                  >
+                    Same as Permanent Address ?
+                  </RegularButton>
+                )}
               </Typography>
             </Grid>
             <Grid item md={6} xs={12}>
@@ -1319,10 +1395,15 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
                 disabled={preview}
                 select
                 fullWidth
-                variant="outlined"
+                variant={preview ? 'standard' : 'outlined'}
                 label="Select State"
                 name="cState"
                 value={cState}
@@ -1340,11 +1421,16 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
                 disabled={preview}
                 select
                 fullWidth
                 label="Select City"
-                variant="outlined"
+                variant={preview ? 'standard' : 'outlined'}
                 name="cCity"
                 value={cCity}
                 onChange={this.handleChangeFields}
@@ -1380,7 +1466,7 @@ class Form extends React.Component {
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                       </Grid>
-                      <Grid item md={1} xs={12}>
+                      <Grid item md={2} xs={12}>
                         <CustomInput
                           smallLabel
                           labelText={mandatoryField('Name of Board')}
@@ -1394,8 +1480,6 @@ class Form extends React.Component {
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
-                      </Grid>
-                      <Grid item md={2} xs={12}>
                         <CustomInput
                           smallLabel
                           labelText={mandatoryField('Name of Institution')}
@@ -1440,7 +1524,7 @@ class Form extends React.Component {
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                       </Grid>
-                      <Grid item md={1} xs={4}>
+                      <Grid item md={2} xs={6}>
                         <CustomInput
                           smallLabel
                           labelText={mandatoryField('Total Marks')}
@@ -1455,8 +1539,6 @@ class Form extends React.Component {
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
-                      </Grid>
-                      <Grid item md={1} xs={4}>
                         <CustomInput
                           smallLabel
                           labelText={mandatoryField('Marks Obtained')}
@@ -1472,7 +1554,7 @@ class Form extends React.Component {
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                       </Grid>
-                      <Grid item md={1} xs={4}>
+                      <Grid item md={2} xs={6}>
                         <CustomInput
                           smallLabel
                           labelText={mandatoryField('Percentage')}
@@ -1487,7 +1569,7 @@ class Form extends React.Component {
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                       </Grid>
-                      <Grid item md={1} xs={12}>
+                      <Grid item md={2} xs={12}>
                         <CustomInput
                           smallLabel
                           labelText="Subjects"
@@ -1560,6 +1642,11 @@ class Form extends React.Component {
                               root: classes.labelRoot,
                             },
                           }}
+                          InputProps={{
+                            classes: {
+                              disabled: classes.disabled,
+                            },
+                          }}
                           disabled={preview}
                           fullWidth
                           select
@@ -1567,7 +1654,7 @@ class Form extends React.Component {
                           label={mandatoryField('Document Type')}
                           value={item.documentType}
                           onChange={(e) => this.handleInputEnclosure(e, i)}
-                          variant="outlined"
+                          variant={preview ? 'standard' : 'outlined'}
                           name="documentType"
                         >
                           <MenuItem value="highSchool">
@@ -1658,10 +1745,15 @@ class Form extends React.Component {
                           root: classes.labelRoot,
                         },
                       }}
+                      InputProps={{
+                        classes: {
+                          disabled: classes.disabled,
+                        },
+                      }}
                       disabled={preview}
                       select
                       fullWidth
-                      variant="outlined"
+                      variant={preview ? 'standard' : 'outlined'}
                       name="nationalCompetition"
                       label="Participation in Zone / State Level National Competition"
                       value={nationalCompetition}
@@ -1697,10 +1789,15 @@ class Form extends React.Component {
                             root: classes.labelRoot,
                           },
                         }}
+                        InputProps={{
+                          classes: {
+                            disabled: classes.disabled,
+                          },
+                        }}
                         disabled={preview}
                         select
                         fullWidth
-                        variant="outlined"
+                        variant={preview ? 'standard' : 'outlined'}
                         name="otherCompetition"
                         label="Participation in Competition from University"
                         value={otherCompetition}
@@ -1738,10 +1835,15 @@ class Form extends React.Component {
                           root: classes.labelRoot,
                         },
                       }}
+                      InputProps={{
+                        classes: {
+                          disabled: classes.disabled,
+                        },
+                      }}
                       disabled={preview}
                       select
                       fullWidth
-                      variant="outlined"
+                      variant={preview ? 'standard' : 'outlined'}
                       name="ncc"
                       label="NCC/Cadet"
                       value={ncc}
@@ -1826,11 +1928,16 @@ class Form extends React.Component {
                             root: classes.labelRoot,
                           },
                         }}
+                        InputProps={{
+                          classes: {
+                            disabled: classes.disabled,
+                          },
+                        }}
                         disabled={preview}
                         select
                         fullWidth
                         disabled={otherRoverRanger}
-                        variant="outlined"
+                        variant={preview ? 'standard' : 'outlined'}
                         name="roverRanger"
                         label="Team Members of Rover Rangers to Participate in Rally from University"
                         value={roverRanger}
@@ -1912,10 +2019,15 @@ class Form extends React.Component {
                     root: classes.labelRoot,
                   },
                 }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
                 disabled={preview}
                 select
                 fullWidth
-                variant="outlined"
+                variant={preview ? 'standard' : 'outlined'}
                 name="other"
                 label="Other Details / Marks"
                 value={other}

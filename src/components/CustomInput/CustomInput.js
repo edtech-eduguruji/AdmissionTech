@@ -43,7 +43,7 @@ export default function CustomInput(props) {
   })
 
   const formControlClasses = classNames({
-    [' ' + classes.formControl]: formControlProps.isForm,
+    [classes.formControl]: true,
   })
 
   const onChange = (event) => {
@@ -108,9 +108,14 @@ export default function CustomInput(props) {
             root: underlineClasses,
           },
         }}
+        InputProps={{
+          classes: {
+            disabled: classes.disabled,
+          },
+        }}
         label={labelText}
-        variant={'outlined'}
-        size="small"
+        variant={inputProps.disabled ? 'standard' : 'outlined'}
+        margin="dense"
         id={id}
         {...inputProps}
         onChange={onChange}

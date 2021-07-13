@@ -1,6 +1,6 @@
 const customInputStyle = {
   disabled: {
-    backgroundColor: 'transparent !important',
+    color: 'black',
   },
   underline: {
     '&:hover:not($disabled):before,&:before': {
@@ -36,7 +36,7 @@ const customInputStyle = {
     paddingBottom: '10px',
     margin: '27px 0 0 0',
     position: 'relative',
-    verticalAlign: 'unset',
+    verticalAlign: 'center',
   },
 }
 
