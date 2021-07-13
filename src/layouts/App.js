@@ -45,7 +45,7 @@ const App = () => {
           <Route path="/form" component={Form} />
           <Route path="/formsubmitted" component={FormSubmitted} />
           <Route path="/forgotpassword" component={ForgotPassword} />
-          <Route path="/preview" render={() => <Form preview="1" />} />
+          <Route path="/preview" render={() => <Form isPreview="1" />} />
         </Switch>
       </HashRouter>
     </React.Fragment>

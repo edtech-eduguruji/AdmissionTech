@@ -44,10 +44,7 @@ class FormSubmitted extends React.Component {
             <RegularButton
               color="primary"
               onClick={() =>
-                this.props.history.push({
-                  pathname: '/form',
-                  state: { isPreview: true },
-                })
+                this.props.history.push('/preview')
               }
             >
               Download Application Form

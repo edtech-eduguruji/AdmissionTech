@@ -60,8 +60,8 @@ const styles = {
 }
 
 class Form extends React.Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
       faculty: '',
       courseType: '',
@@ -127,6 +127,7 @@ class Form extends React.Component {
       totalMeritCount: 0,
       mediumOfInstitution: '',
       signature: '',
+      submitted: '0'
     }
   }
 
@@ -136,12 +137,16 @@ class Form extends React.Component {
     }
     FormApi.getForm(data).then((response) => {
       if (response.data) {
-        if (
-          response.data.submitted == '1' &&
-          response.data.payment == '0' &&
-          !this.props.location.state.isPreview
-        ) {
+        
+        if(response.data.submitted == '1' &&  !this.props.isPreview) {
+          //
           this.props.history.push('/formsubmitted')
+        } else if (response.data.submitted == '1' && this.props.isPreview) {
+          response.data.academicDetails = JSON.parse(
+            response.data.academicDetails
+          )
+          response.data.documents = JSON.parse(response.data.documents)
+          this.setState({ ...response.data })
         } else {
           response.data.academicDetails = JSON.parse(
             response.data.academicDetails
@@ -546,7 +551,8 @@ class Form extends React.Component {
       postOffice,
       submitted,
     } = this.state
-    const preview = submitted === '1' ? true : false
+    const { isPreview } = this.props
+    const preview = submitted === '1' && isPreview && isPreview === '1' ? true : false
     return (
       <div className="childContainer">
         <CardContainer
@@ -558,11 +564,7 @@ class Form extends React.Component {
                 size="sm"
                 color="danger"
                 key="dp"
-                onClick={
-                  preview
-                    ? this.handleDownloadForm
-                    : this.handleDownloadProspectus
-                }
+                onClick={preview ? this.handleDownloadForm : this.handleDownloadProspectus}
               >
                 {preview ? 'Download Form' : 'Download Prospectus'}
                 &nbsp;&nbsp; <GetAppIcon />
@@ -577,11 +579,7 @@ class Form extends React.Component {
                   size="sm"
                   color="danger"
                   key="dp"
-                  onClick={
-                    preview
-                      ? this.handleDownloadForm
-                      : this.handleDownloadProspectus
-                  }
+                  onClick={preview ? this.handleDownloadForm : this.handleDownloadProspectus}
                 >
                   {preview ? 'Download Form' : 'Download Prospectus'}
                   &nbsp;&nbsp; <GetAppIcon />
