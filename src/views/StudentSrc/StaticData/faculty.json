@@ -1,11 +1,38 @@
 [
-    "Science",
-    "Arts",
-    "Law",
-    "Commerce",
-    "BBA",
-    "BCA",
-    "BED",
-    "Journalism",
-    "Bio-Tech"
+    {
+        "facultyId": "#f1Science",
+        "faculty": "Science"
+    },
+    {
+        "facultyId": "#f2Arts",
+        "faculty": "Arts"
+    },
+    {
+        "facultyId": "#f3Law",
+        "faculty": "Law"
+    },
+    {
+        "facultyId": "#f4Commerce",
+        "faculty": "Commerce"
+    },
+    {
+        "facultyId": "#f5BBA",
+        "faculty": "BBA"
+    },
+    {
+        "facultyId": "#f6BCA",
+        "faculty": "BCA"
+    },
+    {
+        "facultyId": "#f7BED",
+        "faculty": "BED"
+    },
+    {
+        "facultyId": "#f8Journalism",
+        "faculty": "Journalism"
+    },
+    {
+        "facultyId": "#f9BioTech",
+        "faculty": "Bio-Tech"
+    }
 ]

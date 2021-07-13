@@ -1,67 +1,80 @@
 [
     {
-        "faculty": "BBA",
-        "courseType": "Under Graduate",
-        "course": "BBA"
+        "facultyId": "#f5BBA",
+        "courseTypeId": "#ug1UG",
+        "course": "BBA",
+        "courseId": "#c1BBA"
     },
     {
-        "faculty": "BCA",
-        "courseType": "Under Graduate",
-        "course": "BCA"
+        "facultyId": "#f6BCA",
+        "courseTypeId": "#ug1UG",
+        "course": "BCA",
+        "courseId": "#c2BCA"
     },
     {
-        "faculty": "Commerce",
-        "courseType": "Under Graduate",
-        "course": "B.Com"
+        "facultyId": "#f4Commerce",
+        "courseTypeId": "#ug1UG",
+        "course": "B.Com",
+        "courseId": "#c3Bcom"
     },
     {
-        "faculty": "Arts",
-        "courseType": "Under Graduate",
-        "course": "BA"
+        "facultyId": "#f2Arts",
+        "courseTypeId": "#ug1UG",
+        "course": "BA",
+        "courseId": "#c4BA"
     },
     {
-        "faculty": "Arts",
-        "courseType": "Post Graduate",
-        "course": "MA"
+        "facultyId": "#f2Arts",
+        "courseTypeId": "#pg2PG",
+        "course": "MA",
+        "courseId": "#c5MA"
     },
     {
-        "faculty": "Arts",
-        "courseType": "Under Graduate",
-        "course": "Ba.LLB(5 Year)"
+        "facultyId": "#f2Arts",
+        "courseTypeId": "#ug1UG",
+        "course": "Ba.LLB(5 Year)",
+        "courseId": "#c6BaLLB"
     },
     {
-        "faculty": "Science",
-        "courseType": "Under Graduate",
-        "course": "Bsc. Maths"
+        "facultyId": "#f1Science",
+        "courseTypeId": "#ug1UG",
+        "course": "Bsc. Maths",
+        "courseId": "#c7BscMaths"
     },
     {
-        "faculty": "Science",
-        "courseType": "Under Graduate",
-        "course": "Bsc. Bio"
+        "facultyId": "#f1Science",
+        "courseTypeId": "#ug1UG",
+        "course": "Bsc. Bio",
+        "courseId": "#c8BscBio"
     },
     {
-        "faculty": "Science",
-        "courseType": "Post Graduate",
-        "course": "Msc"
+        "facultyId": "#f1Science",
+        "courseTypeId": "#pg2PG",
+        "course": "Msc",
+        "courseId": "#c9MSC"
     },
     {
-        "faculty": "Bio-Tech",
-        "courseType": "Under Graduate",
-        "course": "Bsc. Bio Tech."
+        "facultyId": "#f9BioTech",
+        "courseTypeId": "#ug1UG",
+        "course": "Bsc. Bio Tech.",
+        "courseId": "#c10BscBioTech"
     },
     {
-        "faculty": "Law",
-        "courseType": "Under Graduate",
-        "course": "LLB"
+        "facultyId": "#f3Law",
+        "courseTypeId": "#ug1UG",
+        "course": "LLB",
+        "courseId": "#c11LLB"
     },
     {
-        "faculty": "Law",
-        "courseType": "Post Graduation",
-        "course": "LLM"
+        "facultyId": "#f3Law",
+        "courseTypeId": "#pg2PG",
+        "course": "LLM",
+        "courseId": "#c12LLM"
     },
     {
-        "faculty": "BED",
-        "courseType": "Post Graduation",
-        "course": "BED"
+        "facultyId": "#f7BED",
+        "courseTypeId": "#pg2PG",
+        "course": "BED",
+        "courseId": "#c13BED"
     }
 ]

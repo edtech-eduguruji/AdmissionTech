@@ -2,12 +2,12 @@
     "UG": 
     [
         {
-            "documentType": "highSchool",
+            "documentType": "#dt1HSM",
             "document": "",
             "isDelete": 0
         },
         {
-            "documentType": "inter",
+            "documentType": "#dt2IM",
             "document": "",
             "isDelete": 0
         }
@@ -15,17 +15,17 @@
     "PG": 
     [
         {
-            "documentType": "highSchool",
+            "documentType": "#dt1HSM",
             "document": "",
             "isDelete": 0
         },
         {
-            "documentType": "inter",
+            "documentType": "#dt2IM",
             "document": "",
             "isDelete": 0
         },
         {
-            "documentType": "gDegree",
+            "documentType": "#dt3GD",
             "document": "",
             "isDelete": 0
         }
@@ -33,22 +33,22 @@
     "LLM": 
     [
         {
-            "documentType": "highSchool",
+            "documentType": "#dt1HSM",
             "document": "",
             "isDelete": 0
         },
         {
-            "documentType": "inter",
+            "documentType": "#dt2IM",
             "document": "",
             "isDelete": 0
         },
         {
-            "documentType": "gDegree",
+            "documentType": "#dt3GD",
             "document": "",
             "isDelete": 0
         },
         {
-            "documentType": "pgDegree",
+            "documentType": "#dt4PGD",
             "document": "",
             "isDelete": 0
         }

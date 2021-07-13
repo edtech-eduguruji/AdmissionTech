@@ -34,6 +34,7 @@ import citiesData from './StaticData/cities.json'
 import coursesData from './StaticData/courses.json'
 import courseTypeData from './StaticData/courseType.json'
 import documentsStatic from './StaticData/documents.json'
+import documentTypeData from './StaticData/documentType.json'
 import facultyData from './StaticData/faculty.json'
 import religionData from './StaticData/religion.json'
 import statesData from './StaticData/states.json'
@@ -127,7 +128,7 @@ class Form extends React.Component {
       totalMeritCount: 0,
       mediumOfInstitution: '',
       signature: '',
-      submitted: '0'
+      submitted: '0',
     }
   }
 
@@ -137,8 +138,7 @@ class Form extends React.Component {
     }
     FormApi.getForm(data).then((response) => {
       if (response.data) {
-        
-        if(response.data.submitted == '1' &&  !this.props.isPreview) {
+        if (response.data.submitted == '1' && !this.props.isPreview) {
           //
           this.props.history.push('/formsubmitted')
         } else if (response.data.submitted == '1' && this.props.isPreview) {
@@ -176,25 +176,23 @@ class Form extends React.Component {
   handleChangeFields = (event) => {
     const name = event.target.name
     if (name === 'courseType') {
-      if (event.target.value === 'Under Graduate') {
+      if (event.target.value === '#ug1UG') {
         this.setState({
           academicDetails: academicDetailsStatic.UG,
           documents: documentsStatic.UG,
         })
-      } else if (
-        event.target.value === 'Post Graduate' ||
-        event.target.value === 'LLB'
-      ) {
+      } else if (event.target.value === '#pg2PG') {
         this.setState({
           academicDetails: academicDetailsStatic.PG,
           documents: documentsStatic.PG,
         })
-      } else if (event.target.value === 'LLM') {
-        this.setState({
-          academicDetails: academicDetailsStatic.LLM,
-          documents: documentsStatic.LLM,
-        })
       }
+      // else if (event.target.value === 'LLM') {
+      //   this.setState({
+      //     academicDetails: academicDetailsStatic.LLM,
+      //     documents: documentsStatic.LLM,
+      //   })
+      // }
     }
     this.setState({
       [event.target.name]: event.target.value,
@@ -478,6 +476,12 @@ class Form extends React.Component {
     html2canvas(input, { useCORS: true }).then((canvas) => {
       const imgData = canvas.toDataURL('image/jpeg')
       const pdf = new jsPDF()
+      // var pageHeight = doc.internal.pageSize.height
+      // var y = 500
+      // if (y >= pageHeight) {
+      //   doc.addPage()
+      //   y = 0
+      // }
       pdf.addImage(
         imgData,
         0,
@@ -552,7 +556,8 @@ class Form extends React.Component {
       submitted,
     } = this.state
     const { isPreview } = this.props
-    const preview = submitted === '1' && isPreview && isPreview === '1' ? true : false
+    const preview =
+      submitted === '1' && isPreview && isPreview === '1' ? true : false
     return (
       <div className="childContainer">
         <CardContainer
@@ -564,7 +569,11 @@ class Form extends React.Component {
                 size="sm"
                 color="danger"
                 key="dp"
-                onClick={preview ? this.handleDownloadForm : this.handleDownloadProspectus}
+                onClick={
+                  preview
+                    ? this.handleDownloadForm
+                    : this.handleDownloadProspectus
+                }
               >
                 {preview ? 'Download Form' : 'Download Prospectus'}
                 &nbsp;&nbsp; <GetAppIcon />
@@ -579,7 +588,11 @@ class Form extends React.Component {
                   size="sm"
                   color="danger"
                   key="dp"
-                  onClick={preview ? this.handleDownloadForm : this.handleDownloadProspectus}
+                  onClick={
+                    preview
+                      ? this.handleDownloadForm
+                      : this.handleDownloadProspectus
+                  }
                 >
                   {preview ? 'Download Form' : 'Download Prospectus'}
                   &nbsp;&nbsp; <GetAppIcon />
@@ -646,7 +659,7 @@ class Form extends React.Component {
                 name="faculty"
               >
                 {facultyData.map((item) => (
-                  <MenuItem value={item}>{item}</MenuItem>
+                  <MenuItem value={item.facultyId}>{item.faculty}</MenuItem>
                 ))}
               </TextField>
             </Grid>
@@ -674,7 +687,7 @@ class Form extends React.Component {
                 {courseTypeData.map(
                   (item) =>
                     item.faculty.includes(faculty) && (
-                      <MenuItem value={item.courseType}>
+                      <MenuItem value={item.courseTypeId}>
                         {item.courseType}
                       </MenuItem>
                     )
@@ -704,9 +717,9 @@ class Form extends React.Component {
               >
                 {coursesData.map(
                   (item) =>
-                    faculty === item.faculty &&
-                    courseType === item.courseType && (
-                      <MenuItem value={item.course}>{item.course}</MenuItem>
+                    faculty === item.facultyId &&
+                    courseType === item.courseTypeId && (
+                      <MenuItem value={item.courseId}>{item.course}</MenuItem>
                     )
                 )}
               </TextField>
@@ -748,7 +761,7 @@ class Form extends React.Component {
                       photo === ''
                         ? 'user.png'
                         : typeof photo === 'object'
-                        ? URL.createObjectURL(ASSETS.url + photo)
+                        ? URL.createObjectURL(photo)
                         : ASSETS.url + photo
                     }
                   />
@@ -942,7 +955,7 @@ class Form extends React.Component {
                 name="religion"
               >
                 {religionData.map((item) => (
-                  <MenuItem value={item}>{item}</MenuItem>
+                  <MenuItem value={item.religionId}>{item.religion}</MenuItem>
                 ))}
               </TextField>
             </Grid>
@@ -989,7 +1002,7 @@ class Form extends React.Component {
                 onChange={this.handleChangeFields}
               >
                 {categoryData.map((item) => (
-                  <MenuItem value={item}>{item}</MenuItem>
+                  <MenuItem value={item.categoryId}>{item.category}</MenuItem>
                 ))}
               </TextField>
             </Grid>
@@ -1015,7 +1028,9 @@ class Form extends React.Component {
                 onChange={this.handleChangeFields}
               >
                 {subCategoryData.map((item) => (
-                  <MenuItem value={item}>{item}</MenuItem>
+                  <MenuItem value={item.subCategoryId}>
+                    {item.subCategory}
+                  </MenuItem>
                 ))}
               </TextField>
             </Grid>
@@ -1306,7 +1321,7 @@ class Form extends React.Component {
                 {citiesData.map(
                   (item) =>
                     state === item.state && (
-                      <MenuItem value={item.name}>{item.name}</MenuItem>
+                      <MenuItem value={item.id}>{item.name}</MenuItem>
                     )
                 )}
               </TextField>
@@ -1436,7 +1451,7 @@ class Form extends React.Component {
                 {citiesData.map(
                   (item) =>
                     cState === item.state && (
-                      <MenuItem value={item.name}>{item.name}</MenuItem>
+                      <MenuItem value={item.id}>{item.name}</MenuItem>
                     )
                 )}
               </TextField>
@@ -1655,15 +1670,11 @@ class Form extends React.Component {
                           variant={preview ? 'standard' : 'outlined'}
                           name="documentType"
                         >
-                          <MenuItem value="highSchool">
-                            High School Marksheet
-                          </MenuItem>
-                          <MenuItem value="inter">Inter Marksheet</MenuItem>
-                          <MenuItem value="gDegree">Graduation Degree</MenuItem>
-                          <MenuItem value="pgDegree">
-                            Post-Graduation Degree
-                          </MenuItem>
-                          <MenuItem value="other">Others</MenuItem>
+                          {documentTypeData.map((item) => (
+                            <MenuItem value={item.documentTypeId}>
+                              {item.documentType}
+                            </MenuItem>
+                          ))}
                         </TextField>
                       </Grid>
                       {!preview && (
