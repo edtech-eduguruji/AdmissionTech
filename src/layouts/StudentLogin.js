@@ -27,7 +27,7 @@ const useStyles = (theme) => ({
     marginTop: theme.spacing(1),
   },
   logo: {
-    marginTop: 50,
+    marginTop: 20,
     width: '100px',
     height: '100px',
   },

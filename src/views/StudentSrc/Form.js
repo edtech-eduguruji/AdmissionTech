@@ -133,6 +133,7 @@ class Form extends React.Component {
   }
 
   componentDidMount() {
+    // LocalStorage.removeUser()
     let data = {
       registrationNo: LocalStorage.getUser() && LocalStorage.getUser().user_id,
     }
@@ -388,10 +389,13 @@ class Form extends React.Component {
       mediumOfInstitution,
       signature,
     } = this.state
+    var count = 0
     const data = new FormData()
     data.append(
       'registrationNo',
-      LocalStorage.getUser() ? LocalStorage.getUser().user_id : ''
+      LocalStorage.getUser() && LocalStorage.getUser().user_id !== null
+        ? LocalStorage.getUser().user_id
+        : ''
     )
     data.append('faculty', faculty)
     data.append('courseType', courseType)
@@ -455,40 +459,116 @@ class Form extends React.Component {
     data.append('totalMeritCount', totalMeritCount)
     data.append('signature', signature)
     data.append('submit', btnValue)
-    FormApi.submitForm(data).then((response) => {
-      if (response && response.data) {
-        LocalStorage.setUser(response.data)
-        if (btnValue == 1) {
-          errorDialog('Your application is submitted successfully', 'Form')
-          this.props.history.push('/formsubmitted')
-        } else {
-          errorDialog(
-            `Your application is saved. Your registration no. is ${response.data.user_id}`,
-            'Form'
-          )
-        }
+    if (btnValue === 0 && dob !== '') {
+      count = 0
+    } else {
+      count++
+      addErrorMsg('For saving the draft date of birth is mandatory.')
+    }
+    if (btnValue === 1) {
+      if (
+        faculty === '' ||
+        courseType === '' ||
+        course === '' ||
+        mediumOfInstitution === ''
+      ) {
+        count++
+        addErrorMsg("Fill the empty fields in 'Faculty & Courses' Section")
+      } else if (
+        photo === '' ||
+        wrn === '' ||
+        form === '' ||
+        nameTitle === '' ||
+        name === '' ||
+        dob === '' ||
+        gender === '' ||
+        religion === '' ||
+        caste === '' ||
+        category === '' ||
+        personalMobile === '' ||
+        parentMobile === '' ||
+        aadharNo === '' ||
+        email === ''
+      ) {
+        count++
+        addErrorMsg("Fill the empty fields in 'Basic Details' Section")
+      } else if (
+        fatherName === '' ||
+        motherName === '' ||
+        parentsOccupation === '' ||
+        guardianName === '' ||
+        relationOfApplicant === ''
+      ) {
+        count++
+        addErrorMsg(
+          "Fill the empty fields in 'Parent & Guardian Details' Section"
+        )
+      } else if (
+        houseNo === '' ||
+        street === '' ||
+        state === '' ||
+        city === '' ||
+        (pincode === '' && postOffice === '')
+      ) {
+        count++
+        addErrorMsg("Fill the empty fields in 'Permanent Address' Section")
+      } else if (
+        academicDetails.filter((item) =>
+          Object.values(item).every((itm) => itm === null)
+        )
+      ) {
+        count++
+        addErrorMsg("Fill the empty fields in 'Upload Documents' Section")
+      } else if (
+        doucments.filter((item) =>
+          Object.values(item).every((itm) => itm === null)
+        )
+      ) {
+        count++
+        addErrorMsg("Fill the empty fields in 'Academic Details' Section")
+      } else if (signature === '') {
+        count++
+        addErrorMsg('Upload Signature')
       }
-    })
+    }
+    if (count === 0) {
+      FormApi.submitForm(data).then((response) => {
+        if (response && response.data && btnValue !== 0) {
+          LocalStorage.setUser(response.data)
+          if (btnValue == 1) {
+            errorDialog('Your application is submitted successfully', 'Form')
+            this.props.history.push('/formsubmitted')
+          } else {
+            errorDialog(
+              'Your application is saved. Your registration no. is' +
+              <b>{response.data.user_id}</b>,
+              'Form'
+            )
+            this.props.history.push('/login')
+          }
+        }
+      })
+    }
   }
 
   handleDownloadForm = () => {
     const input = document.getElementById('form1234')
     html2canvas(input, { useCORS: true }).then((canvas) => {
       const imgData = canvas.toDataURL('image/jpeg')
-      const pdf = new jsPDF()
-      // var pageHeight = doc.internal.pageSize.height
-      // var y = 500
-      // if (y >= pageHeight) {
-      //   doc.addPage()
-      //   y = 0
-      // }
-      pdf.addImage(
-        imgData,
-        0,
-        0,
-        pdf.internal.pageSize.width,
-        pdf.internal.pageSize.height
-      )
+      var pdf = new jsPDF('p', 'mm', 'legal')
+      var imgWidth = pdf.internal.pageSize.width
+      var pageHeight = pdf.internal.pageSize.height
+      var imgHeight = (canvas.height * imgWidth) / canvas.width
+      var heightLeft = imgHeight
+      var position = 0
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth - 2, imgHeight)
+      heightLeft -= pageHeight
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight
+        pdf.addPage()
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth - 2, imgHeight)
+        heightLeft -= pageHeight
+      }
       pdf.save('form' + '.pdf')
     })
   }
@@ -1914,7 +1994,7 @@ class Form extends React.Component {
                       label="(NSS) National Seva Scheme ?"
                     />
                   </Grid>
-                  <Grid item md={2} xs={6}>
+                  <Grid item md={3} xs={6}>
                     {nationalSevaScheme && !preview && (
                       <FileUploader
                         buttonLabel="Upload Document"
@@ -1926,7 +2006,7 @@ class Form extends React.Component {
                       />
                     )}
                   </Grid>
-                  <Grid item md={6} xs={6}>
+                  <Grid item md={5} xs={6}>
                     {nssDocument !== '' && <Success>Uploaded.</Success>}
                   </Grid>
                   {courseType === 'Post Graduate' && (
