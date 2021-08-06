@@ -7,15 +7,12 @@ import { FingerprintOutlined } from '@material-ui/icons'
 import EmailOutlinedIcon from '@material-ui/icons/EmailOutlined'
 import LoginApi from 'apis/LoginApi'
 import LocalStorage from 'common/LocalStorage'
-import { ROLES_KEY } from 'constants/Constants'
-import config from 'myconfig'
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import Card from '../components/Card/Card'
 import CardBody from '../components/Card/CardBody'
 import RegularButton from '../components/CustomButtons/Button'
 import CustomInput from '../components/CustomInput/CustomInput'
-import { addErrorMsg } from '../utils/Utils'
 
 const useStyles = (theme) => ({
   paper: {
@@ -51,31 +48,14 @@ class Login extends Component {
     const data = {
       username: username,
       password: password,
+      isAdmin: 1,
     }
-    LoginApi.userLogin(data)
-      .then((response) => {
-        if (response && response.status === 200 && response.data.length > 0) {
-          let user = response.data[0]
-          if (config.ROLES.includes(user.role)) {
-            return user
-          } else {
-            throw new Error('Login details are invalid.')
-          }
-        }
-      })
-      .then((user) => {
-        if (user) {
-          LocalStorage.setUser(user)
-          if (user.role === ROLES_KEY.STUDENT) {
-            this.props.history.push('/student')
-          } else {
-            this.props.history.push('/admin')
-          }
-        }
-      })
-      .catch((err) => {
-        addErrorMsg(err.message)
-      })
+    LoginApi.userLogin(data).then((response) => {
+      if (response.data && response.data.length > 0) {
+        LocalStorage.setUser(response.data[0])
+        this.props.history.push('/admin')
+      }
+    })
   }
 
   handleChangeFields = (event) => {
@@ -96,7 +76,7 @@ class Login extends Component {
           </div>
           <Card>
             <CardBody elevation={2} className={classes.paper}>
-              <Typography component="h1" variant="h5">
+              <Typography component="span" variant="h5">
                 LOGIN
               </Typography>
               <div className={classes.form} noValidate>
@@ -106,7 +86,7 @@ class Login extends Component {
                   </Grid>
                   <Grid item xs={10}>
                     <CustomInput
-                      labelText="Username / Mobile"
+                      labelText="Username"
                       formControlProps={{
                         fullWidth: true,
                       }}

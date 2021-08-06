@@ -11,7 +11,7 @@ class NewForms extends React.Component {
 
   render() {
     const { classes } = this.props
-    return <div>This is New Forms Page.</div>
+    return <div>This is Registrations Forms Page.</div>
   }
 }
 

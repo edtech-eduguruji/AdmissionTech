@@ -55,7 +55,7 @@ export default function AdminNavbarLinks(props) {
         {props.userName}
       </Typography>
       <Button
-        color={window.innerWidth > 959 ? 'transparent' : 'white'}
+        color={window.innerWidth > 959 ? 'inherit' : 'white'}
         justIcon={window.innerWidth > 959}
         simple={!(window.innerWidth > 959)}
         aria-owns={openProfile ? 'profile-menu-list-grow' : null}
@@ -64,7 +64,7 @@ export default function AdminNavbarLinks(props) {
         className={classes.buttonLink}
       >
         <Person className={classes.icons} />
-        <Hidden mdUp implementation="css">
+        <Hidden mdUp>
           <p className={classes.linkText}>Profile</p>
         </Hidden>
       </Button>
@@ -91,10 +91,10 @@ export default function AdminNavbarLinks(props) {
             <Paper>
               <ClickAwayListener onClickAway={handleCloseProfile}>
                 <MenuList role="menu">
-                  {routes.map((item) => {
+                  {routes.map((item, key) => {
                     if (item.isNavbar) {
                       return (
-                        <div>
+                        <div key={key}>
                           <MenuItem
                             onClick={handleMenuItemClick(
                               item.layout + item.path

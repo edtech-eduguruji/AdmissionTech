@@ -14,9 +14,11 @@ import { withStyles } from '@material-ui/core/styles'
 import AddIcon from '@material-ui/icons/Add'
 import DeleteIcon from '@material-ui/icons/Delete'
 import GetAppIcon from '@material-ui/icons/GetApp'
+import Autocomplete from '@material-ui/lab/Autocomplete'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 import React from 'react'
+import ReCAPTCHA from 'react-google-recaptcha'
 import { withRouter } from 'react-router-dom'
 import FormApi from '../../apis/FormApi'
 import CardContainer from '../../common/CardContainer'
@@ -25,18 +27,24 @@ import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import CustomInput from '../../components/CustomInput/CustomInput'
 import Success from '../../components/Typography/Success'
-import { ASSETS } from '../../constants/Constants'
-import { errorDialog, mandatoryField } from '../../utils/Utils'
+import { ASSETS, PAYMENT } from '../../constants/Constants'
+import {
+  addErrorMsg,
+  errorDialog,
+  mandatoryField,
+  redirectUrl,
+} from '../../utils/Utils'
 import academicDetailsStatic from './StaticData/academic.json'
 import academicData from './StaticData/academicData.json'
 import categoryData from './StaticData/category.json'
 import citiesData from './StaticData/cities.json'
-import coursesData from './StaticData/courses.json'
 import courseTypeData from './StaticData/courseType.json'
 import documentsStatic from './StaticData/documents.json'
 import documentTypeData from './StaticData/documentType.json'
 import facultyData from './StaticData/faculty.json'
+import majorSubjectsData from './StaticData/majorSubjects.json'
 import religionData from './StaticData/religion.json'
+import semesterSubjectsData from './StaticData/semesterSubjects.json'
 import statesData from './StaticData/states.json'
 import subCategoryData from './StaticData/subCategory.json'
 
@@ -100,10 +108,10 @@ class Form extends React.Component {
       subCategory: '',
       categoryCertificate: '',
       subCategoryCertificate: '',
-      academicDetails: [],
+      academicDetails: academicDetailsStatic.UG,
+      documents: documentsStatic.UG,
       guardianName: '',
       relationOfApplicant: '',
-      documents: [],
       nationalCompetition: '',
       nationalCertificate: '',
       otherCompetition: '',
@@ -129,34 +137,45 @@ class Form extends React.Component {
       mediumOfInstitution: '',
       signature: '',
       submitted: '0',
+      major1: [],
+      major2: '',
+      major3: '',
+      major4: '',
+      vocationalSubject: '',
+      coCurriculum: '',
+      token: '',
     }
   }
 
   componentDidMount() {
-    // LocalStorage.removeUser()
-    let data = {
-      registrationNo: LocalStorage.getUser() && LocalStorage.getUser().user_id,
-    }
-    FormApi.getForm(data).then((response) => {
-      if (response.data) {
-        if (response.data.submitted == '1' && !this.props.isPreview) {
-          //
-          this.props.history.push('/formsubmitted')
-        } else if (response.data.submitted == '1' && this.props.isPreview) {
-          response.data.academicDetails = JSON.parse(
-            response.data.academicDetails
-          )
-          response.data.documents = JSON.parse(response.data.documents)
-          this.setState({ ...response.data })
-        } else {
-          response.data.academicDetails = JSON.parse(
-            response.data.academicDetails
-          )
-          response.data.documents = JSON.parse(response.data.documents)
-          this.setState({ ...response.data })
-        }
+    if (LocalStorage.getUser().payment === PAYMENT.NOT_DONE) {
+      redirectUrl('sPayment', 1)
+    } else {
+      let data = {
+        registrationNo:
+          LocalStorage.getUser() && LocalStorage.getUser().user_id,
       }
-    })
+      FormApi.getForm(data).then((response) => {
+        if (response.data) {
+          if (response.data.submitted == '1' && !this.props.isPreview) {
+            //
+            this.props.history.push('/formsubmitted')
+          } else if (response.data.submitted == '1' && this.props.isPreview) {
+            response.data.academicDetails = JSON.parse(
+              response.data.academicDetails
+            )
+            response.data.documents = JSON.parse(response.data.documents)
+            this.setState({ ...response.data })
+          } else {
+            response.data.academicDetails = JSON.parse(
+              response.data.academicDetails
+            )
+            response.data.documents = JSON.parse(response.data.documents)
+            this.setState({ ...response.data })
+          }
+        }
+      })
+    }
   }
 
   handleUpload = (file, index, name) => {
@@ -194,6 +213,22 @@ class Form extends React.Component {
       //     documents: documentsStatic.LLM,
       //   })
       // }
+    } else if (name === 'major3') {
+      this.setState({
+        major4: '',
+      })
+    } else if (name === 'major4') {
+      this.setState({
+        major3: '',
+      })
+    } else if (name === 'faculty') {
+      this.setState({
+        major1: [],
+        major2: '',
+        major3: '',
+        major4: '',
+        vocationalSubject: '',
+      })
     }
     this.setState({
       [event.target.name]: event.target.value,
@@ -331,9 +366,15 @@ class Form extends React.Component {
 
   handleSubmitForm = (btnValue) => () => {
     const {
+      tokem,
+      major1,
+      major2,
+      major3,
+      major4,
+      vocationalSubject,
+      coCurriculum,
       faculty,
       courseType,
-      course,
       vaccinated,
       nameTitle,
       name,
@@ -399,7 +440,6 @@ class Form extends React.Component {
     )
     data.append('faculty', faculty)
     data.append('courseType', courseType)
-    data.append('course', course)
     data.append('mediumOfInstitution', mediumOfInstitution)
     data.append('vaccinated', vaccinated)
     data.append('nameTitle', nameTitle)
@@ -436,6 +476,12 @@ class Form extends React.Component {
     data.append('subCategoryCertificate', subCategoryCertificate)
     data.append('academicDetails', JSON.stringify(academicDetails))
     data.append('documents', JSON.stringify(documents))
+    data.append('major1', JSON.stringify(major1))
+    data.append('major2', JSON.stringify(major2))
+    data.append('major3', major3)
+    data.append('major4', major4)
+    data.append('vocationalSubject', vocationalSubject)
+    data.append('coCurriculum', coCurriculum)
     documents.map(
       (item, index) =>
         item.document !== '' && data.append('document' + index, item.document)
@@ -467,14 +513,6 @@ class Form extends React.Component {
     }
     if (btnValue === 1) {
       if (
-        faculty === '' ||
-        courseType === '' ||
-        course === '' ||
-        mediumOfInstitution === ''
-      ) {
-        count++
-        addErrorMsg("Fill the empty fields in 'Faculty & Courses' Section")
-      } else if (
         photo === '' ||
         wrn === '' ||
         form === '' ||
@@ -518,20 +556,53 @@ class Form extends React.Component {
         )
       ) {
         count++
-        addErrorMsg("Fill the empty fields in 'Upload Documents' Section")
+        addErrorMsg("Fill the empty fields in 'Academic Details' Section")
+      } else if (
+        mediumOfInstitution === '' ||
+        courseType === '' ||
+        faculty === '' ||
+        major1.length === 0 ||
+        major2 === '' ||
+        major3 === '' ||
+        major4 === '' ||
+        vocationalSubject === ''
+      ) {
+        if (faculty === '') {
+          count++
+          addErrorMsg(
+            "Fill the empty fields in 'Faculty and Courses Details' Section"
+          )
+        } else if (this.checkFaculty(faculty) && major1.length === 0) {
+          count++
+          addErrorMsg(
+            "Fill the empty fields in 'Faculty and Courses Details' Section"
+          )
+        } else if (
+          !this.checkFaculty(faculty) &&
+          (major1.length === 0 ||
+            major2 === '' ||
+            major3 === '' ||
+            major4 === '' ||
+            vocationalSubject === '')
+        ) {
+          count++
+          addErrorMsg(
+            "Fill the empty fields in 'Faculty and Courses Details' Section"
+          )
+        }
       } else if (
         doucments.filter((item) =>
           Object.values(item).every((itm) => itm === null)
         )
       ) {
         count++
-        addErrorMsg("Fill the empty fields in 'Academic Details' Section")
+        addErrorMsg("Fill the empty fields in 'Upload Documents' Section")
       } else if (signature === '') {
         count++
         addErrorMsg('Upload Signature')
       }
     }
-    if (count === 0) {
+    if (count === 0 && token) {
       FormApi.submitForm(data).then((response) => {
         if (response && response.data && btnValue !== 0) {
           LocalStorage.setUser(response.data)
@@ -548,6 +619,8 @@ class Form extends React.Component {
           }
         }
       })
+    } else {
+      addErrorMsg("Please verify you're not a robot")
     }
   }
 
@@ -573,12 +646,126 @@ class Form extends React.Component {
     })
   }
 
+  handleMultiDropDownData = (event, value) => {
+    if (this.state.major1.length > value.length || value.length === 0) {
+      this.setState({
+        major1: value,
+        major2: '',
+        major3: '',
+        major4: '',
+        vocationalSubject: '',
+      })
+    } else {
+      if (value.length <= 2) {
+        this.setState({ major1: value })
+      } else {
+        addErrorMsg('You can select only 2 subjects.')
+      }
+    }
+  }
+
+  handleReCaptcha = (token) => {
+    this.setState({ token: token })
+  }
+
+  checkFaculty = (facultyId) => {
+    if (facultyId === '') {
+      return false
+    } else {
+      if (facultyId !== '#f5foc' && facultyId !== '#f6fom') {
+        return false
+      } else {
+        return true
+      }
+    }
+  }
+
+  checkCombination = (subjectId) => {
+    const { faculty, major1 } = this.state
+    let combination1 = ['$s7dss', '$s10Phylosophy']
+    let combination2 = ['$17Sanskrit', '$11pe']
+    let combination3 = ['$17Sanskrit', '$18dp']
+    let combination4 = ['$11pe', '$18dp']
+    if (faculty === '#f2Arts') {
+      major1.map((item, i) => {
+        if (combination1.includes(item.subjectId)) {
+          combination1.splice(combination1.indexOf(item.subjectId), 1)
+        }
+        if (combination2.includes(item.subjectId)) {
+          combination2.splice(combination2.indexOf(item.subjectId), 1)
+        }
+      })
+      if (subjectId === combination1[0] || subjectId === combination2[0]) {
+        return 0
+      } else {
+        return 1
+      }
+    } else if (faculty === '#f3Language') {
+      major1.map((item) => {
+        if (combination3.includes(item.subjectId)) {
+          combination3.splice(combination3.indexOf(item.subjectId), 1)
+        }
+        if (combination2.includes(item.subjectId)) {
+          combination2.splice(combination2.indexOf(item.subjectId), 1)
+        }
+      })
+      if (subjectId === combination3[0] || subjectId === combination2[0]) {
+        return 0
+      } else {
+        return 1
+      }
+    } else if (faculty === '#f4fineArt') {
+      major1.map((item) => {
+        if (combination3.includes(item.subjectId)) {
+          combination3.splice(combination3.indexOf(item.subjectId), 1)
+        }
+        if (combination4.includes(item.subjectId)) {
+          combination4.splice(combination4.indexOf(item.subjectId), 1)
+        }
+      })
+      if (subjectId === combination3[0] || subjectId === combination4[0]) {
+        return 0
+      } else {
+        return 1
+      }
+    } else {
+      return 1
+    }
+  }
+
+  filterMajorSubjects = () => {
+    const { faculty, major1, major2 } = this.state
+    let subjects = majorSubjectsData.filter(
+      (item) => item.facultyId === faculty
+    )
+    if (major2 !== '') {
+      let i = subjects.findIndex((item) => item.subjectId === major2.subjectId)
+      subjects.splice(i, 1)
+    }
+    if (major1.length > 0 && faculty === '#f2Arts') {
+      if (major1[0].subjectId === '$s7dss') {
+        let i = subjects.findIndex(
+          (item) => item.subjectId === '$s10Phylosophy'
+        )
+        subjects.splice(i, 1)
+        return subjects
+      } else if (major1[0].subjectId === '$s10Phylosophy') {
+        let i = subjects.findIndex((item) => item.subjectId === '$s7dss')
+        subjects.splice(i, 1)
+        return subjects
+      } else {
+        return subjects
+      }
+    } else {
+      return subjects
+    }
+  }
+
   render() {
     const { classes } = this.props
     const {
       faculty,
       courseType,
-      course,
       photo,
       form,
       vaccinated,
@@ -634,6 +821,12 @@ class Form extends React.Component {
       pincode,
       postOffice,
       submitted,
+      major1,
+      major2,
+      major3,
+      major4,
+      vocationalSubject,
+      coCurriculum,
     } = this.state
     const { isPreview } = this.props
     const preview =
@@ -712,123 +905,6 @@ class Form extends React.Component {
                 <Divider />
               </Grid>
             )}
-            <Grid item xs={12} className="headBg">
-              <Typography variant="subtitle1">
-                Faculty & Courses Details
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                disabled={preview}
-                InputLabelProps={{
-                  classes: {
-                    root: classes.labelRoot,
-                  },
-                }}
-                InputProps={{
-                  classes: {
-                    disabled: classes.disabled,
-                  },
-                }}
-                fullWidth
-                select
-                label={mandatoryField('Select Faculty')}
-                value={faculty}
-                onChange={this.handleChangeFields}
-                variant={preview ? 'standard' : 'outlined'}
-                name="faculty"
-              >
-                {facultyData.map((item) => (
-                  <MenuItem value={item.facultyId}>{item.faculty}</MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                InputLabelProps={{
-                  classes: {
-                    root: classes.labelRoot,
-                  },
-                }}
-                InputProps={{
-                  classes: {
-                    disabled: classes.disabled,
-                  },
-                }}
-                disabled={preview}
-                fullWidth
-                select
-                label={mandatoryField('Select Course Type')}
-                value={courseType}
-                onChange={this.handleChangeFields}
-                variant={preview ? 'standard' : 'outlined'}
-                name="courseType"
-              >
-                {courseTypeData.map(
-                  (item) =>
-                    item.faculty.includes(faculty) && (
-                      <MenuItem value={item.courseTypeId}>
-                        {item.courseType}
-                      </MenuItem>
-                    )
-                )}
-              </TextField>
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                InputLabelProps={{
-                  classes: {
-                    root: classes.labelRoot,
-                  },
-                }}
-                InputProps={{
-                  classes: {
-                    disabled: classes.disabled,
-                  },
-                }}
-                disabled={preview}
-                fullWidth
-                select
-                label={mandatoryField('Select Course')}
-                value={course}
-                onChange={this.handleChangeFields}
-                variant={preview ? 'standard' : 'outlined'}
-                name="course"
-              >
-                {coursesData.map(
-                  (item) =>
-                    faculty === item.facultyId &&
-                    courseType === item.courseTypeId && (
-                      <MenuItem value={item.courseId}>{item.course}</MenuItem>
-                    )
-                )}
-              </TextField>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                InputLabelProps={{
-                  classes: {
-                    root: classes.labelRoot,
-                  },
-                }}
-                InputProps={{
-                  classes: {
-                    disabled: classes.disabled,
-                  },
-                }}
-                disabled={preview}
-                select
-                fullWidth
-                variant={preview ? 'standard' : 'outlined'}
-                name="mediumOfInstitution"
-                label={mandatoryField('Medium of Teaching')}
-                value={mediumOfInstitution}
-                onChange={this.handleChangeFields}
-              >
-                <MenuItem value="hindi">Hindi</MenuItem>
-                <MenuItem value="english">English</MenuItem>
-              </TextField>
-            </Grid>
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">Basic Details</Typography>
             </Grid>
@@ -1647,7 +1723,7 @@ class Form extends React.Component {
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                       </Grid>
-                      <Grid item md={2} xs={6}>
+                      <Grid item md={1} xs={6}>
                         <CustomInput
                           smallLabel
                           labelText={mandatoryField('Percentage')}
@@ -1662,7 +1738,7 @@ class Form extends React.Component {
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                       </Grid>
-                      <Grid item md={2} xs={12}>
+                      <Grid item md={2} xs={8}>
                         <CustomInput
                           smallLabel
                           labelText="Subjects"
@@ -1677,7 +1753,13 @@ class Form extends React.Component {
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                       </Grid>
-                      <Grid item md={1} xs={6}>
+                      <Grid
+                        container
+                        item
+                        md={1}
+                        xs={4}
+                        justifyContent="flex-end"
+                      >
                         {item.isDelete === 1 && !preview && (
                           <RegularButton
                             fab
@@ -1689,7 +1771,7 @@ class Form extends React.Component {
                           </RegularButton>
                         )}
                       </Grid>
-                      <Grid container item md={12} xs={6} justify="flex-end">
+                      <Grid container item xs={12} justify="flex-end">
                         {academicDetails.length - 1 === i && !preview && (
                           <Box pr="10px" pb="5px">
                             <div className="alignCenter">
@@ -1714,8 +1796,309 @@ class Form extends React.Component {
             ) : (
               <Grid container item xs={12} justify="center">
                 <Typography variant="subtitle1">
-                  Select course type to view this content.
+                  Select course type under <b>(Faculty and Courses Details)</b>{' '}
+                  section to view this content.
                 </Typography>
+              </Grid>
+            )}
+            <Grid item xs={12} className="headBg">
+              <Typography variant="subtitle1">
+                Faculty & Courses Details
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                InputLabelProps={{
+                  classes: {
+                    root: classes.labelRoot,
+                  },
+                }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
+                disabled={preview}
+                select
+                fullWidth
+                variant={preview ? 'standard' : 'outlined'}
+                name="mediumOfInstitution"
+                label={mandatoryField('Medium of Teaching')}
+                value={mediumOfInstitution}
+                onChange={this.handleChangeFields}
+              >
+                <MenuItem value="hindi">Hindi</MenuItem>
+                <MenuItem value="english">English</MenuItem>
+              </TextField>
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                InputLabelProps={{
+                  classes: {
+                    root: classes.labelRoot,
+                  },
+                }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
+                disabled={preview}
+                fullWidth
+                select
+                label={mandatoryField('Select Course Type')}
+                value={courseType}
+                onChange={this.handleChangeFields}
+                variant={preview ? 'standard' : 'outlined'}
+                name="courseType"
+              >
+                {courseTypeData.map((item) => (
+                  <MenuItem value={item.courseTypeId}>
+                    {item.courseType}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="subtitle1">Selection of Faculty</Typography>
+              <Divider />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                disabled={preview}
+                InputLabelProps={{
+                  classes: {
+                    root: classes.labelRoot,
+                  },
+                }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
+                fullWidth
+                select
+                label={mandatoryField('Select Faculty')}
+                value={faculty}
+                onChange={this.handleChangeFields}
+                variant={preview ? 'standard' : 'outlined'}
+                name="faculty"
+              >
+                {facultyData.map((item) => (
+                  <MenuItem value={item.facultyId}>{item.faculty}</MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="subtitle1">
+                {!this.checkFaculty(faculty)
+                  ? 'Selection of 2 Major Subjects'
+                  : 'Selection of Course'}
+              </Typography>
+              <Divider />
+            </Grid>
+            <Grid item xs={12}>
+              <Autocomplete
+                disabled={preview}
+                value={major1}
+                onChange={this.handleMultiDropDownData}
+                multiple
+                name="major1"
+                options={this.filterMajorSubjects()}
+                getOptionLabel={(option) => option.subjectName}
+                filterSelectedOptions
+                renderInput={(params) => (
+                  <TextField
+                    label={mandatoryField('Select Subject / Course')}
+                    {...params}
+                    variant="outlined"
+                  />
+                )}
+              />
+            </Grid>
+            {!this.checkFaculty(faculty) && (
+              <Grid container spacing={2} item xs={12}>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">
+                    Selection of 3rd Major Subject (Any Faculty)
+                  </Typography>
+                  <Divider />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    InputLabelProps={{
+                      classes: {
+                        root: classes.labelRoot,
+                      },
+                    }}
+                    InputProps={{
+                      classes: {
+                        disabled: classes.disabled,
+                      },
+                    }}
+                    disabled={preview}
+                    select
+                    fullWidth
+                    variant={preview ? 'standard' : 'outlined'}
+                    name="major2"
+                    label={mandatoryField('Select Subject')}
+                    value={major2}
+                    onChange={this.handleChangeFields}
+                  >
+                    {major1.length > 0 &&
+                      majorSubjectsData.map((item, key) => (
+                        <MenuItem
+                          disabled={
+                            major1.some(
+                              (itm) => item.subjectId === itm.subjectId
+                            ) || this.checkCombination(item.subjectId) === 0
+                          }
+                          key={key}
+                          value={item}
+                        >
+                          {item.subjectName}
+                        </MenuItem>
+                      ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">
+                    Selection of Minor / Elective Course
+                  </Typography>
+                  <Divider />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    InputLabelProps={{
+                      classes: {
+                        root: classes.labelRoot,
+                      },
+                    }}
+                    InputProps={{
+                      classes: {
+                        disabled: classes.disabled,
+                      },
+                    }}
+                    disabled={preview}
+                    select
+                    fullWidth
+                    variant={preview ? 'standard' : 'outlined'}
+                    name="major3"
+                    label={mandatoryField('Semester 1')}
+                    value={major3}
+                    onChange={this.handleChangeFields}
+                  >
+                    {major2 !== '' &&
+                      semesterSubjectsData.map(
+                        (item, key) =>
+                          item.semester === 1 && (
+                            <MenuItem
+                              key={key}
+                              disabled={
+                                major1[0].facultyId === major2.facultyId &&
+                                major2.facultyId === item.facultyId
+                              }
+                              value={item.subjectId}
+                            >
+                              {item.subjectName}
+                            </MenuItem>
+                          )
+                      )}
+                  </TextField>
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    InputLabelProps={{
+                      classes: {
+                        root: classes.labelRoot,
+                      },
+                    }}
+                    InputProps={{
+                      classes: {
+                        disabled: classes.disabled,
+                      },
+                    }}
+                    disabled={preview}
+                    select
+                    fullWidth
+                    variant={preview ? 'standard' : 'outlined'}
+                    name="major4"
+                    label={mandatoryField('Semester 2')}
+                    value={major4}
+                    onChange={this.handleChangeFields}
+                  >
+                    {major2 !== '' &&
+                      semesterSubjectsData.map(
+                        (item, key) =>
+                          item.semester === 2 && (
+                            <MenuItem
+                              key={key}
+                              disabled={
+                                major1[0].facultyId === major2.facultyId &&
+                                major2.facultyId === item.facultyId
+                              }
+                              value={item.subjectId}
+                            >
+                              {item.subjectName}
+                            </MenuItem>
+                          )
+                      )}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">
+                    Selection of Vocational / Skill Course
+                  </Typography>
+                  <Divider />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    InputLabelProps={{
+                      classes: {
+                        root: classes.labelRoot,
+                      },
+                    }}
+                    InputProps={{
+                      classes: {
+                        disabled: classes.disabled,
+                      },
+                    }}
+                    disabled={preview}
+                    select
+                    fullWidth
+                    variant={preview ? 'standard' : 'outlined'}
+                    name="vocationalSubject"
+                    label={mandatoryField('Select Subject')}
+                    value={vocationalSubject}
+                    onChange={this.handleChangeFields}
+                  >
+                    <MenuItem value="1">1</MenuItem>
+                    <MenuItem value="2">2</MenuItem>
+                    <MenuItem value="3">3</MenuItem>
+                    <MenuItem value="4">4</MenuItem>
+                  </TextField>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    InputLabelProps={{
+                      classes: {
+                        root: classes.labelRoot,
+                      },
+                    }}
+                    InputProps={{
+                      classes: {
+                        disabled: classes.disabled,
+                      },
+                    }}
+                    disabled={true}
+                    fullWidth
+                    variant={preview ? 'standard' : 'outlined'}
+                    name="coCurriculum"
+                    label={mandatoryField('Co-Curriculum')}
+                    value={coCurriculum}
+                    onChange={this.handleChangeFields}
+                  />
+                </Grid>
               </Grid>
             )}
             <Grid item xs={12} className="headBg">
@@ -2202,6 +2585,15 @@ class Form extends React.Component {
                 )}
               </div>
             </Grid>
+            {!preview && (
+              <Grid container item xs={12} justify="center">
+                <ReCAPTCHA
+                  sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                  onChange={(token) => this.handleReCaptcha(token)}
+                  onExpired={() => this.handleReCaptcha('')}
+                />
+              </Grid>
+            )}
             {!preview && (
               <Grid container item xs={6} justify="flex-end">
                 <RegularButton

@@ -1,38 +1,26 @@
 [
     {
         "facultyId": "#f1Science",
-        "faculty": "Science"
+        "faculty": "Faculty of Science"
     },
     {
         "facultyId": "#f2Arts",
-        "faculty": "Arts"
+        "faculty": "Faculty of Arts, Humanities and Social Sciences"
     },
     {
-        "facultyId": "#f3Law",
-        "faculty": "Law"
+        "facultyId": "#f3Language",
+        "faculty": "Faculty of Language"
     },
     {
-        "facultyId": "#f4Commerce",
-        "faculty": "Commerce"
+        "facultyId": "#f4fineArt",
+        "faculty": "Faculty of Fine Art and Performing Art"
     },
     {
-        "facultyId": "#f5BBA",
-        "faculty": "BBA"
+        "facultyId": "#f5foc",
+        "faculty": "Faculty of Commerce"
     },
     {
-        "facultyId": "#f6BCA",
-        "faculty": "BCA"
-    },
-    {
-        "facultyId": "#f7BED",
-        "faculty": "BED"
-    },
-    {
-        "facultyId": "#f8Journalism",
-        "faculty": "Journalism"
-    },
-    {
-        "facultyId": "#f9BioTech",
-        "faculty": "Bio-Tech"
+        "facultyId": "#f6fom",
+        "faculty": "Faculty of Management"
     }
 ]

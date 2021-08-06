@@ -17,23 +17,9 @@ const LocalStorage = () => {
     removeUser() {
       sessionStorage.removeItem('user_obj')
     },
-    setClasses(obj) {
-      sessionStorage.setItem('classes', JSON.stringify(obj))
-    },
-    getClasses() {
-      return (
-        sessionStorage.getItem('classes') &&
-        isJSON(sessionStorage.getItem('classes')) &&
-        JSON.parse(sessionStorage.getItem('classes'))
-      )
-    },
-    removeClasses() {
-      sessionStorage.removeItem('classes')
-    },
     getLogout() {
       this.removeUser()
-      this.removeClasses()
-    }
+    },
   }
 }
 

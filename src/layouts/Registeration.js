@@ -3,13 +3,13 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import Grid from '@material-ui/core/Grid'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
+import CakeIcon from '@material-ui/icons/Cake'
 import CallIcon from '@material-ui/icons/Call'
-import EmailOutlinedIcon from '@material-ui/icons/EmailOutlined'
-import FingerprintOutlined from '@material-ui/icons/FingerprintOutlined'
 import PersonIcon from '@material-ui/icons/Person'
 import RegisterApi from 'apis/RegisterApi'
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
+import LocalStorage from '../common/LocalStorage'
 import Card from '../components/Card/Card'
 import CardBody from '../components/Card/CardBody'
 import RegularButton from '../components/CustomButtons/Button'
@@ -39,35 +39,23 @@ class Registeration extends Component {
     super()
     this.state = {
       name: '',
-      email: '',
       mobileNo: '',
-      password: '',
-      confirmPassword: '',
+      dob: '',
     }
   }
   handleSubmit = () => {
-    const { name, email, mobileNo, password, confirmPassword } = this.state
-    if (
-      name !== '' &&
-      email !== '' &&
-      mobileNo !== '' &&
-      password !== '' &&
-      confirmPassword !== ''
-    ) {
-      if (password === confirmPassword) {
-        const data = new FormData()
-        data.append('name', name)
-        data.append('email', email)
-        data.append('mobile', mobileNo)
-        data.append('password', password)
-        RegisterApi.StudentRegister(data).then((res) => {
-          if (!res.data.error) {
-            this.props.history.push('/login')
-          }
-        })
-      } else {
-        addErrorMsg('Entered passwords does not match')
-      }
+    const { name, email, mobileNo, dob } = this.state
+    if (name !== '' && mobileNo !== '' && dob !== '') {
+      const data = new FormData()
+      data.append('name', name)
+      data.append('mobile', mobileNo)
+      data.append('dob', dob)
+      RegisterApi.StudentRegister(data).then((res) => {
+        if (!res.data.error) {
+          LocalStorage.setUser(res.data)
+          this.props.history.push('/student')
+        }
+      })
     } else {
       addErrorMsg('Please enter all fields')
     }
@@ -91,10 +79,10 @@ class Registeration extends Component {
           <Card>
             <CardBody elevation={2} className={classes.paper}>
               <Typography component="h1" variant="h5">
-                Registeration
+                Registration
               </Typography>
               <div className={classes.form} noValidate>
-                <Grid container spacing={2} alignItems="flex-end">
+                <Grid container spacing={2} alignItems="center">
                   <Grid item xs={2}>
                     <PersonIcon />
                   </Grid>
@@ -106,21 +94,6 @@ class Registeration extends Component {
                       }}
                       inputProps={{
                         name: 'name',
-                      }}
-                      handleChange={this.handleChangeFields}
-                    />
-                  </Grid>
-                  <Grid item xs={2}>
-                    <EmailOutlinedIcon />
-                  </Grid>
-                  <Grid item xs={10}>
-                    <CustomInput
-                      labelText="Email"
-                      formControlProps={{
-                        fullWidth: true,
-                      }}
-                      inputProps={{
-                        name: 'email',
                       }}
                       handleChange={this.handleChangeFields}
                     />
@@ -142,33 +115,17 @@ class Registeration extends Component {
                     />
                   </Grid>
                   <Grid item xs={2}>
-                    <FingerprintOutlined />
+                    <CakeIcon />
                   </Grid>
                   <Grid item xs={10}>
                     <CustomInput
-                      labelText="Enter Password"
                       formControlProps={{
                         fullWidth: true,
                       }}
                       inputProps={{
-                        type: 'password',
-                        name: 'password',
-                      }}
-                      handleChange={this.handleChangeFields}
-                    />
-                  </Grid>
-                  <Grid item xs={2}>
-                    <FingerprintOutlined />
-                  </Grid>
-                  <Grid item xs={10}>
-                    <CustomInput
-                      labelText="Confirm Password"
-                      formControlProps={{
-                        fullWidth: true,
-                      }}
-                      inputProps={{
-                        type: 'password',
-                        name: 'confirmPassword',
+                        type: 'date',
+                        name: 'dob',
+                        helperText: 'Date of Birth',
                       }}
                       handleChange={this.handleChangeFields}
                     />

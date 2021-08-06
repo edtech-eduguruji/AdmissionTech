@@ -60,7 +60,7 @@ class Login extends Component {
     LoginApi.userLogin(data).then((response) => {
       if (response.data && response.data.length > 0) {
         LocalStorage.setUser(response.data[0])
-        this.props.history.push('/form')
+        this.props.history.push('/student')
       }
     })
   }
@@ -178,7 +178,7 @@ class Login extends Component {
                         color="primary"
                         variant="contained"
                         className="sub"
-                        onClick={() => this.props.history.push('/form')}
+                        onClick={() => this.props.history.push('/register')}
                       >
                         Registration
                       </RegularButton>
