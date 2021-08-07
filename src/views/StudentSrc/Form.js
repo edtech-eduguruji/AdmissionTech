@@ -156,21 +156,32 @@ class Form extends React.Component {
           LocalStorage.getUser() && LocalStorage.getUser().user_id,
       }
       FormApi.getForm(data).then((response) => {
+        debugger
         if (response.data) {
           if (response.data.submitted == '1' && !this.props.isPreview) {
             //
             this.props.history.push('/formsubmitted')
           } else if (response.data.submitted == '1' && this.props.isPreview) {
-            response.data.academicDetails = JSON.parse(
-              response.data.academicDetails
-            )
-            response.data.documents = JSON.parse(response.data.documents)
+            response.data.academicDetails = response.data.academicDetails
+              ? JSON.parse(response.data.academicDetails)
+              : []
+            response.data.documents = response.data.documents
+              ? JSON.parse(response.data.documents)
+              : []
+            response.data.major1 = response.data.major1
+              ? JSON.parse(response.data.major1)
+              : []
             this.setState({ ...response.data })
           } else {
-            response.data.academicDetails = JSON.parse(
-              response.data.academicDetails
-            )
-            response.data.documents = JSON.parse(response.data.documents)
+            response.data.major1 = response.data.major1
+              ? JSON.parse(response.data.major1)
+              : []
+            response.data.academicDetails = response.data.academicDetails
+              ? JSON.parse(response.data.academicDetails)
+              : []
+            response.data.documents = response.data.documents
+              ? JSON.parse(response.data.documents)
+              : []
             this.setState({ ...response.data })
           }
         }
