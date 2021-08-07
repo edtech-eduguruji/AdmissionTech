@@ -156,7 +156,6 @@ class Form extends React.Component {
           LocalStorage.getUser() && LocalStorage.getUser().user_id,
       }
       FormApi.getForm(data).then((response) => {
-        debugger
         if (response.data) {
           if (response.data.submitted == '1' && !this.props.isPreview) {
             //
