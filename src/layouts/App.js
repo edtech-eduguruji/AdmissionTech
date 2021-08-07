@@ -27,12 +27,12 @@ const App = () => {
         <Switch>
           <Route exact path="/" render={() => verify()} />
           <Route path="/student" render={() => verify()} />
+          <Route path="/preview" render={() => <Form isPreview="1" />} />
           <Route path="/admin" render={() => verify()} />
           <Route path="/aLogin" component={AdminLogin} />
           <Route path="/login" component={StudentLogin} />
           <Route path="/register" component={Registeration} />
           <Route path="/forgotpassword" component={ForgotPassword} />
-          <Route path="/preview" render={() => <Form isPreview="1" />} />
         </Switch>
       </HashRouter>
     </React.Fragment>

@@ -51,7 +51,7 @@ class Registeration extends Component {
       data.append('mobile', mobileNo)
       data.append('dob', dob)
       RegisterApi.StudentRegister(data).then((res) => {
-        if (!res.data.error) {
+        if (res.data) {
           LocalStorage.setUser(res.data)
           this.props.history.push('/student')
         }

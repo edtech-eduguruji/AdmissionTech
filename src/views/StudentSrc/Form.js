@@ -366,7 +366,7 @@ class Form extends React.Component {
 
   handleSubmitForm = (btnValue) => () => {
     const {
-      tokem,
+      token,
       major1,
       major2,
       major3,
