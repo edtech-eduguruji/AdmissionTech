@@ -3,18 +3,16 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import Grid from '@material-ui/core/Grid'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import CakeIcon from '@material-ui/icons/Cake'
-import CallIcon from '@material-ui/icons/Call'
-import PersonIcon from '@material-ui/icons/Person'
-import RegisterApi from 'apis/RegisterApi'
+import { FingerprintOutlined } from '@material-ui/icons'
+import EmailOutlinedIcon from '@material-ui/icons/EmailOutlined'
+import LoginApi from 'apis/LoginApi'
+import LocalStorage from 'common/LocalStorage'
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
-import LocalStorage from '../common/LocalStorage'
 import Card from '../components/Card/Card'
 import CardBody from '../components/Card/CardBody'
 import RegularButton from '../components/CustomButtons/Button'
 import CustomInput from '../components/CustomInput/CustomInput'
-import { addErrorMsg } from '../utils/Utils'
 
 const useStyles = (theme) => ({
   paper: {
@@ -34,35 +32,35 @@ const useStyles = (theme) => ({
   },
 })
 
-class Registeration extends Component {
-  constructor() {
-    super()
-    this.state = {
-      name: '',
-      mobileNo: '',
-      dob: '',
+class Login extends Component {
+  handleSubmit = () => {
+    this.handleLogin()
+  }
+
+  handleKeyDown = (event) => {
+    if (event.keyCode === 13) {
+      this.handleLogin()
     }
   }
-  handleSubmit = () => {
-    const { name, email, mobileNo, dob } = this.state
-    if (name !== '' && mobileNo !== '' && dob !== '') {
-      const data = new FormData()
-      data.append('name', name)
-      data.append('mobile', mobileNo)
-      data.append('dob', dob)
-      RegisterApi.StudentRegister(data).then((res) => {
-        if (!res.data.error) {
-          LocalStorage.setUser(res.data)
-          this.props.history.push('/student')
-        }
-      })
-    } else {
-      addErrorMsg('Please enter all fields')
+
+  handleLogin = () => {
+    const { username, password } = this.state
+    const data = {
+      username: username,
+      password: password,
+      isAdmin: 1,
     }
+    LoginApi.userLogin(data).then((response) => {
+      if (response.data && response.data.length > 0) {
+        LocalStorage.setUser(response.data[0])
+        this.props.history.push('/admin')
+      }
+    })
   }
 
   handleChangeFields = (event) => {
     this.setState({
+      ...this.state,
       [event.target.name]: event.target.value,
     })
   }
@@ -78,66 +76,61 @@ class Registeration extends Component {
           </div>
           <Card>
             <CardBody elevation={2} className={classes.paper}>
-              <Typography component="h1" variant="h5">
-                Registration
+              <Typography component="span" variant="h5">
+                LOGIN
               </Typography>
               <div className={classes.form} noValidate>
                 <Grid container spacing={2} alignItems="center">
                   <Grid item xs={2}>
-                    <PersonIcon />
+                    <EmailOutlinedIcon />
                   </Grid>
                   <Grid item xs={10}>
                     <CustomInput
-                      labelText="Name"
+                      labelText="Username"
                       formControlProps={{
                         fullWidth: true,
                       }}
                       inputProps={{
-                        name: 'name',
+                        name: 'username',
+                        onKeyDown: this.handleKeyDown,
                       }}
                       handleChange={this.handleChangeFields}
                     />
                   </Grid>
                   <Grid item xs={2}>
-                    <CallIcon />
+                    <FingerprintOutlined />
                   </Grid>
                   <Grid item xs={10}>
                     <CustomInput
-                      labelText="Mobile No."
+                      labelText="Password"
                       formControlProps={{
                         fullWidth: true,
                       }}
                       inputProps={{
-                        name: 'mobileNo',
-                        type: 'number',
+                        type: 'password',
+                        name: 'password',
+                        onKeyDown: this.handleKeyDown,
                       }}
                       handleChange={this.handleChangeFields}
                     />
                   </Grid>
-                  <Grid item xs={2}>
-                    <CakeIcon />
-                  </Grid>
-                  <Grid item xs={10}>
-                    <CustomInput
-                      formControlProps={{
-                        fullWidth: true,
-                      }}
-                      inputProps={{
-                        type: 'date',
-                        name: 'dob',
-                        helperText: 'Date of Birth',
-                      }}
-                      handleChange={this.handleChangeFields}
-                    />
-                  </Grid>
-                  <Grid container item xs={12} justify="center">
+                  <Grid container item xs={8} justify="flex-end">
                     <RegularButton
                       color="primary"
                       variant="contained"
                       className="sub"
                       onClick={this.handleSubmit}
                     >
-                      REGISTER
+                      SIGN IN
+                    </RegularButton>
+                  </Grid>
+                  <Grid container item xs={4} justify="flex-end">
+                    <RegularButton
+                      color="transparent"
+                      size="sm"
+                      onClick={() => this.props.history.push('/Register')}
+                    >
+                      Register ?
                     </RegularButton>
                   </Grid>
                 </Grid>
@@ -150,4 +143,4 @@ class Registeration extends Component {
   }
 }
 
-export default withRouter(withStyles(useStyles)(Registeration))
+export default withRouter(withStyles(useStyles)(Login))

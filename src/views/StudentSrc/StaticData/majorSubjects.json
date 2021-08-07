@@ -1,0 +1,107 @@
+[
+    {
+        "facultyId": "#f1Science",
+        "subjectId": "$s1Botany",
+        "subjectName": "Botany"
+    },
+    {
+        "facultyId": "#f1Science",
+        "subjectId": "$s2Physics",
+        "subjectName": "Physics"
+    },
+    {
+        "facultyId": "#f1Science",
+        "subjectId": "$s3Chemistry",
+        "subjectName": "Chemistry"
+    },
+    {
+        "facultyId": "#f1Science",
+        "subjectId": "$s4Maths",
+        "subjectName": "Mathematics"
+    },
+    {
+        "facultyId": "#f1Science",
+        "subjectId": "$s5Statistics",
+        "subjectName": "Statistics"
+    },
+    {
+        "facultyId": "#f1Science",
+        "subjectId": "$s6Zoology",
+        "subjectName": "Zoology"
+    },
+    {
+        "facultyId": "#f2Arts",
+        "subjectId": "$s7dss",
+        "subjectName": "Defence and Strategic Studies"
+    },
+    {
+        "facultyId": "#f2Arts",
+        "subjectId": "$s8Economics",
+        "subjectName": "Economics"
+    },
+    {
+        "facultyId": "#f2Arts",
+        "subjectId": "$9History",
+        "subjectName": "History"
+    },
+    {
+        "facultyId": "#f2Arts",
+        "subjectId": "$s10Phylosophy",
+        "subjectName": "Phylosophy"
+    },
+    {
+        "facultyId": "#f2Arts",
+        "subjectId": "$11pe",
+        "subjectName": "Physical Education"
+    },
+    {
+        "facultyId": "#f2Arts",
+        "subjectId": "$12ps",
+        "subjectName": "Political Science"
+    },
+    {
+        "facultyId": "#f2Arts",
+        "subjectId": "$13Psychology",
+        "subjectName": "Psychology"
+    },
+    {
+        "facultyId": "#f2Arts",
+        "subjectId": "$14Sociology",
+        "subjectName": "Sociology"
+    },
+    {
+        "facultyId": "#f3Language",
+        "subjectId": "$15Hindi",
+        "subjectName": "Hindi"
+    },
+    {
+        "facultyId": "#f3Language",
+        "subjectId": "$16English",
+        "subjectName": "English"
+    },
+    {
+        "facultyId": "#f3Language",
+        "subjectId": "$17Sanskrit",
+        "subjectName": "Sanskrit"
+    },
+    {
+        "facultyId": "#f4fineArt",
+        "subjectId": "$18dp",
+        "subjectName": "Drawing and Painting"
+    },
+    {
+        "facultyId": "#f4fineArt",
+        "subjectId": "$19Music",
+        "subjectName": "Music"
+    },
+    {
+        "facultyId": "#f5foc",
+        "subjectId": "$20Bcom",
+        "subjectName": "B.Com"
+    },
+    {
+        "facultyId": "#f6fom",
+        "subjectId": "$21Bba",
+        "subjectName": "BBA"
+    }
+]

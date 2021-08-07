@@ -212,7 +212,7 @@ export function filterSubjectWise(sid, data, value) {
 export function validateUser() {
   const user = LocalStorage.getUser()
   let isValidate = false
-  if (user && user.user_id && user.role && user.name) {
+  if (user && user.user_id) {
     isValidate = true
   }
   return isValidate
@@ -432,4 +432,13 @@ export function checkExtension(fileName) {
   return fileName
     ? fileName.substring(fileName.length - 3, fileName.length)
     : null
+}
+
+export function mandatoryField(string) {
+  return (
+    <div className="alignCenter">
+      {string} &nbsp;
+      <span className="makeRed">*</span>
+    </div>
+  )
 }

@@ -1,6 +1,5 @@
+import { TextField } from '@material-ui/core'
 import FormControl from '@material-ui/core/FormControl'
-import Input from '@material-ui/core/Input'
-import InputLabel from '@material-ui/core/InputLabel'
 // @material-ui/core components
 import { makeStyles } from '@material-ui/core/styles'
 import Check from '@material-ui/icons/Check'
@@ -23,7 +22,6 @@ export default function CustomInput(props) {
     formControlProps,
     labelText,
     id,
-    labelProps,
     inputProps,
     error,
     success,
@@ -34,23 +32,18 @@ export default function CustomInput(props) {
     isMandatory,
     handleChange,
     isNumber,
+    smallLabel,
   } = props
 
-  const labelClasses = classNames({
-    [' ' + classes.labelRootError]: error || isError,
-    [' ' + classes.labelRootSuccess]: success && (!error || !isError),
-  })
   const underlineClasses = classNames({
     [classes.underlineError]: error || isError,
     [classes.underlineSuccess]: success && (!error || !isError),
     [classes.underline]: true,
-  })
-  const marginTop = classNames({
-    [classes.marginTop]: labelText,
+    [classes.labelRoot]: smallLabel,
   })
 
   const formControlClasses = classNames({
-    [' ' + classes.formControl]: formControlProps.isForm,
+    [classes.formControl]: true,
   })
 
   const onChange = (event) => {
@@ -109,21 +102,20 @@ export default function CustomInput(props) {
       {...formControlProps}
       className={formControlProps.className + formControlClasses}
     >
-      {labelText !== undefined ? (
-        <InputLabel
-          className={classes.labelRoot + labelClasses}
-          htmlFor={id}
-          {...labelProps}
-        >
-          {labelText}
-        </InputLabel>
-      ) : null}
-      <Input
-        classes={{
-          root: marginTop,
-          disabled: classes.disabled,
-          underline: underlineClasses,
+      <TextField
+        InputLabelProps={{
+          classes: {
+            root: underlineClasses,
+          },
         }}
+        InputProps={{
+          classes: {
+            disabled: classes.disabled,
+          },
+        }}
+        label={labelText}
+        variant={inputProps.disabled ? 'standard' : 'outlined'}
+        margin="dense"
         id={id}
         {...inputProps}
         onChange={onChange}
@@ -154,4 +146,5 @@ CustomInput.propTypes = {
   maxLength: PropTypes.number,
   handleChange: PropTypes.func,
   isNumber: PropTypes.bool,
+  smallLabel: PropTypes.bool,
 }

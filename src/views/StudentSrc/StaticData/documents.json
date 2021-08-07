@@ -1,0 +1,56 @@
+{
+    "UG": 
+    [
+        {
+            "documentType": "#dt1HSM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "#dt2IM",
+            "document": "",
+            "isDelete": 0
+        }
+    ],
+    "PG": 
+    [
+        {
+            "documentType": "#dt1HSM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "#dt2IM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "#dt3GD",
+            "document": "",
+            "isDelete": 0
+        }
+    ],
+    "LLM": 
+    [
+        {
+            "documentType": "#dt1HSM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "#dt2IM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "#dt3GD",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "#dt4PGD",
+            "document": "",
+            "isDelete": 0
+        }
+    ]
+}

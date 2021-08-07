@@ -4,17 +4,13 @@ import Grid from '@material-ui/core/Grid'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import CakeIcon from '@material-ui/icons/Cake'
-import CallIcon from '@material-ui/icons/Call'
-import PersonIcon from '@material-ui/icons/Person'
-import RegisterApi from 'apis/RegisterApi'
+import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber'
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
-import LocalStorage from '../common/LocalStorage'
 import Card from '../components/Card/Card'
 import CardBody from '../components/Card/CardBody'
 import RegularButton from '../components/CustomButtons/Button'
 import CustomInput from '../components/CustomInput/CustomInput'
-import { addErrorMsg } from '../utils/Utils'
 
 const useStyles = (theme) => ({
   paper: {
@@ -34,35 +30,35 @@ const useStyles = (theme) => ({
   },
 })
 
-class Registeration extends Component {
+class ForgotPassword extends Component {
   constructor() {
     super()
     this.state = {
-      name: '',
-      mobileNo: '',
+      aadharNo: '',
       dob: '',
     }
   }
   handleSubmit = () => {
-    const { name, email, mobileNo, dob } = this.state
-    if (name !== '' && mobileNo !== '' && dob !== '') {
-      const data = new FormData()
-      data.append('name', name)
-      data.append('mobile', mobileNo)
-      data.append('dob', dob)
-      RegisterApi.StudentRegister(data).then((res) => {
-        if (!res.data.error) {
-          LocalStorage.setUser(res.data)
-          this.props.history.push('/student')
-        }
-      })
-    } else {
-      addErrorMsg('Please enter all fields')
+    this.handleLogin()
+  }
+
+  handleKeyDown = (event) => {
+    if (event.keyCode === 13) {
+      this.handleLogin()
+    }
+  }
+
+  handleLogin = () => {
+    const { aadharNo, dob } = this.state
+    const data = {
+      aadharNo: aadharNo,
+      dob: dob,
     }
   }
 
   handleChangeFields = (event) => {
     this.setState({
+      ...this.state,
       [event.target.name]: event.target.value,
     })
   }
@@ -76,45 +72,30 @@ class Registeration extends Component {
           <div className="center">
             <img alt="logo" src="agracollege.png" className={classes.logo} />
           </div>
-          <Card>
+          <Card cardFullHeight>
             <CardBody elevation={2} className={classes.paper}>
-              <Typography component="h1" variant="h5">
-                Registration
+              <Typography component="h1" variant="h6">
+                Enter the Details Below
               </Typography>
               <div className={classes.form} noValidate>
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={2}>
-                    <PersonIcon />
+                  <Grid container item xs={2} justify="center">
+                    <ConfirmationNumberIcon />
                   </Grid>
                   <Grid item xs={10}>
                     <CustomInput
-                      labelText="Name"
+                      labelText="Aadhar No."
                       formControlProps={{
                         fullWidth: true,
                       }}
                       inputProps={{
-                        name: 'name',
+                        name: 'aadharNo',
+                        onKeyDown: this.handleKeyDown,
                       }}
                       handleChange={this.handleChangeFields}
                     />
                   </Grid>
-                  <Grid item xs={2}>
-                    <CallIcon />
-                  </Grid>
-                  <Grid item xs={10}>
-                    <CustomInput
-                      labelText="Mobile No."
-                      formControlProps={{
-                        fullWidth: true,
-                      }}
-                      inputProps={{
-                        name: 'mobileNo',
-                        type: 'number',
-                      }}
-                      handleChange={this.handleChangeFields}
-                    />
-                  </Grid>
-                  <Grid item xs={2}>
+                  <Grid container item xs={2} justify="center">
                     <CakeIcon />
                   </Grid>
                   <Grid item xs={10}>
@@ -125,6 +106,7 @@ class Registeration extends Component {
                       inputProps={{
                         type: 'date',
                         name: 'dob',
+                        onKeyDown: this.handleKeyDown,
                         helperText: 'Date of Birth',
                       }}
                       handleChange={this.handleChangeFields}
@@ -137,7 +119,7 @@ class Registeration extends Component {
                       className="sub"
                       onClick={this.handleSubmit}
                     >
-                      REGISTER
+                      Submit
                     </RegularButton>
                   </Grid>
                 </Grid>
@@ -150,4 +132,4 @@ class Registeration extends Component {
   }
 }
 
-export default withRouter(withStyles(useStyles)(Registeration))
+export default withRouter(withStyles(useStyles)(ForgotPassword))

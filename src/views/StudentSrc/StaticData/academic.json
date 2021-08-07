@@ -1,0 +1,119 @@
+{
+    "UG": 
+    [
+        {
+            "nameOfExam": "Hight School/10th",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "Intermediate/10+2",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        }
+    ],
+    "PG": 
+    [
+        {
+            "nameOfExam": "Hight School/10th",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "Intermediate/10+2",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "Graduation Degree",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        }
+    ],
+    "LLM": 
+    [
+        {
+            "nameOfExam": "Hight School/10th",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "Intermediate/10+2",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "Graduation Degree",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "Post-Graduation Degree",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        }
+    ]
+}
