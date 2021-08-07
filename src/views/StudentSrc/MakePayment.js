@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@material-ui/core'
+import { Divider, Grid, Typography } from '@material-ui/core'
 import React from 'react'
 import { withRouter } from 'react-router-dom'
 import CardContainer from '../../common/CardContainer'
