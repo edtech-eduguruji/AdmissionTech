@@ -24,11 +24,10 @@ class MakePayment extends React.Component {
       <CardContainer heading="Payment">
         <Grid container spacing={2}>
           <Grid container item xs={12} direction="column" alignContent="center">
-            <Typography variant="h6">
-              <Success>
-                Your Registration ID is : {LocalStorage.getUser().user_id}
-              </Success>
-              <Typography variant="h6" component="div">
+            <Typography variant="h6" component="div" className="center">
+              Your Registration ID
+              <Success>{LocalStorage.getUser().user_id}</Success>
+              <Typography variant="body1" component="div">
                 Please note down your registration id before make payment.
               </Typography>
             </Typography>
@@ -59,10 +58,12 @@ class MakePayment extends React.Component {
               </ul>
             </Typography>
           </Grid>
-          <Grid container item xs={12} justify="center">
-            <Typography variant="h6">
+          <Grid container item xs={12} direction="column" alignContent="center">
+            <Typography variant="h6" component="div">
               Online application form fees is Rs. 252 only.
             </Typography>
+          </Grid>
+          <Grid container item xs={12} justify="center">
             <RegularButton color="primary" onClick={this.handleMakePayment}>
               Make Payment
             </RegularButton>
