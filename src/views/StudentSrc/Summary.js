@@ -68,11 +68,10 @@ class Summary extends React.Component {
               <Divider />
               <Typography variant="caption">
                 <ul>
-                  <li></li>
-                  <li></li>
-                  <li></li>
-                  <li></li>
-                  <li></li>
+                  <li>Download prospectus form before proceed further.</li>
+                  <li>
+                    Read all the guidelines carefully from the prospectus form.
+                  </li>
                 </ul>
               </Typography>
             </Grid>
