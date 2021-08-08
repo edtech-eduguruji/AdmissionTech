@@ -61,7 +61,10 @@ class MakePayment extends React.Component {
                   Read prospectus form before submitting application form
                   online.
                 </li>
-                <li>You can save draft or submit application form anytime.</li>
+                <li>
+                  You can save in draft mode or submit application form anytime.
+                </li>
+                <li>Once application form is submit, it cannot be changed.</li>
               </ul>
             </Typography>
           </Grid>
