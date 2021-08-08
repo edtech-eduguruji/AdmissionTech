@@ -46,6 +46,7 @@ import majorSubjectsData from './StaticData/majorSubjects.json'
 import religionData from './StaticData/religion.json'
 import semesterSubjectsData from './StaticData/semesterSubjects.json'
 import statesData from './StaticData/states.json'
+import streamData from './StaticData/stream.json'
 import subCategoryData from './StaticData/subCategory.json'
 
 const styles = {
@@ -157,29 +158,25 @@ class Form extends React.Component {
       }
       FormApi.getForm(data).then((response) => {
         if (response.data) {
-          if (response.data.submitted == '1' && !this.props.isPreview) {
-            //
+          if (response.data.submitted === '1' && !this.props.isPreview) {
             this.props.history.push('/formsubmitted')
-          } else if (response.data.submitted == '1' && this.props.isPreview) {
-            response.data.academicDetails = response.data.academicDetails
-              ? JSON.parse(response.data.academicDetails)
-              : []
-            response.data.documents = response.data.documents
-              ? JSON.parse(response.data.documents)
-              : []
-            response.data.major1 = response.data.major1
-              ? JSON.parse(response.data.major1)
-              : []
-            this.setState({ ...response.data })
           } else {
-            response.data.major1 = response.data.major1
-              ? JSON.parse(response.data.major1)
-              : []
+            Object.keys(response.data).map((item) => {
+              if (response.data[item] === 'null') {
+                response.data[item] = ''
+              }
+            })
             response.data.academicDetails = response.data.academicDetails
               ? JSON.parse(response.data.academicDetails)
               : []
             response.data.documents = response.data.documents
               ? JSON.parse(response.data.documents)
+              : []
+            response.data.major1 = response.data.major1
+              ? JSON.parse(response.data.major1)
+              : []
+            response.data.major2 = response.data.major2
+              ? JSON.parse(response.data.major2)
               : []
             this.setState({ ...response.data })
           }
@@ -241,7 +238,8 @@ class Form extends React.Component {
       })
     }
     this.setState({
-      [event.target.name]: event.target.value,
+      [event.target.name]:
+        name === 'major2' ? JSON.parse(event.target.value) : event.target.value,
     })
   }
 
@@ -266,6 +264,15 @@ class Form extends React.Component {
         let p = parseFloat((marksObtained / totalMarks) * 100).toFixed(2)
         list[index]['percentage'] = p + '%'
       }
+    } else if (name === 'stream') {
+      this.setState({
+        faculty: '',
+        major1: [],
+        major2: '',
+        major3: '',
+        major4: '',
+        vocationalSubject: '',
+      })
     }
     this.setState({
       academicDetails: list,
@@ -335,17 +342,10 @@ class Form extends React.Component {
         totalMeritCount: total,
       })
     } else {
-      if (event.target.checked) {
-        this.setState({
-          totalMeritCount: total,
-          [event.target.name]: event.target.checked,
-        })
-      } else {
-        this.setState({
-          totalMeritCount: total,
-          [event.target.name]: event.target.checked,
-        })
-      }
+      this.setState({
+        totalMeritCount: total,
+        [event.target.name]: event.target.checked,
+      })
     }
   }
 
@@ -515,122 +515,120 @@ class Form extends React.Component {
     data.append('totalMeritCount', totalMeritCount)
     data.append('signature', signature)
     data.append('submit', btnValue)
-    if (btnValue === 0 && dob !== '') {
-      count = 0
+    if (btnValue === 0) {
+      if (dob === '') {
+        count++
+        addErrorMsg('For saving the draft date of birth is mandatory.')
+      } else if (token === '') {
+        count++
+        addErrorMsg("Please verify you're not a robot")
+      }
     } else {
-      count++
-      addErrorMsg('For saving the draft date of birth is mandatory.')
-    }
-    if (btnValue === 1) {
       if (
-        photo === '' ||
-        wrn === '' ||
-        form === '' ||
-        nameTitle === '' ||
-        name === '' ||
-        dob === '' ||
-        gender === '' ||
-        religion === '' ||
-        caste === '' ||
-        category === '' ||
-        personalMobile === '' ||
-        parentMobile === '' ||
-        aadharNo === '' ||
-        email === ''
+        !photo ||
+        !wrn ||
+        !form ||
+        !nameTitle ||
+        !name ||
+        !dob ||
+        !gender ||
+        !religion ||
+        !caste ||
+        !category ||
+        !personalMobile ||
+        !parentMobile ||
+        !aadharNo ||
+        !email
       ) {
         count++
         addErrorMsg("Fill the empty fields in 'Basic Details' Section")
       } else if (
-        fatherName === '' ||
-        motherName === '' ||
-        parentsOccupation === '' ||
-        guardianName === '' ||
-        relationOfApplicant === ''
+        !fatherName ||
+        !motherName ||
+        !parentsOccupation ||
+        !guardianName ||
+        !relationOfApplicant
       ) {
         count++
         addErrorMsg(
           "Fill the empty fields in 'Parent & Guardian Details' Section"
         )
       } else if (
-        houseNo === '' ||
-        street === '' ||
-        state === '' ||
-        city === '' ||
-        (pincode === '' && postOffice === '')
+        !houseNo ||
+        !street ||
+        !state ||
+        !city ||
+        (!pincode && !postOffice)
       ) {
         count++
         addErrorMsg("Fill the empty fields in 'Permanent Address' Section")
-      } else if (
-        academicDetails.filter((item) =>
-          Object.values(item).every((itm) => itm === null)
-        )
-      ) {
+      } else if (this.checkJSONfields(academicDetails) !== 0 || !courseType) {
         count++
         addErrorMsg("Fill the empty fields in 'Academic Details' Section")
-      } else if (
-        mediumOfInstitution === '' ||
-        courseType === '' ||
-        faculty === '' ||
-        major1.length === 0 ||
-        major2 === '' ||
-        major3 === '' ||
-        major4 === '' ||
-        vocationalSubject === ''
-      ) {
-        if (faculty === '') {
-          count++
-          addErrorMsg(
-            "Fill the empty fields in 'Faculty and Courses Details' Section"
-          )
-        } else if (this.checkFaculty(faculty) && major1.length === 0) {
-          count++
-          addErrorMsg(
-            "Fill the empty fields in 'Faculty and Courses Details' Section"
-          )
-        } else if (
-          !this.checkFaculty(faculty) &&
-          (major1.length === 0 ||
-            major2 === '' ||
-            major3 === '' ||
-            major4 === '' ||
-            vocationalSubject === '')
-        ) {
-          count++
-          addErrorMsg(
-            "Fill the empty fields in 'Faculty and Courses Details' Section"
-          )
-        }
-      } else if (
-        doucments.filter((item) =>
-          Object.values(item).every((itm) => itm === null)
+      } else if (!mediumOfInstitution || !faculty || major1.length === 0) {
+        count++
+        addErrorMsg(
+          "Fill the empty fields in 'Faculty and Courses Details' Section"
         )
+      } else if (this.checkFaculty(faculty) && major1.length === 0) {
+        count++
+        addErrorMsg(
+          "Fill the empty fields in 'Faculty and Courses Details' Section"
+        )
+      } else if (
+        !this.checkFaculty(faculty) &&
+        (major1.length !== 2 ||
+          !major2 ||
+          (!major3 && !major4) ||
+          !vocationalSubject)
       ) {
+        count++
+        addErrorMsg(
+          "Fill the empty fields in 'Faculty and Courses Details' Section"
+        )
+      } else if (this.checkJSONfields(documents) !== 0) {
         count++
         addErrorMsg("Fill the empty fields in 'Upload Documents' Section")
-      } else if (signature === '') {
+      } else if (!signature) {
         count++
         addErrorMsg('Upload Signature')
+      } else if (token === '') {
+        addErrorMsg("Please verify you're not a robot")
       }
     }
-    if (count === 0 && token) {
+    if (count === 0) {
       FormApi.submitForm(data).then((response) => {
-        if (response && response.data && btnValue !== 0) {
-          LocalStorage.setUser(response.data)
-          if (btnValue == 1) {
-            errorDialog('Your application is submitted successfully', 'Form')
-            this.props.history.push('/formsubmitted')
-          } else {
-            errorDialog(
-              'Your application is saved. Your registration no. is' +
-              <b>{response.data.user_id}</b>,
-              'Form'
-            )
-            this.props.history.push('/login')
-          }
+        if (btnValue === 1) {
+          errorDialog('Your application is submitted successfully', 'Form')
+          let user = { ...LocalStorage.getUser(), submitted: '1' }
+          LocalStorage.setUser(user)
+          redirectUrl('sFormSubmit', 1)
+        } else {
+          errorDialog(
+            'Your application is saved. Your registration no. is : ' +
+              response.data.user_id,
+            'Form'
+          )
+          LocalStorage.removeUser()
+          redirectUrl('/login')
         }
       })
+    }
+  }
+
+  checkJSONfields = (data) => {
+    let isNull = 0
+    if (data.length > 0) {
+      data.map((item) => {
+        Object.values(item).map((value) => {
+          if (value === null || value === '') {
+            isNull++
+          }
+        })
+      })
+      return isNull
     } else {
-      addErrorMsg("Please verify you're not a robot")
+      return 1
     }
   }
 
@@ -652,7 +650,7 @@ class Form extends React.Component {
         pdf.addImage(imgData, 'PNG', 0, position, imgWidth - 2, imgHeight)
         heightLeft -= pageHeight
       }
-      pdf.save('form' + '.pdf')
+      pdf.save(LocalStorage.getUser().user_id + '.pdf')
     })
   }
 
@@ -748,6 +746,10 @@ class Form extends React.Component {
     let subjects = majorSubjectsData.filter(
       (item) => item.facultyId === faculty
     )
+    major1.map((item) => {
+      let index = subjects.findIndex((itm) => item.subjectId === itm.subjectId)
+      subjects.splice(index, 1)
+    })
     if (major2 !== '') {
       let i = subjects.findIndex((item) => item.subjectId === major2.subjectId)
       subjects.splice(i, 1)
@@ -847,41 +849,37 @@ class Form extends React.Component {
           heading={'Admission Form'}
           subTitle="Fill Up the Form"
           buttons={[
-            <Hidden xsDown>
-              <RegularButton
-                size="sm"
-                color="danger"
-                key="dp"
-                onClick={
-                  preview
-                    ? this.handleDownloadForm
-                    : this.handleDownloadProspectus
-                }
-              >
-                {preview ? 'Download Form' : 'Download Prospectus'}
-                &nbsp;&nbsp; <GetAppIcon />
-              </RegularButton>
-            </Hidden>,
-          ]}
-        >
-          <Grid container spacing={2} alignItems="center" id="form1234">
-            <Hidden smUp>
-              <Grid container item xs={12} justify="center">
+            !preview && (
+              <Hidden xsDown>
                 <RegularButton
                   size="sm"
                   color="danger"
                   key="dp"
-                  onClick={
-                    preview
-                      ? this.handleDownloadForm
-                      : this.handleDownloadProspectus
-                  }
+                  onClick={this.handleDownloadProspectus}
                 >
-                  {preview ? 'Download Form' : 'Download Prospectus'}
+                  {'Download Prospectus'}
                   &nbsp;&nbsp; <GetAppIcon />
                 </RegularButton>
-              </Grid>
-            </Hidden>
+              </Hidden>
+            ),
+          ]}
+        >
+          <Grid container spacing={2} alignItems="center" id="form1234">
+            {!preview && (
+              <Hidden smUp>
+                <Grid container item xs={12} justify="center">
+                  <RegularButton
+                    size="sm"
+                    color="danger"
+                    key="dp"
+                    onClick={this.handleDownloadProspectus}
+                  >
+                    {'Download Prospectus'}
+                    &nbsp;&nbsp; <GetAppIcon />
+                  </RegularButton>
+                </Grid>
+              </Hidden>
+            )}
             {!preview ? (
               <Grid item xs={12}>
                 <Typography variant="h6">
@@ -924,7 +922,7 @@ class Form extends React.Component {
                   <img
                     className={classes.profilePhoto}
                     src={
-                      photo === ''
+                      photo === '' || photo === null
                         ? 'user.png'
                         : typeof photo === 'object'
                         ? URL.createObjectURL(photo)
@@ -991,7 +989,9 @@ class Form extends React.Component {
                   </div>
                 </Grid>
                 <Grid container item xs={12} justify="center">
-                  {form !== '' && <Success>Uploaded.</Success>}
+                  {form !== '' && form !== null ? (
+                    <Success>Uploaded.</Success>
+                  ) : null}
                 </Grid>
               </Grid>
             </Grid>
@@ -1212,7 +1212,9 @@ class Form extends React.Component {
                     name="categoryCertificate"
                   />
                 )}
-                {categoryCertificate !== '' && <Success>Uploaded.</Success>}
+                {categoryCertificate !== '' && categoryCertificate !== null ? (
+                  <Success>Uploaded.</Success>
+                ) : null}
               </div>
             </Grid>
             <Grid container item md={6} xs={12} justify="center">
@@ -1227,7 +1229,10 @@ class Form extends React.Component {
                     name="subCategoryCertificate"
                   />
                 )}
-                {subCategoryCertificate !== '' && <Success>Uploaded.</Success>}
+                {subCategoryCertificate !== '' &&
+                subCategoryCertificate !== null ? (
+                  <Success>Uploaded.</Success>
+                ) : null}
               </div>
             </Grid>
             <Grid item xs={6}>
@@ -1625,6 +1630,34 @@ class Form extends React.Component {
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">Academic Details</Typography>
             </Grid>
+            <Grid item xs={12}>
+              <TextField
+                InputLabelProps={{
+                  classes: {
+                    root: classes.labelRoot,
+                  },
+                }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
+                disabled={preview}
+                fullWidth
+                select
+                label={mandatoryField('Select Course Type')}
+                value={courseType}
+                onChange={this.handleChangeFields}
+                variant={preview ? 'standard' : 'outlined'}
+                name="courseType"
+              >
+                {courseTypeData.map((item) => (
+                  <MenuItem value={item.courseTypeId}>
+                    {item.courseType}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
             {courseType !== '' ? (
               <Grid item xs={12}>
                 {academicDetails.map((item, i) => (
@@ -1743,15 +1776,15 @@ class Form extends React.Component {
                           inputProps={{
                             name: 'percentage',
                             value: item.percentage,
-                            disabled: preview,
+                            disabled: true,
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                       </Grid>
-                      <Grid item md={2} xs={8}>
+                      <Grid item md={1} xs={12}>
                         <CustomInput
                           smallLabel
-                          labelText="Subjects"
+                          labelText={mandatoryField('Subjects')}
                           formControlProps={{
                             fullWidth: true,
                           }}
@@ -1763,6 +1796,39 @@ class Form extends React.Component {
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                       </Grid>
+                      {item.stream ||
+                      item.stream === '' ||
+                      item.stream === null ? (
+                        <Grid item md={1} xs={8}>
+                          <TextField
+                            InputLabelProps={{
+                              classes: {
+                                root: classes.labelRoot,
+                              },
+                            }}
+                            InputProps={{
+                              classes: {
+                                disabled: classes.disabled,
+                              },
+                            }}
+                            disabled={preview}
+                            select
+                            fullWidth
+                            size="small"
+                            variant={preview ? 'standard' : 'outlined'}
+                            name="stream"
+                            label={mandatoryField('Stream')}
+                            value={item.stream}
+                            onChange={(e) => this.handleInputChange(e, i)}
+                          >
+                            {streamData.map((item, key) => (
+                              <MenuItem key={key} value={item.streamId}>
+                                {item.stream}
+                              </MenuItem>
+                            ))}
+                          </TextField>
+                        </Grid>
+                      ) : null}
                       <Grid
                         container
                         item
@@ -1806,8 +1872,7 @@ class Form extends React.Component {
             ) : (
               <Grid container item xs={12} justify="center">
                 <Typography variant="subtitle1">
-                  Select course type under <b>(Faculty and Courses Details)</b>{' '}
-                  section to view this content.
+                  Select <b>"course type"</b> to view this content.
                 </Typography>
               </Grid>
             )}
@@ -1816,7 +1881,7 @@ class Form extends React.Component {
                 Faculty & Courses Details
               </Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <TextField
                 InputLabelProps={{
                   classes: {
@@ -1839,34 +1904,6 @@ class Form extends React.Component {
               >
                 <MenuItem value="hindi">Hindi</MenuItem>
                 <MenuItem value="english">English</MenuItem>
-              </TextField>
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                InputLabelProps={{
-                  classes: {
-                    root: classes.labelRoot,
-                  },
-                }}
-                InputProps={{
-                  classes: {
-                    disabled: classes.disabled,
-                  },
-                }}
-                disabled={preview}
-                fullWidth
-                select
-                label={mandatoryField('Select Course Type')}
-                value={courseType}
-                onChange={this.handleChangeFields}
-                variant={preview ? 'standard' : 'outlined'}
-                name="courseType"
-              >
-                {courseTypeData.map((item) => (
-                  <MenuItem value={item.courseTypeId}>
-                    {item.courseType}
-                  </MenuItem>
-                ))}
               </TextField>
             </Grid>
             <Grid item xs={12}>
@@ -1894,9 +1931,19 @@ class Form extends React.Component {
                 variant={preview ? 'standard' : 'outlined'}
                 name="faculty"
               >
-                {facultyData.map((item) => (
-                  <MenuItem value={item.facultyId}>{item.faculty}</MenuItem>
-                ))}
+                {academicDetails.length > 0 &&
+                  academicDetails[1].stream !== '' &&
+                  facultyData.map((item) => (
+                    <MenuItem
+                      disabled={
+                        academicDetails[1].stream !== '$s1Science' &&
+                        item.facultyId === '#f1Science'
+                      }
+                      value={item.facultyId}
+                    >
+                      {item.faculty}
+                    </MenuItem>
+                  ))}
               </TextField>
             </Grid>
             <Grid item xs={12}>
@@ -1914,7 +1961,7 @@ class Form extends React.Component {
                 onChange={this.handleMultiDropDownData}
                 multiple
                 name="major1"
-                options={this.filterMajorSubjects()}
+                options={this.filterMajorSubjects(major1)}
                 getOptionLabel={(option) => option.subjectName}
                 filterSelectedOptions
                 renderInput={(params) => (
@@ -1951,8 +1998,7 @@ class Form extends React.Component {
                     fullWidth
                     variant={preview ? 'standard' : 'outlined'}
                     name="major2"
-                    label={mandatoryField('Select Subject')}
-                    value={major2}
+                    value={JSON.stringify(major2)}
                     onChange={this.handleChangeFields}
                   >
                     {major1.length > 0 &&
@@ -1961,10 +2007,15 @@ class Form extends React.Component {
                           disabled={
                             major1.some(
                               (itm) => item.subjectId === itm.subjectId
-                            ) || this.checkCombination(item.subjectId) === 0
+                            ) ||
+                            this.checkCombination(item.subjectId) === 0 ||
+                            item.subjectId === '$20Bcom' ||
+                            item.subjectId === '$21Bba' ||
+                            (academicDetails[1].stream !== '$s1Science' &&
+                              item.facultyId === '#f1Science')
                           }
                           key={key}
-                          value={item}
+                          value={JSON.stringify(item)}
                         >
                           {item.subjectName}
                         </MenuItem>
@@ -1998,22 +2049,25 @@ class Form extends React.Component {
                     value={major3}
                     onChange={this.handleChangeFields}
                   >
-                    {major2 !== '' &&
-                      semesterSubjectsData.map(
-                        (item, key) =>
-                          item.semester === 1 && (
-                            <MenuItem
-                              key={key}
-                              disabled={
-                                major1[0].facultyId === major2.facultyId &&
-                                major2.facultyId === item.facultyId
-                              }
-                              value={item.subjectId}
-                            >
-                              {item.subjectName}
-                            </MenuItem>
-                          )
-                      )}
+                    {major1.length > 0 && major2
+                      ? semesterSubjectsData.map(
+                          (item, key) =>
+                            item.semester === 1 && (
+                              <MenuItem
+                                key={key}
+                                disabled={
+                                  (major1[0].facultyId === major2.facultyId &&
+                                    major2.facultyId === item.facultyId) ||
+                                  (academicDetails[1].stream !== '$s1Science' &&
+                                    item.facultyId === '#f1Science')
+                                }
+                                value={item.subjectId}
+                              >
+                                {item.subjectName}
+                              </MenuItem>
+                            )
+                        )
+                      : null}
                   </TextField>
                 </Grid>
                 <Grid item xs={6}>
@@ -2037,22 +2091,25 @@ class Form extends React.Component {
                     value={major4}
                     onChange={this.handleChangeFields}
                   >
-                    {major2 !== '' &&
-                      semesterSubjectsData.map(
-                        (item, key) =>
-                          item.semester === 2 && (
-                            <MenuItem
-                              key={key}
-                              disabled={
-                                major1[0].facultyId === major2.facultyId &&
-                                major2.facultyId === item.facultyId
-                              }
-                              value={item.subjectId}
-                            >
-                              {item.subjectName}
-                            </MenuItem>
-                          )
-                      )}
+                    {major1.length > 0 && major2
+                      ? semesterSubjectsData.map(
+                          (item, key) =>
+                            item.semester === 2 && (
+                              <MenuItem
+                                key={key}
+                                disabled={
+                                  (major1[0].facultyId === major2.facultyId &&
+                                    major2.facultyId === item.facultyId) ||
+                                  (academicDetails[1].stream !== '$s1Science' &&
+                                    item.facultyId === '#f1Science')
+                                }
+                                value={item.subjectId}
+                              >
+                                {item.subjectName}
+                              </MenuItem>
+                            )
+                        )
+                      : null}
                   </TextField>
                 </Grid>
                 <Grid item xs={12}>
@@ -2163,7 +2220,9 @@ class Form extends React.Component {
                         </Grid>
                       )}
                       <Grid item md={4} xs={12}>
-                        {item.document !== '' && <Success>Uploaded.</Success>}
+                        {item.document !== '' && item.document !== null ? (
+                          <Success>Uploaded.</Success>
+                        ) : null}
                       </Grid>
                       <Grid item md={1} xs={12}>
                         {item.isDelete === 1 && !preview && (
@@ -2261,7 +2320,10 @@ class Form extends React.Component {
                     </Grid>
                   )}
                   <Grid item md={4} xs={6}>
-                    {nationalCertificate !== '' && <Success>Uploaded.</Success>}
+                    {nationalCertificate !== '' &&
+                    nationalCertificate !== null ? (
+                      <Success>Uploaded.</Success>
+                    ) : null}
                   </Grid>
                   {courseType === 'Post Graduate' && (
                     <Grid item md={6} xs={12}>
@@ -2307,7 +2369,9 @@ class Form extends React.Component {
                   )}
                   {courseType === 'Post Graduate' && (
                     <Grid item md={4} xs={6}>
-                      {otherCertificate !== '' && <Success>Uploaded.</Success>}
+                      {otherCertificate !== '' && otherCertificate !== null ? (
+                        <Success>Uploaded.</Success>
+                      ) : null}
                     </Grid>
                   )}
                   <Grid item md={6} xs={12}>
@@ -2353,7 +2417,9 @@ class Form extends React.Component {
                     </Grid>
                   )}
                   <Grid item md={4} xs={6}>
-                    {nccCertificate !== '' && <Success>Uploaded.</Success>}
+                    {nccCertificate !== '' && nccCertificate !== null ? (
+                      <Success>Uploaded.</Success>
+                    ) : null}
                   </Grid>
                   {courseType === 'Under Graduate' && (
                     <Grid item xs={12}>
@@ -2400,7 +2466,9 @@ class Form extends React.Component {
                     )}
                   </Grid>
                   <Grid item md={5} xs={6}>
-                    {nssDocument !== '' && <Success>Uploaded.</Success>}
+                    {nssDocument !== '' && nssDocument !== null ? (
+                      <Success>Uploaded.</Success>
+                    ) : null}
                   </Grid>
                   {courseType === 'Post Graduate' && (
                     <Grid item md={6} xs={12}>
@@ -2449,7 +2517,9 @@ class Form extends React.Component {
                   )}
                   {courseType === 'Post Graduate' && (
                     <Grid item md={4} xs={6}>
-                      {rrDocument !== '' && <Success>Uploaded.</Success>}
+                      {rrDocument !== '' && rrDocument !== null ? (
+                        <Success>Uploaded.</Success>
+                      ) : null}
                     </Grid>
                   )}
                   {courseType === 'Post Graduate' && (
@@ -2583,7 +2653,7 @@ class Form extends React.Component {
                   />
                 )}
                 &nbsp;&nbsp;
-                {signature !== '' && (
+                {signature !== '' && signature !== null ? (
                   <img
                     className={classes.photo}
                     src={
@@ -2592,7 +2662,7 @@ class Form extends React.Component {
                         : ASSETS.url + signature
                     }
                   />
-                )}
+                ) : null}
               </div>
             </Grid>
             {!preview && (
@@ -2621,6 +2691,16 @@ class Form extends React.Component {
                   onClick={this.handleSubmitForm(1)}
                 >
                   Submit
+                </RegularButton>
+              </Grid>
+            )}
+            {preview && (
+              <Grid container item xs={12} justifyContent="center">
+                <RegularButton
+                  color="primary"
+                  onClick={this.handleDownloadForm}
+                >
+                  Download Form & Payment Receipt
                 </RegularButton>
               </Grid>
             )}
