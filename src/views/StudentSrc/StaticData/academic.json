@@ -2,7 +2,7 @@
     "UG": 
     [
         {
-            "nameOfExam": "Hight School/10th",
+            "nameOfExam": "High School/10th",
             "year": "",
             "rollNo": "",
             "board": "",
@@ -23,6 +23,7 @@
             "marksObtained": "",
             "percentage": "",
             "subjects": "",
+            "stream": "",
             "isDelete": 0
         }
     ],
@@ -50,6 +51,7 @@
             "marksObtained": "",
             "percentage": "",
             "subjects": "",
+            "stream": "",
             "isDelete": 0
         },
         {
@@ -89,6 +91,7 @@
             "marksObtained": "",
             "percentage": "",
             "subjects": "",
+            "stream": "",
             "isDelete": 0
         },
         {

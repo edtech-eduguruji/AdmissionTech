@@ -1,0 +1,14 @@
+[
+    {
+        "streamId": "$s1Science",
+        "stream": "Science"
+    },
+    {
+        "streamId": "$s2Commerce",
+        "stream": "Commerce"
+    },
+    {
+        "streamId": "$s3Arts",
+        "stream": "Arts" 
+    }
+]

@@ -5,11 +5,18 @@ import CardContainer from '../../common/CardContainer'
 import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import Success from '../../components/Typography/Success'
+import { PAYMENT } from '../../constants/Constants'
 
 class MakePayment extends React.Component {
   constructor() {
     super()
     this.state = {}
+  }
+
+  componentDidMount() {
+    if (LocalStorage.getUser().payment === PAYMENT.DONE) {
+      this.props.history.push('/student')
+    }
   }
 
   handleMakePayment = () => {

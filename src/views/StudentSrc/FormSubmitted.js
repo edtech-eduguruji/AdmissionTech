@@ -21,7 +21,7 @@ class FormSubmitted extends React.Component {
 
   render() {
     return (
-      <CardContainer heading="Registration">
+      <CardContainer heading="Thank You">
         <Grid container spacing={2}>
           <Grid container item xs={12} direction="column" alignContent="center">
             <Typography variant="h6">
@@ -51,17 +51,12 @@ class FormSubmitted extends React.Component {
               </ul>
             </Typography>
           </Grid>
-          <Grid container item sm={6} xs={12} justify="flex-end">
+          <Grid container item xs={12} justify="center">
             <RegularButton
               color="primary"
               onClick={() => this.props.history.push('/preview')}
             >
               Download Application Form
-            </RegularButton>
-          </Grid>
-          <Grid container item sm={6} xs={12} justify="flex-start">
-            <RegularButton color="primary">
-              Download Payment Receipt
             </RegularButton>
           </Grid>
         </Grid>
