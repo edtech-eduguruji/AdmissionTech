@@ -31,7 +31,7 @@ class FormSubmitted extends React.Component {
           <Grid container item xs={12} direction="column" alignContent="center">
             <Typography variant="h6">General instruction</Typography>
             <Divider />
-            <Typography variant="body1">
+            <Typography component="span" variant="body1">
               <ul>
                 <li>
                   You can login to our portal using your registration id and
@@ -40,10 +40,6 @@ class FormSubmitted extends React.Component {
                 <li>
                   You can download application form and payment receipt below
                 </li>
-                {/* <li>
-                  If 'Make payment' button appear below which means your
-                  application is submitted but payment is not yet done
-                </li> */}
                 <li>
                   Once you done with payment process then only your application
                   form will accepted further
@@ -51,7 +47,7 @@ class FormSubmitted extends React.Component {
               </ul>
             </Typography>
           </Grid>
-          <Grid container item xs={12} justify="center">
+          <Grid container item xs={12} justifyContent="center">
             <RegularButton
               color="primary"
               onClick={() => this.props.history.push('/preview')}

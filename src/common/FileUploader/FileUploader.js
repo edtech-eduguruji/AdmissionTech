@@ -44,7 +44,7 @@ class FileUploader extends Component {
     this.dropRef = React.createRef()
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     this.setState({
       filesCount: props.filesCount,
     })

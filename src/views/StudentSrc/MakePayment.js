@@ -1,11 +1,13 @@
 import { Divider, Grid, Typography } from '@material-ui/core'
 import React from 'react'
 import { withRouter } from 'react-router-dom'
+import FormApi from '../../apis/FormApi'
 import CardContainer from '../../common/CardContainer'
 import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import Success from '../../components/Typography/Success'
 import { PAYMENT } from '../../constants/Constants'
+import { addSuccessMsg } from '../../utils/Utils'
 
 class MakePayment extends React.Component {
   constructor() {
@@ -20,10 +22,16 @@ class MakePayment extends React.Component {
   }
 
   handleMakePayment = () => {
-    //API call for Payment
-    let user = { ...LocalStorage.getUser(), payment: '1' }
-    LocalStorage.setUser(user)
-    this.props.history.push('/student')
+    const data = new FormData()
+    data.append('registrationNo', LocalStorage.getUser().user_id)
+    FormApi.makePayment(data).then((res) => {
+      if (res.status === 200) {
+        addSuccessMsg('Payment is Successfully done.')
+        let user = { ...LocalStorage.getUser(), payment: '1' }
+        LocalStorage.setUser(user)
+        this.props.history.push('/student')
+      }
+    })
   }
 
   render() {
@@ -73,7 +81,7 @@ class MakePayment extends React.Component {
               Online application form fees is Rs. 252 only.
             </Typography>
           </Grid>
-          <Grid container item xs={12} justify="center">
+          <Grid container item xs={12} justifyContent="center">
             <RegularButton color="primary" onClick={this.handleMakePayment}>
               Make Payment
             </RegularButton>

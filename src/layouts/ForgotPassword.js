@@ -6,11 +6,13 @@ import Typography from '@material-ui/core/Typography'
 import CakeIcon from '@material-ui/icons/Cake'
 import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber'
 import React, { Component } from 'react'
-import { withRouter } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
+import ForgotApi from '../apis/ForgotApi'
 import Card from '../components/Card/Card'
 import CardBody from '../components/Card/CardBody'
 import RegularButton from '../components/CustomButtons/Button'
 import CustomInput from '../components/CustomInput/CustomInput'
+import { addErrorMsg } from '../utils/Utils'
 
 const useStyles = (theme) => ({
   paper: {
@@ -34,25 +36,30 @@ class ForgotPassword extends Component {
   constructor() {
     super()
     this.state = {
-      aadharNo: '',
+      phone: '',
       dob: '',
     }
   }
   handleSubmit = () => {
-    this.handleLogin()
+    this.handleSubmitDetails()
   }
 
   handleKeyDown = (event) => {
     if (event.keyCode === 13) {
-      this.handleLogin()
+      this.handleSubmitDetails()
     }
   }
 
-  handleLogin = () => {
-    const { aadharNo, dob } = this.state
+  handleSubmitDetails = () => {
+    const { phone, dob } = this.state
     const data = {
-      aadharNo: aadharNo,
+      phone: phone,
       dob: dob,
+    }
+    if (phone !== '' && dob !== '') {
+      ForgotApi.forgotRegistration(data)
+    } else {
+      addErrorMsg('Fields cannot be empty')
     }
   }
 
@@ -79,23 +86,24 @@ class ForgotPassword extends Component {
               </Typography>
               <div className={classes.form} noValidate>
                 <Grid container spacing={2} alignItems="center">
-                  <Grid container item xs={2} justify="center">
+                  <Grid container item xs={2} justifyContent="center">
                     <ConfirmationNumberIcon />
                   </Grid>
                   <Grid item xs={10}>
                     <CustomInput
-                      labelText="Aadhar No."
+                      labelText="Mobile No"
                       formControlProps={{
                         fullWidth: true,
                       }}
                       inputProps={{
-                        name: 'aadharNo',
+                        name: 'phone',
+                        type: 'number',
                         onKeyDown: this.handleKeyDown,
                       }}
                       handleChange={this.handleChangeFields}
                     />
                   </Grid>
-                  <Grid container item xs={2} justify="center">
+                  <Grid container item xs={2} justifyContent="center">
                     <CakeIcon />
                   </Grid>
                   <Grid item xs={10}>
@@ -112,7 +120,7 @@ class ForgotPassword extends Component {
                       handleChange={this.handleChangeFields}
                     />
                   </Grid>
-                  <Grid container item xs={12} justify="center">
+                  <Grid container item xs={12} justifyContent="center">
                     <RegularButton
                       color="primary"
                       variant="contained"
@@ -121,6 +129,9 @@ class ForgotPassword extends Component {
                     >
                       Submit
                     </RegularButton>
+                  </Grid>
+                  <Grid container item xs={12} justifyContent="flex-end">
+                    <Link to="/login">Home ?</Link>
                   </Grid>
                 </Grid>
               </div>

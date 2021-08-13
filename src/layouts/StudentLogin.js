@@ -116,7 +116,7 @@ class Login extends Component {
                   </Typography>
                   <div className={classes.form} noValidate>
                     <Grid container spacing={2} alignItems="center">
-                      <Grid container item xs={2} justify="center">
+                      <Grid container item xs={2} justifyContent="center">
                         <ConfirmationNumberIcon />
                       </Grid>
                       <Grid item xs={10}>
@@ -132,7 +132,7 @@ class Login extends Component {
                           handleChange={this.handleChangeFields}
                         />
                       </Grid>
-                      <Grid container item xs={2} justify="center">
+                      <Grid container item xs={2} justifyContent="center">
                         <CakeIcon />
                       </Grid>
                       <Grid item xs={10}>
@@ -149,7 +149,7 @@ class Login extends Component {
                           handleChange={this.handleChangeFields}
                         />
                       </Grid>
-                      <Grid container item xs={12} justify="center">
+                      <Grid container item xs={12} justifyContent="center">
                         <RegularButton
                           color="primary"
                           variant="contained"
@@ -168,12 +168,12 @@ class Login extends Component {
               <Card cardFullHeight>
                 <CardBody className={classes.paper}>
                   <Grid container spacing={2}>
-                    <Grid container item xs={12} justify="center">
+                    <Grid container item xs={12} justifyContent="center">
                       <Typography component="h1" variant="h6">
                         New User Registration for Admission
                       </Typography>
                     </Grid>
-                    <Grid container item xs={12} justify="center">
+                    <Grid container item xs={12} justifyContent="center">
                       <RegularButton
                         color="primary"
                         variant="contained"
@@ -186,12 +186,12 @@ class Login extends Component {
                     <Grid item xs={12}>
                       <Divider />
                     </Grid>
-                    <Grid container item xs={12} justify="center">
+                    <Grid container item xs={12} justifyContent="center">
                       <Typography component="h1" variant="h6">
                         Forgot Registration Details ?
                       </Typography>
                     </Grid>
-                    <Grid container item xs={12} justify="center">
+                    <Grid container item xs={12} justifyContent="center">
                       <RegularButton
                         color="primary"
                         variant="contained"

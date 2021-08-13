@@ -26,10 +26,12 @@ import FileUploader from '../../common/FileUploader/FileUploader'
 import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import CustomInput from '../../components/CustomInput/CustomInput'
+import CustomTable from '../../components/Table/Table'
 import Success from '../../components/Typography/Success'
 import { ASSETS, PAYMENT } from '../../constants/Constants'
 import {
   addErrorMsg,
+  createdDateTime,
   errorDialog,
   mandatoryField,
   redirectUrl,
@@ -142,9 +144,12 @@ class Form extends React.Component {
       major2: '',
       major3: '',
       major4: '',
-      vocationalSubject: '',
-      coCurriculum: '',
+      vocationalSem1: '',
+      vocationalSem2: '',
+      coCurriculumSem1: '',
+      coCurriculumSem2: '',
       token: '',
+      paymentDetails: [],
     }
   }
 
@@ -161,6 +166,16 @@ class Form extends React.Component {
           if (response.data.submitted === '1' && !this.props.isPreview) {
             this.props.history.push('/formsubmitted')
           } else {
+            if (this.props.isPreview) {
+              const data = {
+                registrationNo: LocalStorage.getUser().user_id,
+              }
+              FormApi.fetchPaymentDetails(data).then((res) => {
+                this.setState({
+                  paymentDetails: this.formatPaymentData(res.data),
+                })
+              })
+            }
             Object.keys(response.data).map((item) => {
               if (response.data[item] === 'null') {
                 response.data[item] = ''
@@ -178,6 +193,8 @@ class Form extends React.Component {
             response.data.major2 = response.data.major2
               ? JSON.parse(response.data.major2)
               : []
+            response.data.coCurriculumSem1 = 'Food, Nutrition and Hygiene'
+            response.data.coCurriculumSem2 = 'First Aid and Basic health'
             this.setState({ ...response.data })
           }
         }
@@ -234,7 +251,7 @@ class Form extends React.Component {
         major2: '',
         major3: '',
         major4: '',
-        vocationalSubject: '',
+        vocationalSem1: '',
       })
     }
     this.setState({
@@ -271,7 +288,8 @@ class Form extends React.Component {
         major2: '',
         major3: '',
         major4: '',
-        vocationalSubject: '',
+        vocationalSem1: '',
+        vocationalSem2: '',
       })
     }
     this.setState({
@@ -381,8 +399,10 @@ class Form extends React.Component {
       major2,
       major3,
       major4,
-      vocationalSubject,
-      coCurriculum,
+      vocationalSem1,
+      vocationalSem2,
+      coCurriculumSem1,
+      coCurriculumSem2,
       faculty,
       courseType,
       vaccinated,
@@ -490,8 +510,10 @@ class Form extends React.Component {
     data.append('major2', JSON.stringify(major2))
     data.append('major3', major3)
     data.append('major4', major4)
-    data.append('vocationalSubject', vocationalSubject)
-    data.append('coCurriculum', coCurriculum)
+    data.append('vocationalSem1', vocationalSem1)
+    data.append('vocationalSem2', vocationalSem2)
+    data.append('coCurriculumSem1', coCurriculumSem1)
+    data.append('coCurriculumSem2', coCurriculumSem2)
     documents.map(
       (item, index) =>
         item.document !== '' && data.append('document' + index, item.document)
@@ -519,7 +541,7 @@ class Form extends React.Component {
       if (dob === '') {
         count++
         addErrorMsg('For saving the draft date of birth is mandatory.')
-      } else if (token === '') {
+      } else if (!token) {
         count++
         addErrorMsg("Please verify you're not a robot")
       }
@@ -576,11 +598,12 @@ class Form extends React.Component {
           "Fill the empty fields in 'Faculty and Courses Details' Section"
         )
       } else if (
-        !this.checkFaculty(faculty) &&
-        (major1.length !== 2 ||
-          !major2 ||
-          (!major3 && !major4) ||
-          !vocationalSubject)
+        (!this.checkFaculty(faculty) &&
+          (major1.length !== 2 ||
+            !major2 ||
+            (!major3 && !major4) ||
+            !vocationalSem1)) ||
+        !vocationalSem2
       ) {
         count++
         addErrorMsg(
@@ -592,7 +615,8 @@ class Form extends React.Component {
       } else if (!signature) {
         count++
         addErrorMsg('Upload Signature')
-      } else if (token === '') {
+      } else if (!token) {
+        count++
         addErrorMsg("Please verify you're not a robot")
       }
     }
@@ -636,18 +660,19 @@ class Form extends React.Component {
     const input = document.getElementById('form1234')
     html2canvas(input, { useCORS: true }).then((canvas) => {
       const imgData = canvas.toDataURL('image/jpeg')
-      var pdf = new jsPDF('p', 'mm', 'legal')
+      var pdf = new jsPDF('p', 'px', 'a4')
+
       var imgWidth = pdf.internal.pageSize.width
       var pageHeight = pdf.internal.pageSize.height
       var imgHeight = (canvas.height * imgWidth) / canvas.width
       var heightLeft = imgHeight
       var position = 0
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth - 2, imgHeight)
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
       heightLeft -= pageHeight
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight
         pdf.addPage()
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth - 2, imgHeight)
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
         heightLeft -= pageHeight
       }
       pdf.save(LocalStorage.getUser().user_id + '.pdf')
@@ -661,7 +686,8 @@ class Form extends React.Component {
         major2: '',
         major3: '',
         major4: '',
-        vocationalSubject: '',
+        vocationalSem1: '',
+        vocationalSem2: '',
       })
     } else {
       if (value.length <= 2) {
@@ -703,7 +729,10 @@ class Form extends React.Component {
           combination2.splice(combination2.indexOf(item.subjectId), 1)
         }
       })
-      if (subjectId === combination1[0] || subjectId === combination2[0]) {
+      if (
+        (subjectId === combination1[0] && combination1.length === 1) ||
+        (subjectId === combination2[0] && combination2.length === 1)
+      ) {
         return 0
       } else {
         return 1
@@ -717,7 +746,10 @@ class Form extends React.Component {
           combination2.splice(combination2.indexOf(item.subjectId), 1)
         }
       })
-      if (subjectId === combination3[0] || subjectId === combination2[0]) {
+      if (
+        (subjectId === combination3[0] && combination3.length === 1) ||
+        (subjectId === combination2[0] && combination2.length === 1)
+      ) {
         return 0
       } else {
         return 1
@@ -731,7 +763,10 @@ class Form extends React.Component {
           combination4.splice(combination4.indexOf(item.subjectId), 1)
         }
       })
-      if (subjectId === combination3[0] || subjectId === combination4[0]) {
+      if (
+        (subjectId === combination3[0] && combination3.length === 1) ||
+        (subjectId === combination4[0] && combination4.length === 1)
+      ) {
         return 0
       } else {
         return 1
@@ -742,35 +777,58 @@ class Form extends React.Component {
   }
 
   filterMajorSubjects = () => {
-    const { faculty, major1, major2 } = this.state
-    let subjects = majorSubjectsData.filter(
-      (item) => item.facultyId === faculty
-    )
-    major1.map((item) => {
-      let index = subjects.findIndex((itm) => item.subjectId === itm.subjectId)
-      subjects.splice(index, 1)
-    })
-    if (major2 !== '') {
-      let i = subjects.findIndex((item) => item.subjectId === major2.subjectId)
-      subjects.splice(i, 1)
-    }
-    if (major1.length > 0 && faculty === '#f2Arts') {
-      if (major1[0].subjectId === '$s7dss') {
+    const { faculty, major1, major2, academicDetails } = this.state
+    if (academicDetails.length > 0 && academicDetails[1].stream) {
+      let subjects = majorSubjectsData.filter(
+        (item) =>
+          item.streamId.includes(academicDetails[1].stream) &&
+          item.facultyId === faculty
+      )
+      major1.map((item) => {
+        let index = subjects.findIndex(
+          (itm) => item.subjectId === itm.subjectId
+        )
+        subjects.splice(index, 1)
+      })
+      if (major2 !== '') {
         let i = subjects.findIndex(
-          (item) => item.subjectId === '$s10Phylosophy'
+          (item) => item.subjectId === major2.subjectId
         )
         subjects.splice(i, 1)
-        return subjects
-      } else if (major1[0].subjectId === '$s10Phylosophy') {
-        let i = subjects.findIndex((item) => item.subjectId === '$s7dss')
-        subjects.splice(i, 1)
-        return subjects
+      }
+      if (major1.length > 0 && faculty === '#f2Arts') {
+        if (major1[0].subjectId === '$s7dss') {
+          let i = subjects.findIndex(
+            (item) => item.subjectId === '$s10Phylosophy'
+          )
+          subjects.splice(i, 1)
+          return subjects
+        } else if (major1[0].subjectId === '$s10Phylosophy') {
+          let i = subjects.findIndex((item) => item.subjectId === '$s7dss')
+          subjects.splice(i, 1)
+          return subjects
+        } else {
+          return subjects
+        }
       } else {
         return subjects
       }
     } else {
-      return subjects
+      return []
     }
+  }
+
+  formatPaymentData = (data) => {
+    var formatted = data.map((item) => {
+      return [
+        item.paymentId,
+        createdDateTime(item.payment_date, 1),
+        item.mode,
+        '₹' + item.amount,
+        'SUCCESS',
+      ]
+    })
+    return formatted
   }
 
   render() {
@@ -837,8 +895,11 @@ class Form extends React.Component {
       major2,
       major3,
       major4,
-      vocationalSubject,
-      coCurriculum,
+      vocationalSem1,
+      vocationalSem2,
+      coCurriculumSem1,
+      coCurriculumSem2,
+      paymentDetails,
     } = this.state
     const { isPreview } = this.props
     const preview =
@@ -849,33 +910,48 @@ class Form extends React.Component {
           heading={'Admission Form'}
           subTitle="Fill Up the Form"
           buttons={[
+            preview && (
+              <RegularButton
+                size="sm"
+                color="danger"
+                key="dp"
+                onClick={() => this.props.history.goBack()}
+              >
+                Back
+              </RegularButton>
+            ),
             !preview && (
               <Hidden xsDown>
                 <RegularButton
                   size="sm"
                   color="danger"
                   key="dp"
-                  onClick={this.handleDownloadProspectus}
+                  target="_blank"
+                  href="./Prospectus.pdf"
                 >
-                  {'Download Prospectus'}
-                  &nbsp;&nbsp; <GetAppIcon />
+                  Download Prospectus &nbsp;&nbsp; <GetAppIcon />
                 </RegularButton>
               </Hidden>
             ),
           ]}
         >
-          <Grid container spacing={2} alignItems="center" id="form1234">
+          <Grid
+            container
+            spacing={2}
+            alignItems="center"
+            className="pad10"
+            id="form1234"
+          >
             {!preview && (
               <Hidden smUp>
-                <Grid container item xs={12} justify="center">
+                <Grid container item xs={12} justifyContent="center">
                   <RegularButton
                     size="sm"
                     color="danger"
-                    key="dp"
-                    onClick={this.handleDownloadProspectus}
+                    target="_blank"
+                    href="./Prospectus.pdf"
                   >
-                    {'Download Prospectus'}
-                    &nbsp;&nbsp; <GetAppIcon />
+                    Download Prospectus &nbsp;&nbsp; <GetAppIcon />
                   </RegularButton>
                 </Grid>
               </Hidden>
@@ -908,7 +984,7 @@ class Form extends React.Component {
                 </Typography>
               </Grid>
             ) : (
-              <Grid container item xs={12} justify="center">
+              <Grid container item xs={12} justifyContent="center">
                 <Typography variant="h6">ADMISSION FORM</Typography>
                 <Divider />
               </Grid>
@@ -971,7 +1047,7 @@ class Form extends React.Component {
                     handleChange={this.handleChangeFields}
                   />
                 </Grid>
-                <Grid container item xs={12} justify="center">
+                <Grid container item xs={12} justifyContent="center">
                   <div className="alignCenter">
                     <Typography>
                       Upload University Web Registration (PDF) &nbsp;
@@ -988,7 +1064,7 @@ class Form extends React.Component {
                     )}
                   </div>
                 </Grid>
-                <Grid container item xs={12} justify="center">
+                <Grid container item xs={12} justifyContent="center">
                   {form !== '' && form !== null ? (
                     <Success>Uploaded.</Success>
                   ) : null}
@@ -1001,7 +1077,7 @@ class Form extends React.Component {
                   <Switch
                     disabled={preview}
                     name="vaccinated"
-                    checked={vaccinated}
+                    checked={!vaccinated ? false : true}
                     color="primary"
                     onChange={this.handleFieldChecked}
                   />
@@ -1042,7 +1118,6 @@ class Form extends React.Component {
                 labelText={mandatoryField('Full Name')}
                 formControlProps={{
                   fullWidth: true,
-                  isForm: true,
                 }}
                 inputProps={{
                   name: 'name',
@@ -1120,8 +1195,10 @@ class Form extends React.Component {
                 variant={preview ? 'standard' : 'outlined'}
                 name="religion"
               >
-                {religionData.map((item) => (
-                  <MenuItem value={item.religionId}>{item.religion}</MenuItem>
+                {religionData.map((item, key) => (
+                  <MenuItem key={key} value={item.religionId}>
+                    {item.religion}
+                  </MenuItem>
                 ))}
               </TextField>
             </Grid>
@@ -1167,8 +1244,10 @@ class Form extends React.Component {
                 value={category}
                 onChange={this.handleChangeFields}
               >
-                {categoryData.map((item) => (
-                  <MenuItem value={item.categoryId}>{item.category}</MenuItem>
+                {categoryData.map((item, key) => (
+                  <MenuItem key={key} value={item.categoryId}>
+                    {item.category}
+                  </MenuItem>
                 ))}
               </TextField>
             </Grid>
@@ -1193,14 +1272,14 @@ class Form extends React.Component {
                 value={subCategory}
                 onChange={this.handleChangeFields}
               >
-                {subCategoryData.map((item) => (
-                  <MenuItem value={item.subCategoryId}>
+                {subCategoryData.map((item, key) => (
+                  <MenuItem key={key} value={item.subCategoryId}>
                     {item.subCategory}
                   </MenuItem>
                 ))}
               </TextField>
             </Grid>
-            <Grid container item md={6} xs={12} justify="center">
+            <Grid container item md={6} xs={12} justifyContent="center">
               <div className="center">
                 {!preview && (
                   <FileUploader
@@ -1217,7 +1296,7 @@ class Form extends React.Component {
                 ) : null}
               </div>
             </Grid>
-            <Grid container item md={6} xs={12} justify="center">
+            <Grid container item md={6} xs={12} justifyContent="center">
               <div className="center">
                 {!preview && (
                   <FileUploader
@@ -1463,8 +1542,10 @@ class Form extends React.Component {
                 value={state}
                 onChange={this.handleChangeFields}
               >
-                {statesData.map((item) => (
-                  <MenuItem value={item.code}>{item.name}</MenuItem>
+                {statesData.map((item, key) => (
+                  <MenuItem key={key} value={item.code}>
+                    {item.name}
+                  </MenuItem>
                 ))}
               </TextField>
             </Grid>
@@ -1490,9 +1571,11 @@ class Form extends React.Component {
                 onChange={this.handleChangeFields}
               >
                 {citiesData.map(
-                  (item) =>
+                  (item, key) =>
                     state === item.state && (
-                      <MenuItem value={item.id}>{item.name}</MenuItem>
+                      <MenuItem key={key} value={item.id}>
+                        {item.name}
+                      </MenuItem>
                     )
                 )}
               </TextField>
@@ -1593,8 +1676,10 @@ class Form extends React.Component {
                 value={cState}
                 onChange={this.handleChangeFields}
               >
-                {statesData.map((item) => (
-                  <MenuItem value={item.code}>{item.name}</MenuItem>
+                {statesData.map((item, key) => (
+                  <MenuItem key={key} value={item.code}>
+                    {item.name}
+                  </MenuItem>
                 ))}
               </TextField>
             </Grid>
@@ -1620,9 +1705,11 @@ class Form extends React.Component {
                 onChange={this.handleChangeFields}
               >
                 {citiesData.map(
-                  (item) =>
+                  (item, key) =>
                     cState === item.state && (
-                      <MenuItem value={item.id}>{item.name}</MenuItem>
+                      <MenuItem key={key} value={item.id}>
+                        {item.name}
+                      </MenuItem>
                     )
                 )}
               </TextField>
@@ -1651,8 +1738,8 @@ class Form extends React.Component {
                 variant={preview ? 'standard' : 'outlined'}
                 name="courseType"
               >
-                {courseTypeData.map((item) => (
-                  <MenuItem value={item.courseTypeId}>
+                {courseTypeData.map((item, key) => (
+                  <MenuItem key={key} value={item.courseTypeId}>
                     {item.courseType}
                   </MenuItem>
                 ))}
@@ -1847,7 +1934,7 @@ class Form extends React.Component {
                           </RegularButton>
                         )}
                       </Grid>
-                      <Grid container item xs={12} justify="flex-end">
+                      <Grid container item xs={12} justifyContent="flex-end">
                         {academicDetails.length - 1 === i && !preview && (
                           <Box pr="10px" pb="5px">
                             <div className="alignCenter">
@@ -1870,7 +1957,7 @@ class Form extends React.Component {
                 ))}
               </Grid>
             ) : (
-              <Grid container item xs={12} justify="center">
+              <Grid container item xs={12} justifyContent="center">
                 <Typography variant="subtitle1">
                   Select <b>"course type"</b> to view this content.
                 </Typography>
@@ -1933,10 +2020,12 @@ class Form extends React.Component {
               >
                 {academicDetails.length > 0 &&
                   academicDetails[1].stream !== '' &&
-                  facultyData.map((item) => (
+                  facultyData.map((item, key) => (
                     <MenuItem
+                      key={key}
                       disabled={
-                        academicDetails[1].stream !== '$s1Science' &&
+                        (academicDetails[1].stream === '$s2Commerce' ||
+                          academicDetails[1].stream === '$s3Arts') &&
                         item.facultyId === '#f1Science'
                       }
                       value={item.facultyId}
@@ -2001,7 +2090,7 @@ class Form extends React.Component {
                     value={JSON.stringify(major2)}
                     onChange={this.handleChangeFields}
                   >
-                    {major1.length > 0 &&
+                    {major1.length === 2 &&
                       majorSubjectsData.map((item, key) => (
                         <MenuItem
                           disabled={
@@ -2011,8 +2100,13 @@ class Form extends React.Component {
                             this.checkCombination(item.subjectId) === 0 ||
                             item.subjectId === '$20Bcom' ||
                             item.subjectId === '$21Bba' ||
-                            (academicDetails[1].stream !== '$s1Science' &&
-                              item.facultyId === '#f1Science')
+                            ((academicDetails[1].stream === '$s2Commerce' ||
+                              academicDetails[1].stream === '$s3Arts') &&
+                              item.facultyId === '#f1Science') ||
+                            (!item.streamId.includes(
+                              academicDetails[1].stream
+                            ) &&
+                              item.facultyId === faculty)
                           }
                           key={key}
                           value={JSON.stringify(item)}
@@ -2058,10 +2152,15 @@ class Form extends React.Component {
                                 disabled={
                                   (major1[0].facultyId === major2.facultyId &&
                                     major2.facultyId === item.facultyId) ||
-                                  (academicDetails[1].stream !== '$s1Science' &&
-                                    item.facultyId === '#f1Science')
+                                  ((academicDetails[1].stream ===
+                                    '$s2Commerce' ||
+                                    academicDetails[1].stream === '$s3Arts') &&
+                                    item.facultyId === '#f1Science') ||
+                                  item.subjectId === major1[0].subjectId ||
+                                  item.subjectId === major1[1].subjectId ||
+                                  item.subjectId === major2.subjectId
                                 }
-                                value={item.subjectId}
+                                value={item.paperId}
                               >
                                 {item.subjectName}
                               </MenuItem>
@@ -2100,8 +2199,13 @@ class Form extends React.Component {
                                 disabled={
                                   (major1[0].facultyId === major2.facultyId &&
                                     major2.facultyId === item.facultyId) ||
-                                  (academicDetails[1].stream !== '$s1Science' &&
-                                    item.facultyId === '#f1Science')
+                                  ((academicDetails[1].stream ===
+                                    '$s2Commerce' ||
+                                    academicDetails[1].stream === '$s3Arts') &&
+                                    item.facultyId === '#f1Science') ||
+                                  item.subjectId === major1[0].subjectId ||
+                                  item.subjectId === major1[1].subjectId ||
+                                  item.subjectId === major2.subjectId
                                 }
                                 value={item.subjectId}
                               >
@@ -2118,7 +2222,7 @@ class Form extends React.Component {
                   </Typography>
                   <Divider />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={6}>
                   <TextField
                     InputLabelProps={{
                       classes: {
@@ -2134,9 +2238,36 @@ class Form extends React.Component {
                     select
                     fullWidth
                     variant={preview ? 'standard' : 'outlined'}
-                    name="vocationalSubject"
-                    label={mandatoryField('Select Subject')}
-                    value={vocationalSubject}
+                    name="vocationalSem1"
+                    label={mandatoryField('Semester 1')}
+                    value={vocationalSem1}
+                    onChange={this.handleChangeFields}
+                  >
+                    <MenuItem value="1">1</MenuItem>
+                    <MenuItem value="2">2</MenuItem>
+                    <MenuItem value="3">3</MenuItem>
+                    <MenuItem value="4">4</MenuItem>
+                  </TextField>
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    InputLabelProps={{
+                      classes: {
+                        root: classes.labelRoot,
+                      },
+                    }}
+                    InputProps={{
+                      classes: {
+                        disabled: classes.disabled,
+                      },
+                    }}
+                    disabled={preview}
+                    select
+                    fullWidth
+                    variant={preview ? 'standard' : 'outlined'}
+                    name="vocationalSem2"
+                    label={mandatoryField('Semester 2')}
+                    value={vocationalSem2}
                     onChange={this.handleChangeFields}
                   >
                     <MenuItem value="1">1</MenuItem>
@@ -2146,6 +2277,12 @@ class Form extends React.Component {
                   </TextField>
                 </Grid>
                 <Grid item xs={12}>
+                  <Typography variant="subtitle1">
+                    Selection of Co-Curriculum
+                  </Typography>
+                  <Divider />
+                </Grid>
+                <Grid item xs={6}>
                   <TextField
                     InputLabelProps={{
                       classes: {
@@ -2160,9 +2297,30 @@ class Form extends React.Component {
                     disabled={true}
                     fullWidth
                     variant={preview ? 'standard' : 'outlined'}
-                    name="coCurriculum"
-                    label={mandatoryField('Co-Curriculum')}
-                    value={coCurriculum}
+                    name="coCurriculumSem1"
+                    label={mandatoryField('Semester 1')}
+                    value={coCurriculumSem1}
+                    onChange={this.handleChangeFields}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    InputLabelProps={{
+                      classes: {
+                        root: classes.labelRoot,
+                      },
+                    }}
+                    InputProps={{
+                      classes: {
+                        disabled: classes.disabled,
+                      },
+                    }}
+                    disabled={true}
+                    fullWidth
+                    variant={preview ? 'standard' : 'outlined'}
+                    name="coCurriculumSem2"
+                    label={mandatoryField('Semester 2')}
+                    value={coCurriculumSem2}
                     onChange={this.handleChangeFields}
                   />
                 </Grid>
@@ -2200,8 +2358,8 @@ class Form extends React.Component {
                           variant={preview ? 'standard' : 'outlined'}
                           name="documentType"
                         >
-                          {documentTypeData.map((item) => (
-                            <MenuItem value={item.documentTypeId}>
+                          {documentTypeData.map((item, key) => (
+                            <MenuItem key={key} value={item.documentTypeId}>
                               {item.documentType}
                             </MenuItem>
                           ))}
@@ -2236,7 +2394,13 @@ class Form extends React.Component {
                           </RegularButton>
                         )}
                       </Grid>
-                      <Grid container item md={12} xs={6} justify="flex-end">
+                      <Grid
+                        container
+                        item
+                        md={12}
+                        xs={6}
+                        justifyContent="flex-end"
+                      >
                         {documents.length - 1 === i && !preview && (
                           <Box pr="10px" pb="5px">
                             <div className="alignCenter">
@@ -2259,7 +2423,7 @@ class Form extends React.Component {
                 ))}
               </Grid>
             ) : (
-              <Grid container item xs={12} justify="center">
+              <Grid container item xs={12} justifyContent="center">
                 <Typography variant="subtitle1">
                   Select course type to view this content.
                 </Typography>
@@ -2272,7 +2436,7 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={12}>
               {courseType === '' ? (
-                <Grid container item xs={12} justify="center">
+                <Grid container item xs={12} justifyContent="center">
                   <Typography variant="subtitle1">
                     Select course type to view this content.
                   </Typography>
@@ -2427,7 +2591,8 @@ class Form extends React.Component {
                         control={
                           <Checkbox
                             value="5"
-                            checked={freedomFighter}
+                            checked={!freedomFighter ? false : true}
+                            s
                             onChange={this.handleCalculateMeritCheck}
                             name="freedomFighter"
                             color="primary"
@@ -2443,7 +2608,7 @@ class Form extends React.Component {
                       control={
                         <Checkbox
                           value="5"
-                          checked={nationalSevaScheme}
+                          checked={!nationalSevaScheme ? false : true}
                           onChange={this.handleCalculateMeritCheck}
                           name="nationalSevaScheme"
                           color="primary"
@@ -2523,7 +2688,7 @@ class Form extends React.Component {
                     </Grid>
                   )}
                   {courseType === 'Post Graduate' && (
-                    <Grid container item xs={12} justify="center">
+                    <Grid container item xs={12} justifyContent="center">
                       <Typography>OR</Typography>
                     </Grid>
                   )}
@@ -2533,7 +2698,7 @@ class Form extends React.Component {
                         control={
                           <Checkbox
                             value="3"
-                            checked={otherRoverRanger}
+                            checked={!otherRoverRanger ? false : true}
                             onChange={this.handleCalculateMeritCheck}
                             name="otherRoverRanger"
                             color="primary"
@@ -2550,7 +2715,7 @@ class Form extends React.Component {
                         control={
                           <Checkbox
                             value="5"
-                            checked={bcom}
+                            checked={!bcom ? false : true}
                             onChange={this.handleCalculateMeritCheck}
                             name="bcom"
                             color="primary"
@@ -2666,7 +2831,7 @@ class Form extends React.Component {
               </div>
             </Grid>
             {!preview && (
-              <Grid container item xs={12} justify="center">
+              <Grid container item xs={12} justifyContent="center">
                 <ReCAPTCHA
                   sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
                   onChange={(token) => this.handleReCaptcha(token)}
@@ -2675,7 +2840,7 @@ class Form extends React.Component {
               </Grid>
             )}
             {!preview && (
-              <Grid container item xs={6} justify="flex-end">
+              <Grid container item xs={6} justifyContent="flex-end">
                 <RegularButton
                   color="primary"
                   onClick={this.handleSubmitForm(0)}
@@ -2696,15 +2861,40 @@ class Form extends React.Component {
             )}
             {preview && (
               <Grid container item xs={12} justifyContent="center">
+                <Grid container item xs={12} justifyContent="center">
+                  <Box p={4}>
+                    <Typography variant="h6">PAYMENT RECEIPT</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <CustomTable
+                    boldHeading
+                    isColumn={true}
+                    tableHead={[
+                      'Payment ID',
+                      'Payment Date',
+                      'Payment Mode',
+                      'Amount Paid',
+                      'Status',
+                    ]}
+                    tableData={paymentDetails}
+                  />
+                </Grid>
+              </Grid>
+            )}
+          </Grid>
+          {preview && (
+            <Grid container item xs={12} justifyContent="center">
+              <Box p={2}>
                 <RegularButton
                   color="primary"
                   onClick={this.handleDownloadForm}
                 >
                   Download Form & Payment Receipt
                 </RegularButton>
-              </Grid>
-            )}
-          </Grid>
+              </Box>
+            </Grid>
+          )}
         </CardContainer>
       </div>
     )
