@@ -40,8 +40,8 @@ class Summary extends React.Component {
               <RegularButton
                 size="sm"
                 color="danger"
-                key="dp"
-                onClick={this.handleDownloadProspectus}
+                target="_blank"
+                href="./Prospectus.pdf"
               >
                 Download Prospectus &nbsp;&nbsp; <GetAppIcon />
               </RegularButton>
@@ -50,12 +50,12 @@ class Summary extends React.Component {
         >
           <Grid container spacing={2} alignItems="center" id="form1234">
             <Hidden smUp>
-              <Grid container item xs={12} justify="center">
+              <Grid container item xs={12} justifyContent="center">
                 <RegularButton
                   size="sm"
                   color="danger"
-                  key="dp"
-                  onClick={this.handleDownloadProspectus}
+                  target="_blank"
+                  href="./Prospectus.pdf"
                 >
                   Download Prospectus &nbsp;&nbsp; <GetAppIcon />
                 </RegularButton>
