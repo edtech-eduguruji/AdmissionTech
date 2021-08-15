@@ -1907,7 +1907,13 @@ class Form extends React.Component {
               </TextField>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle1">Selection of Faculty</Typography>
+              <Typography variant="subtitle1" component="div" gutterBottom>
+                Selection of Faculty
+              </Typography>
+              <Typography variant="caption">
+                You can choose "Facult of Science" only if you are from science
+                stream in 12th
+              </Typography>
               <Divider />
             </Grid>
             <Grid item xs={12}>
@@ -1947,10 +1953,11 @@ class Form extends React.Component {
               </TextField>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle1">
-                {!this.checkFaculty(faculty)
-                  ? 'Selection of 2 Major Subjects'
-                  : 'Selection of Course'}
+              <Typography variant="subtitle1" gutterBottom>
+                Selection of 2 Major Subjects
+              </Typography>
+              <Typography variant="caption">
+                You can select any two subjects from the list
               </Typography>
               <Divider />
             </Grid>
@@ -1976,8 +1983,11 @@ class Form extends React.Component {
             {!this.checkFaculty(faculty) && (
               <Grid container spacing={2} item xs={12}>
                 <Grid item xs={12}>
-                  <Typography variant="subtitle1">
+                  <Typography variant="subtitle1" component="div" gutterBottom>
                     Selection of 3rd Major Subject (Any Faculty)
+                  </Typography>
+                  <Typography variant="caption">
+                    You have to select only one subject from the list
                   </Typography>
                   <Divider />
                 </Grid>
@@ -2023,8 +2033,12 @@ class Form extends React.Component {
                   </TextField>
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography variant="subtitle1">
+                  <Typography variant="subtitle1" component="div" gutterBottom>
                     Selection of Minor / Elective Course
+                  </Typography>
+                  <Typography variant="caption">
+                    You can only select one subject either from Semester 1 or
+                    Semester 2
                   </Typography>
                   <Divider />
                 </Grid>
