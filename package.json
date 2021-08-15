@@ -12,7 +12,7 @@
     "classnames": "^2.2.6",
     "file-saver": "^2.0.5",
     "history": "^4.9.0",
-    "html2canvas": "1.1.5",
+    "html2canvas": "1.0.0-rc.1",
     "jspdf": "^2.3.1",
     "mobile-device-detect": "^0.4.3",
     "perfect-scrollbar": "1.5.2",

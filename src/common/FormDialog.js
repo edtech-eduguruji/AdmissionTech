@@ -24,10 +24,10 @@ const FormDialog = (props) => {
       {title !== null && title && (
         <DialogTitle>
           <Grid container>
-            <Grid item lg={11} xs={11}>
+            <Grid item xs={11}>
               <Typography variant="subtitle1">{title}</Typography>
             </Grid>
-            <Grid container item lg={1} xs={1} justify="flex-end">
+            <Grid container item xs={1} justifyContent="flex-end">
               <IconButton
                 size="small"
                 aria-label="close"

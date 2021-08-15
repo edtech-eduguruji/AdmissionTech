@@ -23,7 +23,7 @@ class Admin extends React.Component {
     this.mainPanel = React.createRef()
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     const { role } = this.props
     let routesLink = userDefineRoutes.map((prop, key) => {
       if (role) {
@@ -92,7 +92,7 @@ class Admin extends React.Component {
               handleDrawerToggle={this.handleDrawerToggle}
             />
           ) : (
-            <Grid container item xs={12} justify="flex-end">
+            <Grid container item xs={12} justifyContent="flex-end">
               <Box p={1}>
                 <Button onClick={this.handleLogout} color="inherit">
                   <ExitToAppIcon /> &nbsp;&nbsp; Logout

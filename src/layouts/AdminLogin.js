@@ -114,7 +114,7 @@ class Login extends Component {
                       handleChange={this.handleChangeFields}
                     />
                   </Grid>
-                  <Grid container item xs={8} justify="flex-end">
+                  <Grid container item xs={8} justifyContent="flex-end">
                     <RegularButton
                       color="primary"
                       variant="contained"
@@ -124,7 +124,7 @@ class Login extends Component {
                       SIGN IN
                     </RegularButton>
                   </Grid>
-                  <Grid container item xs={4} justify="flex-end">
+                  <Grid container item xs={4} justifyContent="flex-end">
                     <RegularButton
                       color="transparent"
                       size="sm"

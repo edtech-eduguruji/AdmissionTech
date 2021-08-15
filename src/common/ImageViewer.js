@@ -84,7 +84,7 @@ class ImageViewer extends React.Component {
         <Divider />
         <DialogContent dividers>
           <Grid container>
-            <Grid container item xs={12} justify="center">
+            <Grid container item xs={12} justifyContent="center">
               {images.length > 0 &&
                 images.map(
                   (item, i) =>

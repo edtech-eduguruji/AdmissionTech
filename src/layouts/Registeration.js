@@ -130,7 +130,7 @@ class Registeration extends Component {
                       handleChange={this.handleChangeFields}
                     />
                   </Grid>
-                  <Grid container item xs={12} justify="center">
+                  <Grid container item xs={12} justifyContent="center">
                     <RegularButton
                       color="primary"
                       variant="contained"
