@@ -128,42 +128,42 @@
     {
         "facultyId": "#f4fineArt",
         "semester": 1,
-        "subjectId": "$19Music(Sitar)",
+        "subjectId": "$19Music",
         "paperId": "$p19",
         "subjectName": "Theory of Indian Classical Music "
     },
     {
         "facultyId": "#f4fineArt",
         "semester": 1,
-        "subjectId": "$19Music(Sitar)",
+        "subjectId": "$19Music",
         "paperId": "$p20",
         "subjectName": "Practical Performance and Proficiency Skill of the Prescribed Raagas and Taals"
     },
     {
         "facultyId": "#f4fineArt",
         "semester": 1,
-        "subjectId": "$19.2Music(Tabla)",
+        "subjectId": "$19Music",
         "paperId": "$p21",
         "subjectName": "Basic Fundamental of Tabla"
     },
     {
         "facultyId": "#f4fineArt",
         "semester": 1,
-        "subjectId": "$p22tpsp",
+        "subjectId": "$19Music",
         "paperId": "$p22",
         "subjectName": "Tabla Practical and stage performance"
     },
     {
         "facultyId": "#f4fineArt",
         "semester": 1,
-        "subjectId": "$19.2Music(Tabla)",
+        "subjectId": "$19Music",
         "paperId": "$p23",
         "subjectName": "Introduction to Indian Music"
     },
     {
         "facultyId": "#f4fineArt",
         "semester": 1,
-        "subjectId": "$19.3Music(Vocal)",
+        "subjectId": "$19Music",
         "paperId": "$p24",
         "subjectName": "Critical study of Ragas and Taals"
     },
@@ -324,42 +324,42 @@
     {
         "facultyId": "#f4fineArt",
         "semester": 2,
-        "subjectId": "$19Music(Sitar)",
+        "subjectId": "$19Music",
         "paperId": "$p47",
         "subjectName": "Historical study of Indian Classical Music Practical Performance and Proficiency Skill of the"
     },
     {
         "facultyId": "#f4fineArt",
         "semester": 2,
-        "subjectId": "$19Music(Sitar)",
+        "subjectId": "$19Music",
         "paperId": "$p48",
         "subjectName": "Prescribed Raagas and Taals."
     },
     {
         "facultyId": "#f4fineArt",
         "semester": 2,
-        "subjectId": "$19.2Music(Tabla)",
+        "subjectId": "$19Music",
         "paperId": "$p49",
         "subjectName": "Principles of Taal"
     },
     {
         "facultyId": "#f4fineArt",
         "semester": 2,
-        "subjectId": "$19.2Music(Tabla)",
+        "subjectId": "$19Music",
         "paperId": "$p50",
         "subjectName": "Tabla Practical and stage performance II"
     },
     {
         "facultyId": "#f4fineArt",
         "semester": 2,
-        "subjectId": "$19.3Music(Vocal)",
+        "subjectId": "$19Music",
         "paperId": "$p51",
         "subjectName": "History of Indian Music"
     },
     {
         "facultyId": "#f4fineArt",
         "semester": 2,
-        "subjectId": "$19.3Music(Vocal)",
+        "subjectId": "$19Music",
         "paperId": "$p52",
         "subjectName": "Critical study of Ragas and Taals"
     },

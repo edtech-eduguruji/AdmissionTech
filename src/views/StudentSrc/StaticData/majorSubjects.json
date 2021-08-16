@@ -109,27 +109,15 @@
     },
     {
         "facultyId": "#f4fineArt",
-        "subjectId": "$19Music(Sitar)",
+        "subjectId": "$19Music",
         "streamId": ["$s3Arts","$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce"],
-        "subjectName": "Music Instrument (Sitar)"
-    },
-    {
-        "facultyId": "#f4fineArt",
-        "subjectId": "$19.2Music(Tabla)",
-        "streamId": ["$s2Commerce","$s1.3PCMB","$s1.2PCB","$s1Science","$s3Arts"],
-        "subjectName": "Music Instrument (Tabla)"
-    },
-    {
-        "facultyId": "#f4fineArt",
-        "subjectId": "$19.3Music(Vocal)",
-        "streamId": ["$s2Commerce","$s1.3PCMB","$s1.2PCB","$s1Science","$s3Arts"],
-        "subjectName": "Music Instrument (Vocal)"
+        "subjectName": "Music (Vocal/ Instrumental Sitar/ Instrumental Tabla)"
     },
     {
         "facultyId": "#f5foc",
         "subjectId": "$20Bcom",
         "streamId": ["$s2Commerce","$s1.3PCMB","$s1.2PCB","$s1Science","$s3Arts"],
-        "subjectName": "B.Com"
+        "subjectName": "Commerce"
     },
     {
         "facultyId": "#f6fom",

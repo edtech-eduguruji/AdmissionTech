@@ -989,6 +989,62 @@ class Form extends React.Component {
                 <Divider />
               </Grid>
             )}
+
+            <Grid item xs={12}>
+              <TextField
+                InputLabelProps={{
+                  classes: {
+                    root: classes.labelRoot,
+                  },
+                }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
+                disabled={preview}
+                fullWidth
+                select
+                label={mandatoryField('Select Course Type')}
+                value={courseType}
+                onChange={this.handleChangeFields}
+                variant={preview ? 'standard' : 'outlined'}
+                name="courseType"
+              >
+                {courseTypeData.map((item, key) => (
+                  <MenuItem key={key} value={item.courseTypeId}>
+                    {item.courseType}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                InputLabelProps={{
+                  classes: {
+                    root: classes.labelRoot,
+                  },
+                }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
+                disabled={preview}
+                select
+                fullWidth
+                variant={preview ? 'standard' : 'outlined'}
+                name="mediumOfInstitution"
+                label={mandatoryField('Medium of Teaching')}
+                value={mediumOfInstitution}
+                onChange={this.handleChangeFields}
+              >
+                <MenuItem value="hindi">Hindi</MenuItem>
+                <MenuItem value="english">English</MenuItem>
+              </TextField>
+            </Grid>
+
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">Basic Details</Typography>
             </Grid>
@@ -1717,34 +1773,7 @@ class Form extends React.Component {
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">Academic Details</Typography>
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                InputLabelProps={{
-                  classes: {
-                    root: classes.labelRoot,
-                  },
-                }}
-                InputProps={{
-                  classes: {
-                    disabled: classes.disabled,
-                  },
-                }}
-                disabled={preview}
-                fullWidth
-                select
-                label={mandatoryField('Select Course Type')}
-                value={courseType}
-                onChange={this.handleChangeFields}
-                variant={preview ? 'standard' : 'outlined'}
-                name="courseType"
-              >
-                {courseTypeData.map((item, key) => (
-                  <MenuItem key={key} value={item.courseTypeId}>
-                    {item.courseType}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
+
             {courseType !== '' ? (
               <Grid item xs={12}>
                 {academicDetails.map((item, i) => (
@@ -1968,31 +1997,7 @@ class Form extends React.Component {
                 Faculty & Courses Details
               </Typography>
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                InputLabelProps={{
-                  classes: {
-                    root: classes.labelRoot,
-                  },
-                }}
-                InputProps={{
-                  classes: {
-                    disabled: classes.disabled,
-                  },
-                }}
-                disabled={preview}
-                select
-                fullWidth
-                variant={preview ? 'standard' : 'outlined'}
-                name="mediumOfInstitution"
-                label={mandatoryField('Medium of Teaching')}
-                value={mediumOfInstitution}
-                onChange={this.handleChangeFields}
-              >
-                <MenuItem value="hindi">Hindi</MenuItem>
-                <MenuItem value="english">English</MenuItem>
-              </TextField>
-            </Grid>
+
             <Grid item xs={12}>
               <Typography variant="subtitle1" component="div" gutterBottom>
                 Selection of Faculty
@@ -2503,7 +2508,7 @@ class Form extends React.Component {
                       <Success>Uploaded.</Success>
                     ) : null}
                   </Grid>
-                  {courseType === 'Post Graduate' && (
+                  {courseType === '#pg2PG' && (
                     <Grid item md={6} xs={12}>
                       <TextField
                         InputLabelProps={{
@@ -2533,7 +2538,7 @@ class Form extends React.Component {
                       </TextField>
                     </Grid>
                   )}
-                  {courseType === 'Post Graduate' && !preview && (
+                  {courseType === '#pg2PG' && !preview && (
                     <Grid item md={2} xs={6}>
                       <FileUploader
                         buttonLabel="Upload Document"
@@ -2545,7 +2550,7 @@ class Form extends React.Component {
                       />
                     </Grid>
                   )}
-                  {courseType === 'Post Graduate' && (
+                  {courseType === '#pg2PG' && (
                     <Grid item md={4} xs={6}>
                       {otherCertificate !== '' && otherCertificate !== null ? (
                         <Success>Uploaded.</Success>
@@ -2599,7 +2604,7 @@ class Form extends React.Component {
                       <Success>Uploaded.</Success>
                     ) : null}
                   </Grid>
-                  {courseType === 'Under Graduate' && (
+                  {courseType === '#ug1UG' && (
                     <Grid item xs={12}>
                       <FormControlLabel
                         control={
@@ -2649,7 +2654,7 @@ class Form extends React.Component {
                       <Success>Uploaded.</Success>
                     ) : null}
                   </Grid>
-                  {courseType === 'Post Graduate' && (
+                  {courseType === '#pg2PG' && (
                     <Grid item md={6} xs={12}>
                       <TextField
                         InputLabelProps={{
@@ -2680,7 +2685,7 @@ class Form extends React.Component {
                       </TextField>
                     </Grid>
                   )}
-                  {courseType === 'Post Graduate' && (
+                  {courseType === '#pg2PG' && (
                     <Grid item md={2} xs={6}>
                       {!otherRoverRanger && !preview && (
                         <FileUploader
@@ -2694,19 +2699,19 @@ class Form extends React.Component {
                       )}
                     </Grid>
                   )}
-                  {courseType === 'Post Graduate' && (
+                  {courseType === '#pg2PG' && (
                     <Grid item md={4} xs={6}>
                       {rrDocument !== '' && rrDocument !== null ? (
                         <Success>Uploaded.</Success>
                       ) : null}
                     </Grid>
                   )}
-                  {courseType === 'Post Graduate' && (
+                  {courseType === '#pg2PG' && (
                     <Grid container item xs={12} justifyContent="center">
                       <Typography>OR</Typography>
                     </Grid>
                   )}
-                  {courseType === 'Post Graduate' && (
+                  {courseType === '#pg2PG' && (
                     <Grid item xs={12}>
                       <FormControlLabel
                         control={
@@ -2723,7 +2728,7 @@ class Form extends React.Component {
                       />
                     </Grid>
                   )}
-                  {courseType === 'Under Graduate' && (
+                  {courseType === '#ug1UG' && (
                     <Grid item xs={12}>
                       <FormControlLabel
                         control={
