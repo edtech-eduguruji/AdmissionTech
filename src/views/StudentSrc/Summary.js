@@ -4,33 +4,13 @@ import GetAppIcon from '@material-ui/icons/GetApp'
 import React from 'react'
 import { withRouter } from 'react-router-dom'
 import CardContainer from '../../common/CardContainer'
-import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
-import { PAYMENT } from '../../constants/Constants'
+import { ASSETS } from '../../constants/Constants'
 import { redirectUrl } from '../../utils/Utils'
 
 const styles = {}
-
 class Summary extends React.Component {
-  constructor() {
-    super()
-    this.state = {}
-  }
-
-  componentDidMount() {
-    if (LocalStorage.getUser().payment === PAYMENT.NOT_DONE) {
-      redirectUrl('sPayment', 1)
-    }
-  }
-
-  handleChangeFields = (event) => {
-    this.setState({
-      [event.target.name]: event.target.checked,
-    })
-  }
-
   render() {
-    const { classes } = this.props
     return (
       <div className="childContainer">
         <CardContainer
@@ -41,7 +21,7 @@ class Summary extends React.Component {
                 size="sm"
                 color="danger"
                 target="_blank"
-                href="./Prospectus.pdf"
+                href={`./${ASSETS.PROSPECTUS}`}
               >
                 Download Prospectus &nbsp;&nbsp; <GetAppIcon />
               </RegularButton>
@@ -55,7 +35,7 @@ class Summary extends React.Component {
                   size="sm"
                   color="danger"
                   target="_blank"
-                  href="./Prospectus.pdf"
+                  href={`./${ASSETS.PROSPECTUS}`}
                 >
                   Download Prospectus &nbsp;&nbsp; <GetAppIcon />
                 </RegularButton>
@@ -66,7 +46,7 @@ class Summary extends React.Component {
                 Please read all the instructions
               </Typography>
               <Divider />
-              <Typography variant="caption">
+              <Typography component="div" variant="body1">
                 <ul>
                   <li>Download prospectus form before proceed further.</li>
                   <li>

@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography'
 import CakeIcon from '@material-ui/icons/Cake'
 import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber'
 import React, { Component } from 'react'
-import { Link, withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import ForgotApi from '../apis/ForgotApi'
 import Card from '../components/Card/Card'
 import CardBody from '../components/Card/CardBody'
@@ -129,9 +129,6 @@ class ForgotPassword extends Component {
                     >
                       Submit
                     </RegularButton>
-                  </Grid>
-                  <Grid container item xs={12} justifyContent="flex-end">
-                    <Link to="/login">Home ?</Link>
                   </Grid>
                 </Grid>
               </div>

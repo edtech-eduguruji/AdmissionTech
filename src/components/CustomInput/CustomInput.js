@@ -52,16 +52,16 @@ export default function CustomInput(props) {
         return
       }
     }
-    if (maxLength) {
-      if (event.target.value.length > maxLength) {
+    if (minLength) {
+      if (event.target.value.length < minLength) {
         setError(true)
         setMessage(errorMsg)
         handleChange(event, true)
       } else {
         handleInput(event)
       }
-    } else if (minLength) {
-      if (event.target.value.length < minLength) {
+    } else if (maxLength) {
+      if (event.target.value.length > maxLength) {
         setError(true)
         setMessage(errorMsg)
         handleChange(event, true)

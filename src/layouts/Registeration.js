@@ -14,7 +14,7 @@ import Card from '../components/Card/Card'
 import CardBody from '../components/Card/CardBody'
 import RegularButton from '../components/CustomButtons/Button'
 import CustomInput from '../components/CustomInput/CustomInput'
-import { addErrorMsg } from '../utils/Utils'
+import { addErrorMsg, setErrorFields } from '../utils/Utils'
 
 const useStyles = (theme) => ({
   paper: {
@@ -41,28 +41,37 @@ class Registeration extends Component {
       name: '',
       mobileNo: '',
       dob: '',
+      errorList: [],
     }
   }
   handleSubmit = () => {
-    const { name, email, mobileNo, dob } = this.state
-    if (name !== '' && mobileNo !== '' && dob !== '') {
-      const data = new FormData()
-      data.append('name', name)
-      data.append('mobile', mobileNo)
-      data.append('dob', dob)
-      RegisterApi.StudentRegister(data).then((res) => {
-        if (res.data) {
-          LocalStorage.setUser(res.data)
-          this.props.history.push('/student')
-        }
-      })
+    const { name, email, mobileNo, dob, errorList } = this.state
+    if (!errorList.length) {
+      if (name !== '' && mobileNo !== '' && dob !== '') {
+        const data = new FormData()
+        data.append('name', name)
+        data.append('mobile', mobileNo)
+        data.append('dob', dob)
+        RegisterApi.StudentRegister(data).then((res) => {
+          if (res.data) {
+            LocalStorage.setUser(res.data)
+            this.props.history.push('/student')
+          }
+        })
+      } else {
+        addErrorMsg('Please fill all the fields')
+      }
     } else {
-      addErrorMsg('Please enter all fields')
+      addErrorMsg('Please remove errors from all the fields')
     }
   }
 
-  handleChangeFields = (event) => {
+  handleChangeFields = (event, isError) => {
+    const { errorList } = this.state
+
+    setErrorFields(isError, errorList, event.target.name)
     this.setState({
+      errorList,
       [event.target.name]: event.target.value,
     })
   }
@@ -71,7 +80,7 @@ class Registeration extends Component {
     const { classes } = this.props
     return (
       <div>
-        <Container component="main" maxWidth="xs">
+        <Container component="main" maxWidth="sm">
           <CssBaseline />
           <div className="center">
             <img alt="logo" src="agracollege.png" className={classes.logo} />
@@ -88,7 +97,10 @@ class Registeration extends Component {
                   </Grid>
                   <Grid item xs={10}>
                     <CustomInput
-                      labelText="Name"
+                      isMandatory={true}
+                      minLength={5}
+                      maxLength={20}
+                      labelText="Name (as per highschool/secondary certificate)"
                       formControlProps={{
                         fullWidth: true,
                       }}
@@ -96,6 +108,7 @@ class Registeration extends Component {
                         name: 'name',
                       }}
                       handleChange={this.handleChangeFields}
+                      errorMsg={'Name must be min. of 5 and max. 20 character'}
                     />
                   </Grid>
                   <Grid item xs={2}>
@@ -103,6 +116,9 @@ class Registeration extends Component {
                   </Grid>
                   <Grid item xs={10}>
                     <CustomInput
+                      isMandatory={true}
+                      maxLength={10}
+                      isNumber={true}
                       labelText="Mobile No."
                       formControlProps={{
                         fullWidth: true,
@@ -112,6 +128,7 @@ class Registeration extends Component {
                         type: 'number',
                       }}
                       handleChange={this.handleChangeFields}
+                      errorMsg={'Mobile no must be of 10 digit'}
                     />
                   </Grid>
                   <Grid item xs={2}>
@@ -119,6 +136,7 @@ class Registeration extends Component {
                   </Grid>
                   <Grid item xs={10}>
                     <CustomInput
+                      isMandatory={true}
                       formControlProps={{
                         fullWidth: true,
                       }}
@@ -128,6 +146,7 @@ class Registeration extends Component {
                         helperText: 'Date of Birth',
                       }}
                       handleChange={this.handleChangeFields}
+                      errorMsg={'Please select your dob'}
                     />
                   </Grid>
                   <Grid container item xs={12} justifyContent="center">

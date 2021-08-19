@@ -15,8 +15,6 @@ import AddIcon from '@material-ui/icons/Add'
 import DeleteIcon from '@material-ui/icons/Delete'
 import GetAppIcon from '@material-ui/icons/GetApp'
 import Autocomplete from '@material-ui/lab/Autocomplete'
-import html2canvas from 'html2canvas'
-import { jsPDF } from 'jspdf'
 import React from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { withRouter } from 'react-router-dom'
@@ -28,10 +26,11 @@ import RegularButton from '../../components/CustomButtons/Button'
 import CustomInput from '../../components/CustomInput/CustomInput'
 import CustomTable from '../../components/Table/Table'
 import Success from '../../components/Typography/Success'
-import { ASSETS, PAYMENT } from '../../constants/Constants'
+import { ASSETS } from '../../constants/Constants'
 import {
   addErrorMsg,
   createdDateTime,
+  downloadPdf,
   errorDialog,
   mandatoryField,
   redirectUrl,
@@ -150,56 +149,52 @@ class Form extends React.Component {
       coCurriculumSem2: '',
       token: '',
       paymentDetails: [],
+      registrationNo: null,
     }
   }
 
   componentDidMount() {
-    if (LocalStorage.getUser().payment === PAYMENT.NOT_DONE) {
-      redirectUrl('sPayment', 1)
-    } else {
-      let data = {
-        registrationNo:
-          LocalStorage.getUser() && LocalStorage.getUser().user_id,
-      }
-      FormApi.getForm(data).then((response) => {
-        if (response.data) {
-          if (response.data.submitted === '1' && !this.props.isPreview) {
-            this.props.history.push('/formsubmitted')
-          } else {
-            if (this.props.isPreview) {
-              const data = {
-                registrationNo: LocalStorage.getUser().user_id,
-              }
-              FormApi.fetchPaymentDetails(data).then((res) => {
-                this.setState({
-                  paymentDetails: this.formatPaymentData(res.data),
-                })
-              })
-            }
-            Object.keys(response.data).map((item) => {
-              if (response.data[item] === 'null') {
-                response.data[item] = ''
-              }
-            })
-            response.data.academicDetails = response.data.academicDetails
-              ? JSON.parse(response.data.academicDetails)
-              : []
-            response.data.documents = response.data.documents
-              ? JSON.parse(response.data.documents)
-              : []
-            response.data.major1 = response.data.major1
-              ? JSON.parse(response.data.major1)
-              : []
-            response.data.major2 = response.data.major2
-              ? JSON.parse(response.data.major2)
-              : []
-            response.data.coCurriculumSem1 = 'Food, Nutrition and Hygiene'
-            response.data.coCurriculumSem2 = 'First Aid and Basic health'
-            this.setState({ ...response.data })
-          }
-        }
-      })
+    let data = {
+      registrationNo: LocalStorage.getUser() && LocalStorage.getUser().user_id,
     }
+    FormApi.getForm(data).then((response) => {
+      if (response.data) {
+        if (response.data.submitted === '1' && !this.props.isPreview) {
+          this.props.history.push('/formsubmitted')
+        } else {
+          if (this.props.isPreview) {
+            const data = {
+              registrationNo: LocalStorage.getUser().user_id,
+            }
+            FormApi.fetchPaymentDetails(data).then((res) => {
+              this.setState({
+                paymentDetails: this.formatPaymentData(res.data),
+              })
+            })
+          }
+          Object.keys(response.data).map((item) => {
+            if (response.data[item] === 'null') {
+              response.data[item] = ''
+            }
+          })
+          response.data.academicDetails = response.data.academicDetails
+            ? JSON.parse(response.data.academicDetails)
+            : []
+          response.data.documents = response.data.documents
+            ? JSON.parse(response.data.documents)
+            : []
+          response.data.major1 = response.data.major1
+            ? JSON.parse(response.data.major1)
+            : []
+          response.data.major2 = response.data.major2
+            ? JSON.parse(response.data.major2)
+            : []
+          response.data.coCurriculumSem1 = 'Food, Nutrition and Hygiene'
+          response.data.coCurriculumSem2 = 'First Aid and Basic health'
+          this.setState({ ...response.data })
+        }
+      }
+    })
   }
 
   handleUpload = (file, index, name) => {
@@ -657,26 +652,7 @@ class Form extends React.Component {
   }
 
   handleDownloadForm = () => {
-    const input = document.getElementById('form1234')
-    html2canvas(input, { useCORS: true }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/jpeg')
-      var pdf = new jsPDF('p', 'px', 'a4')
-
-      var imgWidth = pdf.internal.pageSize.width
-      var pageHeight = pdf.internal.pageSize.height
-      var imgHeight = (canvas.height * imgWidth) / canvas.width
-      var heightLeft = imgHeight
-      var position = 0
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-      heightLeft -= pageHeight
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight
-        pdf.addPage()
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-        heightLeft -= pageHeight
-      }
-      pdf.save(LocalStorage.getUser().user_id + '.pdf')
-    })
+    downloadPdf('form1234', 'FORM')
   }
 
   handleMultiDropDownData = (event, value) => {
@@ -900,26 +876,16 @@ class Form extends React.Component {
       coCurriculumSem1,
       coCurriculumSem2,
       paymentDetails,
+      registrationNo,
     } = this.state
     const { isPreview } = this.props
     const preview =
       submitted === '1' && isPreview && isPreview === '1' ? true : false
     return (
-      <div className="childContainer">
+      <div className="childContainer" id="form1234">
         <CardContainer
           heading={'Admission Form'}
-          subTitle="Fill Up the Form"
           buttons={[
-            preview && (
-              <RegularButton
-                size="sm"
-                color="danger"
-                key="dp"
-                onClick={() => this.props.history.goBack()}
-              >
-                Back
-              </RegularButton>
-            ),
             !preview && (
               <Hidden xsDown>
                 <RegularButton
@@ -927,7 +893,7 @@ class Form extends React.Component {
                   color="danger"
                   key="dp"
                   target="_blank"
-                  href="./Prospectus.pdf"
+                  href={`./${ASSETS.PROSPECTUS}`}
                 >
                   Download Prospectus &nbsp;&nbsp; <GetAppIcon />
                 </RegularButton>
@@ -935,13 +901,7 @@ class Form extends React.Component {
             ),
           ]}
         >
-          <Grid
-            container
-            spacing={2}
-            alignItems="center"
-            className="pad10"
-            id="form1234"
-          >
+          <Grid container spacing={2} alignItems="center" className="pad10">
             {!preview && (
               <Hidden smUp>
                 <Grid container item xs={12} justifyContent="center">
@@ -949,7 +909,7 @@ class Form extends React.Component {
                     size="sm"
                     color="danger"
                     target="_blank"
-                    href="./Prospectus.pdf"
+                    href={`./${ASSETS.PROSPECTUS}`}
                   >
                     Download Prospectus &nbsp;&nbsp; <GetAppIcon />
                   </RegularButton>
@@ -984,13 +944,17 @@ class Form extends React.Component {
                 </Typography>
               </Grid>
             ) : (
-              <Grid container item xs={12} justifyContent="center">
-                <Typography variant="h6">ADMISSION FORM</Typography>
+              <Grid item xs={12}>
+                <Typography variant="h6" component="div" gutterBottom>
+                  Your registration no: {registrationNo}
+                </Typography>
                 <Divider />
+                <br />
+                <br />
               </Grid>
             )}
 
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <TextField
                 InputLabelProps={{
                   classes: {
@@ -1019,7 +983,7 @@ class Form extends React.Component {
               </TextField>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <TextField
                 InputLabelProps={{
                   classes: {
@@ -1067,7 +1031,7 @@ class Form extends React.Component {
                     <FileUploader
                       buttonLabel="Upload Photo"
                       accept="image/jpg,image/jpeg,image/png"
-                      maxSize={2}
+                      maxSize={5}
                       handleChange={this.handleUpload}
                       id="profile"
                       name="photo"
@@ -1112,7 +1076,7 @@ class Form extends React.Component {
                       <FileUploader
                         buttonLabel="Upload Form"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
-                        maxSize={2}
+                        maxSize={5}
                         handleChange={this.handleUpload}
                         id="uploadForm"
                         name="form"
@@ -1341,7 +1305,7 @@ class Form extends React.Component {
                   <FileUploader
                     buttonLabel="Upload Category Certificate"
                     accept="image/jpg,image/jpeg,image/png,application/pdf"
-                    maxSize={2}
+                    maxSize={5}
                     handleChange={this.handleUpload}
                     id="categoryCertificate"
                     name="categoryCertificate"
@@ -1358,7 +1322,7 @@ class Form extends React.Component {
                   <FileUploader
                     buttonLabel="Upload Sub-Category Certificate"
                     accept="image/jpg,image/jpeg,image/png,application/pdf"
-                    maxSize={2}
+                    maxSize={5}
                     handleChange={this.handleUpload}
                     id="subCategoryCertificate"
                     name="subCategoryCertificate"
@@ -2296,9 +2260,7 @@ class Form extends React.Component {
                   </TextField>
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography variant="subtitle1">
-                    Selection of Co-Curriculum
-                  </Typography>
+                  <Typography variant="subtitle1">Co-Curriculum</Typography>
                   <Divider />
                 </Grid>
                 <Grid item xs={6}>
@@ -2389,7 +2351,7 @@ class Form extends React.Component {
                           <FileUploader
                             buttonLabel="Upload Document"
                             accept="image/jpg,image/jpeg,image/png,application/pdf"
-                            maxSize={2}
+                            maxSize={5}
                             handleChange={this.handleUploadEnclosure}
                             id={'uploadDocument' + i}
                             index={i}
@@ -2495,7 +2457,7 @@ class Form extends React.Component {
                       <FileUploader
                         buttonLabel="Upload Document"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
-                        maxSize={2}
+                        maxSize={5}
                         handleChange={this.handleUpload}
                         id={'nationalCompetition'}
                         name="nationalCertificate"
@@ -2543,7 +2505,7 @@ class Form extends React.Component {
                       <FileUploader
                         buttonLabel="Upload Document"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
-                        maxSize={2}
+                        maxSize={5}
                         handleChange={this.handleUpload}
                         id={'otherCompetition'}
                         name="otherCertificate"
@@ -2592,7 +2554,7 @@ class Form extends React.Component {
                       <FileUploader
                         buttonLabel="Upload Document"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
-                        maxSize={2}
+                        maxSize={5}
                         handleChange={this.handleUpload}
                         id={'nccDoc'}
                         name="nccCertificate"
@@ -2642,7 +2604,7 @@ class Form extends React.Component {
                       <FileUploader
                         buttonLabel="Upload Document"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
-                        maxSize={2}
+                        maxSize={5}
                         handleChange={this.handleUpload}
                         id={'nssDoc'}
                         name="nssDocument"
@@ -2691,7 +2653,7 @@ class Form extends React.Component {
                         <FileUploader
                           buttonLabel="Upload Document"
                           accept="image/jpg,image/jpeg,image/png,application/pdf"
-                          maxSize={2}
+                          maxSize={5}
                           handleChange={this.handleUpload}
                           id={'roverRanger'}
                           name="rrDocument"
@@ -2830,7 +2792,7 @@ class Form extends React.Component {
                   <FileUploader
                     buttonLabel="Upload"
                     accept="image/jpg,image/jpeg,image/png"
-                    maxSize={2}
+                    maxSize={5}
                     handleChange={this.handleUpload}
                     id="signature"
                     name="signature"

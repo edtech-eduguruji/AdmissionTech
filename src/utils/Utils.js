@@ -1,6 +1,8 @@
 import { CircularProgress, Dialog, Divider } from '@material-ui/core'
 import Axios from 'axios'
 import { ROLES_KEY } from 'constants/Constants'
+import html2canvas from 'html2canvas'
+import { jsPDF } from 'jspdf'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import FormDialog from '../common/FormDialog'
@@ -441,4 +443,29 @@ export function mandatoryField(string) {
       <span className="makeRed">*</span>
     </div>
   )
+}
+
+export function downloadPdf(formId, fname) {
+  try {
+    const input = document.getElementById(formId)
+    html2canvas(input, { useCORS: true }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/jpeg')
+      var pdf = new jsPDF('p', 'px', 'a4')
+
+      var imgWidth = pdf.internal.pageSize.width
+      var pageHeight = pdf.internal.pageSize.height
+      var imgHeight = (canvas.height * imgWidth) / canvas.width
+      var heightLeft = imgHeight
+      var position = 0
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+      heightLeft -= pageHeight
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight
+        pdf.addPage()
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+        heightLeft -= pageHeight
+      }
+      pdf.save(LocalStorage.getUser().user_id + '_' + fname + '.pdf')
+    })
+  } catch (error) {}
 }

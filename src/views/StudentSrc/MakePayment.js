@@ -1,28 +1,21 @@
 import { Divider, Grid, Typography } from '@material-ui/core'
 import React from 'react'
 import { withRouter } from 'react-router-dom'
-import FormApi from '../../apis/FormApi'
 import CardContainer from '../../common/CardContainer'
 import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import Success from '../../components/Typography/Success'
-import { PAYMENT } from '../../constants/Constants'
-import { addSuccessMsg } from '../../utils/Utils'
+import { downloadPdf, errorDialog } from '../../utils/Utils'
 
 class MakePayment extends React.Component {
-  constructor() {
-    super()
-    this.state = {}
-  }
-
   componentDidMount() {
-    if (LocalStorage.getUser().payment === PAYMENT.DONE) {
-      this.props.history.push('/student')
-    }
+    setTimeout(() => {
+      downloadPdf('p1234', 'RID')
+    }, 3000)
   }
 
   handleMakePayment = () => {
-    const data = new FormData()
+    /* const data = new FormData()
     data.append('registrationNo', LocalStorage.getUser().user_id)
     FormApi.makePayment(data).then((res) => {
       if (res.status === 200) {
@@ -31,7 +24,10 @@ class MakePayment extends React.Component {
         LocalStorage.setUser(user)
         this.props.history.push('/student')
       }
-    })
+    }) */
+    errorDialog(
+      'Due to technical failure, payment process cannot be completed at this moment. Try again later'
+    )
   }
 
   render() {
@@ -39,17 +35,19 @@ class MakePayment extends React.Component {
       <CardContainer heading="Payment">
         <Grid container spacing={2}>
           <Grid container item xs={12} direction="column" alignContent="center">
-            <Typography variant="h6" component="div" className="center">
-              Your Registration ID
-              <Success>{LocalStorage.getUser().user_id}</Success>
-              <Typography variant="body1" component="div">
-                Please note down your registration id before make payment.
+            <div id="p1234">
+              <Typography variant="h6" component="div" className="center">
+                Your Registration ID
+                <Success>{LocalStorage.getUser().user_id}</Success>
+                <Typography variant="body1" component="div">
+                  Please note down your registration id before making payment.
+                </Typography>
               </Typography>
-            </Typography>
+            </div>
           </Grid>
           <Grid container item xs={12} direction="column" alignContent="center">
             <Typography variant="h6">
-              Before make any payment read instructions carefully
+              Read instructions carefully before making any payment
             </Typography>
             <Divider />
             <Typography variant="body1">
@@ -59,20 +57,18 @@ class MakePayment extends React.Component {
                   home page.
                 </li>
                 <li>
-                  Application form fees is Rs. 252 which is non-refundable.
+                  Application form fees is Rs. 250 and registration fees is Rs.
+                  2 which is non-refundable.
                 </li>
-                <li>
-                  After completing payment transaction you can download
-                  prospectus form.
-                </li>
+                <li>Download prospectus form after making payment</li>
                 <li>
                   Read prospectus form before submitting application form
                   online.
                 </li>
                 <li>
-                  You can save in draft mode or submit application form anytime.
+                  Follow admission guidelines before submitting application form
                 </li>
-                <li>Once application form is submit, it cannot be changed.</li>
+                <li>Once form is submitted, it cannot be edited or changed</li>
               </ul>
             </Typography>
           </Grid>

@@ -2,23 +2,9 @@ import { Divider, Grid, Typography } from '@material-ui/core'
 import React from 'react'
 import { withRouter } from 'react-router-dom'
 import CardContainer from '../../common/CardContainer'
-import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import Success from '../../components/Typography/Success'
-import { PAYMENT } from '../../constants/Constants'
-import { redirectUrl } from '../../utils/Utils'
 class FormSubmitted extends React.Component {
-  constructor() {
-    super()
-    this.state = {}
-  }
-
-  componentDidMount() {
-    if (LocalStorage.getUser().payment === PAYMENT.NOT_DONE) {
-      redirectUrl('sPayment', 1)
-    }
-  }
-
   render() {
     return (
       <CardContainer heading="Thank You">
@@ -39,10 +25,6 @@ class FormSubmitted extends React.Component {
                 </li>
                 <li>
                   You can download application form and payment receipt below
-                </li>
-                <li>
-                  Once you done with payment process then only your application
-                  form will accepted further
                 </li>
               </ul>
             </Typography>

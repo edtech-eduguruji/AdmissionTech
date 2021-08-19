@@ -93,11 +93,10 @@ class Login extends Component {
                         the button 'FORGET REGISTRATION'
                       </li>
                       <li>
-                        Candidate has to First Register with University Website,
-                        Univerirty Web Registration is Compulsary
+                        Candidate has to register on university website
+                        (mandatory)
                       </li>
                       <li>A Unique Registration Number will be Provided</li>
-                      <li>For Registration Adhar Number is Compulsary</li>
                       <li>Disable Popup blocker</li>
                       <li>
                         Here registration fees Rs. 252/- will be submitted
@@ -112,7 +111,7 @@ class Login extends Component {
               <Card cardFullHeight>
                 <CardBody className={classes.paper}>
                   <Typography component="h1" variant="h6">
-                    For already registered users
+                    For registered users
                   </Typography>
                   <div className={classes.form} noValidate>
                     <Grid container spacing={2} alignItems="center">
@@ -170,7 +169,7 @@ class Login extends Component {
                   <Grid container spacing={2}>
                     <Grid container item xs={12} justifyContent="center">
                       <Typography component="h1" variant="h6">
-                        New User Registration for Admission
+                        New user registration for Admission
                       </Typography>
                     </Grid>
                     <Grid container item xs={12} justifyContent="center">

@@ -92,7 +92,10 @@ class Admin extends React.Component {
               handleDrawerToggle={this.handleDrawerToggle}
             />
           ) : (
-            <Grid container item xs={12} justifyContent="flex-end">
+            <Grid container item xs={12} justifyContent="space-between">
+              <div className="center">
+                <img alt="logo" src="agracollege.png" className="logo" />
+              </div>
               <Box p={1}>
                 <Button onClick={this.handleLogout} color="inherit">
                   <ExitToAppIcon /> &nbsp;&nbsp; Logout
