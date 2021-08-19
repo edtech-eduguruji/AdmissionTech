@@ -4,49 +4,21 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import styles from 'assets/jss/material-dashboard-react/layouts/adminStyle.js'
 import Navbar from 'components/Navbars/Navbar'
 import Sidebar from 'components/Sidebar/Sidebar'
-import config from 'myconfig'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
 import React from 'react'
-import { Redirect, Route, Switch } from 'react-router-dom'
+import { Switch } from 'react-router-dom'
 import LocalStorage from '../common/LocalStorage'
-import { FORM, PAYMENT, ROLES_KEY } from '../constants/Constants'
+import { ROLES_KEY } from '../constants/Constants'
 import userDefineRoutes from '../routes'
-import withRouteLayout from './EnhancedLayout'
 
 class Admin extends React.Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
-      routesLink: [],
+      routesLink: props.routesLink,
       mobileOpen: false,
     }
     this.mainPanel = React.createRef()
-  }
-
-  UNSAFE_componentWillMount() {
-    const { role } = this.props
-    let routesLink = userDefineRoutes.map((prop, key) => {
-      if (role) {
-        if (prop.role.includes(role)) {
-          return (
-            <Route
-              exact
-              path={prop.layout + prop.path}
-              component={withRouteLayout(
-                prop.component,
-                prop,
-                role,
-                config,
-                userDefineRoutes
-              )}
-              key={key}
-            />
-          )
-        }
-      }
-      return null
-    })
-    this.setState({ routesLink })
   }
 
   handleDrawerToggle = () => {
@@ -92,33 +64,22 @@ class Admin extends React.Component {
               handleDrawerToggle={this.handleDrawerToggle}
             />
           ) : (
-            <Grid container item xs={12} justifyContent="space-between">
-              <div className="center">
-                <img alt="logo" src="agracollege.png" className="logo" />
-              </div>
-              <Box p={1}>
-                <Button onClick={this.handleLogout} color="inherit">
-                  <ExitToAppIcon /> &nbsp;&nbsp; Logout
-                </Button>
-              </Box>
-            </Grid>
+            <div className="childContainer">
+              <Grid container item xs={12} justifyContent="space-between">
+                <div className="center">
+                  <img alt="logo" src="agracollege.png" className="logo" />
+                </div>
+                <Box p={1}>
+                  <Button onClick={this.handleLogout} color="inherit">
+                    <ExitToAppIcon /> &nbsp;&nbsp; Logout
+                  </Button>
+                </Box>
+              </Grid>
+            </div>
           )}
           <div className={classes.content}>
             <div className={classes.container}>
-              <Switch>
-                {routesLink}
-                {role === ROLES_KEY.STUDENT ? (
-                  user.payment === PAYMENT.NOT_DONE ? (
-                    <Redirect to="/student/payment" />
-                  ) : user.submitted === FORM.SUBMITTED ? (
-                    <Redirect to="/student/formsubmitted" />
-                  ) : (
-                    <Redirect to="/student/summary" />
-                  )
-                ) : (
-                  <Redirect to="/admin/registrations" />
-                )}
-              </Switch>
+              <Switch>{routesLink}</Switch>
             </div>
           </div>
         </div>

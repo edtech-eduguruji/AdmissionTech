@@ -1,5 +1,5 @@
 module.exports = {
-  BASE_URL: 'https://eduguruji.com/admission/',
-  APIURL: 'https://eduguruji.com/admission/api/',
+  BASE_URL: 'https://admission.agracollegeagra.org.in/',
+  APIURL: 'https://admission.agracollegeagra.org.in/api/',
   ROLES: ['STUDENT', 'ADMIN'],
 }

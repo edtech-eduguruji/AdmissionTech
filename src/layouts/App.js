@@ -1,8 +1,11 @@
 import LocalStorage from 'common/LocalStorage'
+import config from 'myconfig'
 import React from 'react'
 import { HashRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { validateUser } from 'utils/Utils'
+import userDefineRoutes from '../routes'
 import asyncComponent from './AsyncComponent'
+import withRouteLayout from './EnhancedLayout'
 import ForgotPassword from './ForgotPassword'
 
 const AdminLogin = asyncComponent(() => import('./AdminLogin'))
@@ -14,7 +17,30 @@ const AdminAsync = asyncComponent(() => import('./Admin'))
 const verify = () => {
   if (validateUser()) {
     const user = LocalStorage.getUser()
-    return <AdminAsync user={user} role={user.role} />
+    const role = user.role
+    let routesLink = userDefineRoutes.map((prop, key) => {
+      if (role) {
+        if (prop.role.includes(role)) {
+          return (
+            <Route
+              exact
+              path={prop.layout + prop.path}
+              component={withRouteLayout(
+                prop.component,
+                prop,
+                role,
+                config,
+                userDefineRoutes,
+                user
+              )}
+              key={key}
+            />
+          )
+        }
+      }
+      return null
+    })
+    return <AdminAsync user={user} role={user.role} routesLink={routesLink} />
   } else {
     return <Redirect to="/login" />
   }

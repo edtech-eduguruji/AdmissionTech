@@ -48,7 +48,7 @@ class Summary extends React.Component {
               <Divider />
               <Typography component="div" variant="body1">
                 <ul>
-                  <li>Download prospectus form before proceed further.</li>
+                  <li>Download prospectus form before proceeding further.</li>
                   <li>
                     Read all the guidelines carefully from the prospectus form.
                   </li>
