@@ -5,7 +5,8 @@ function withRouteLayout(
   currentRoute,
   currentRole,
   config,
-  routes
+  routes,
+  user
 ) {
   // ...and returns another component...
   return class extends React.Component {
