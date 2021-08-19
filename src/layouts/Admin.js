@@ -6,7 +6,7 @@ import Navbar from 'components/Navbars/Navbar'
 import Sidebar from 'components/Sidebar/Sidebar'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
 import React from 'react'
-import { Switch } from 'react-router-dom'
+import { Redirect, Switch } from 'react-router-dom'
 import LocalStorage from '../common/LocalStorage'
 import { ROLES_KEY } from '../constants/Constants'
 import userDefineRoutes from '../routes'
@@ -34,6 +34,17 @@ class Admin extends React.Component {
   handleLogout = () => {
     LocalStorage.getLogout()
     window.location.reload()
+  }
+
+  handleRedirects = () => {
+    const { user } = this.props
+    if (user.payment == '0' && user.submitted === '0') {
+      return <Redirect to="/student/payment"></Redirect>
+    } else if (user.payment == '1' && user.submitted === '0') {
+      return <Redirect to="/student/form"></Redirect>
+    } else if (user.payment == '1' && user.submitted === '1') {
+      return <Redirect to="/student/formsubmitted"></Redirect>
+    }
   }
 
   render() {
@@ -80,6 +91,7 @@ class Admin extends React.Component {
           <div className={classes.content}>
             <div className={classes.container}>
               <Switch>{routesLink}</Switch>
+              {this.handleRedirects()}
             </div>
           </div>
         </div>
