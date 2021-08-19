@@ -1,15 +1,16 @@
+import { Box, Button, Grid } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import styles from 'assets/jss/material-dashboard-react/layouts/adminStyle.js'
 import Navbar from 'components/Navbars/Navbar'
 import Sidebar from 'components/Sidebar/Sidebar'
-import { ROLES_KEY } from 'constants/Constants'
 import config from 'myconfig'
-import PerfectScrollbar from 'perfect-scrollbar'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
 import React from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
+import LocalStorage from '../common/LocalStorage'
+import { FORM, PAYMENT, ROLES_KEY } from '../constants/Constants'
 import userDefineRoutes from '../routes'
-import { getUserClasses, getUserRole } from '../utils/Utils'
 import withRouteLayout from './EnhancedLayout'
 
 class Admin extends React.Component {
@@ -22,7 +23,7 @@ class Admin extends React.Component {
     this.mainPanel = React.createRef()
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     const { role } = this.props
     let routesLink = userDefineRoutes.map((prop, key) => {
       if (role) {
@@ -45,34 +46,7 @@ class Admin extends React.Component {
       }
       return null
     })
-
     this.setState({ routesLink })
-  }
-
-  componentDidMount() {
-    let ps
-    if (navigator.platform.indexOf('Win') > -1) {
-      ps = new PerfectScrollbar(this.mainPanel.current, {
-        suppressScrollX: true,
-        suppressScrollY: false,
-      })
-      document.body.style.overflow = 'hidden'
-    }
-    window.addEventListener('resize', this.resizeFunction)
-
-    document.addEventListener('deviceready', onDeviceReady, false)
-    function onDeviceReady() {
-      if (window.FCMPlugin) {
-        window.FCMPlugin.getToken(function (token) {})
-        if (getUserClasses() && Array.isArray(getUserClasses())) {
-          getUserClasses().map()
-        }
-        window.FCMPlugin.subscribeToTopic(
-          getUserRole() + '/' + getUserClasses()
-        )
-        window.FCMPlugin.onNotification(function (data) {})
-      }
-    }
   }
 
   handleDrawerToggle = () => {
@@ -85,33 +59,64 @@ class Admin extends React.Component {
     }
   }
 
+  handleLogout = () => {
+    LocalStorage.getLogout()
+    window.location.reload()
+  }
+
   render() {
     const { classes, role, user } = this.props
     const { mobileOpen, routesLink } = this.state
     return (
       <div className={classes.wrapper}>
-        <Sidebar
-          routes={userDefineRoutes}
-          logoText="AdmissionTech"
-          logo={'logo'}
-          handleDrawerToggle={this.handleDrawerToggle}
-          open={mobileOpen}
-          color="primary"
-        />
-        <div className={classes.mainPanel} ref={this.mainPanel}>
-          <Navbar
-            userName={user && user.fullname}
+        {role === ROLES_KEY.ADMIN && (
+          <Sidebar
             routes={userDefineRoutes}
+            logoText="ADMISSION-TECH"
+            logo={'logo'}
             handleDrawerToggle={this.handleDrawerToggle}
+            open={mobileOpen}
+            color="primary"
           />
+        )}
+        <div
+          className={
+            role === ROLES_KEY.ADMIN ? classes.adminPanel : classes.studentPanel
+          }
+          ref={this.mainPanel}
+        >
+          {role === ROLES_KEY.ADMIN ? (
+            <Navbar
+              userName={user && user.fullname}
+              routes={userDefineRoutes}
+              handleDrawerToggle={this.handleDrawerToggle}
+            />
+          ) : (
+            <Grid container item xs={12} justifyContent="space-between">
+              <div className="center">
+                <img alt="logo" src="agracollege.png" className="logo" />
+              </div>
+              <Box p={1}>
+                <Button onClick={this.handleLogout} color="inherit">
+                  <ExitToAppIcon /> &nbsp;&nbsp; Logout
+                </Button>
+              </Box>
+            </Grid>
+          )}
           <div className={classes.content}>
             <div className={classes.container}>
               <Switch>
                 {routesLink}
                 {role === ROLES_KEY.STUDENT ? (
-                  <Redirect to="/student/admission" />
+                  user.payment === PAYMENT.NOT_DONE ? (
+                    <Redirect to="/student/payment" />
+                  ) : user.submitted === FORM.SUBMITTED ? (
+                    <Redirect to="/student/formsubmitted" />
+                  ) : (
+                    <Redirect to="/student/summary" />
+                  )
                 ) : (
-                  <Redirect to={'/admin/courseMgt'} />
+                  <Redirect to="/admin/registrations" />
                 )}
               </Switch>
             </div>

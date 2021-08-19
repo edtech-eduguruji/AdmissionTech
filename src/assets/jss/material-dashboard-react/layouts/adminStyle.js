@@ -10,10 +10,20 @@ const appStyle = (theme) => ({
     top: '0',
     height: '100vh',
   },
-  mainPanel: {
+  studentPanel: {
+    overflow: 'auto',
+    position: 'relative',
+    float: 'right',
+    ...transition,
+    maxHeight: '100%',
+    width: '100%',
+    overflowScrolling: 'touch',
+  },
+  adminPanel: {
     [theme.breakpoints.up('md')]: {
       width: `calc(100% - ${drawerWidth}px)`,
     },
+    width: 'auto',
     overflow: 'auto',
     position: 'relative',
     float: 'right',

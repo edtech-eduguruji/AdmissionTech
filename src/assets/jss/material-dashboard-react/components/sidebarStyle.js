@@ -219,24 +219,24 @@ const sidebarStyle = (theme) => ({
     },
   },
   primary: {
-    backgroundColor: '#cccc00',
+    backgroundColor: 'darkblue',
     boxShadow:
       '0 12px 20px -10px rgba(' +
-      '#cccc00' +
+      'darkblue' +
       ',.28), 0 4px 20px 0 rgba(' +
-      '#cccc00' +
+      'darkblue' +
       ',.12), 0 7px 8px -5px rgba(' +
-      '#cccc00' +
+      'darkblue' +
       ',.2)',
     '&:hover,&:focus': {
-      backgroundColor: '#cccc00',
+      backgroundColor: 'darkblue',
       boxShadow:
         '0 12px 20px -10px rgba(' +
-        '#cccc00' +
+        'darkblue' +
         ',.28), 0 4px 20px 0 rgba(' +
-        '#cccc00' +
+        'darkblue' +
         ',.12), 0 7px 8px -5px rgba(' +
-        '#cccc00' +
+        'darkblue' +
         ',.2)',
     },
   },

@@ -3,18 +3,17 @@ import { addErrorMsg } from '../utils/Utils'
 import BaseApi from './BaseApi'
 import URLS from './Urls'
 
-class StudentsApi {
+class RegisterApi {
   StudentRegister(formData) {
     return BaseApi.postFormData(URLS.STUDENTREGISTER, formData).then((res) => {
-      if (res.data.error){
+      if (res.data.error) {
         addErrorMsg(res.data.message)
-      
-      }else{
-        addSuccessMsg('Registeration Successfull.')
-      } 
+      } else {
+        addSuccessMsg('Registration Successfull.')
+      }
       return res
     })
   }
 }
 
-export default new StudentsApi()
+export default new RegisterApi()

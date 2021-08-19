@@ -78,7 +78,11 @@ const CardContainer = (props) => {
           {buttons && buttons.length > 0 ? (
             <Grid item>
               {buttons.length == 1 ? (
-                <React.Fragment>{buttons.map((item) => item)}</React.Fragment>
+                <React.Fragment>
+                  {buttons.map((item, key) => (
+                    <div key={key}>{item}</div>
+                  ))}
+                </React.Fragment>
               ) : (
                 <React.Fragment>
                   <Hidden only={['xs']}>{buttons.map((item) => item)}</Hidden>

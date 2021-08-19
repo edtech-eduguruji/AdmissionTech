@@ -85,6 +85,7 @@ Snackbar.propTypes = {
     'success',
     'warning',
     'danger',
+    'rose',
     'primary',
     'black',
   ]),

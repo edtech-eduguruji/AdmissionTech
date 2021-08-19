@@ -8,7 +8,6 @@ const cardStyle = {
   card: {
     border: '0',
     marginBottom: '30px',
-    marginTop: '15px',
     borderRadius: '6px',
     color: 'rgba(' + hexToRgb(blackColor) + ', 0.87)',
     background: whiteColor,
@@ -39,6 +38,9 @@ const cardStyle = {
       paddingTop: '0px',
     },
   },
+  cardFullHeight: {
+    height: '92%'
+  }
 }
 
 export default cardStyle

@@ -11,7 +11,7 @@ class ClassDropDown extends React.Component {
     }
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     this.setState({
       hidden: props.hidden,
     })

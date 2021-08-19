@@ -1,0 +1,22 @@
+[
+    {
+        "documentTypeId": "#dt1HSM",
+        "documentType": "High School Marksheet"
+    },
+    {
+        "documentTypeId": "#dt2IM",
+        "documentType": "Inter Marksheet"
+    },
+    {
+        "documentTypeId": "#dt3GD",
+        "documentType": "Graduation Degree"
+    },
+    {
+        "documentTypeId": "#dt4PGD",
+        "documentType": "Post-Graduation Degree"
+    },
+    {
+        "documentTypeId": "#dt5Others",
+        "documentType": "Others"
+    }
+]

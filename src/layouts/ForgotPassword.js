@@ -4,17 +4,15 @@ import Grid from '@material-ui/core/Grid'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import CakeIcon from '@material-ui/icons/Cake'
-import CallIcon from '@material-ui/icons/Call'
-import PersonIcon from '@material-ui/icons/Person'
-import RegisterApi from 'apis/RegisterApi'
+import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber'
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
-import LocalStorage from '../common/LocalStorage'
+import ForgotApi from '../apis/ForgotApi'
 import Card from '../components/Card/Card'
 import CardBody from '../components/Card/CardBody'
 import RegularButton from '../components/CustomButtons/Button'
 import CustomInput from '../components/CustomInput/CustomInput'
-import { addErrorMsg, setErrorFields } from '../utils/Utils'
+import { addErrorMsg } from '../utils/Utils'
 
 const useStyles = (theme) => ({
   paper: {
@@ -34,44 +32,40 @@ const useStyles = (theme) => ({
   },
 })
 
-class Registeration extends Component {
+class ForgotPassword extends Component {
   constructor() {
     super()
     this.state = {
-      name: '',
-      mobileNo: '',
+      phone: '',
       dob: '',
-      errorList: [],
     }
   }
   handleSubmit = () => {
-    const { name, email, mobileNo, dob, errorList } = this.state
-    if (!errorList.length) {
-      if (name !== '' && mobileNo !== '' && dob !== '') {
-        const data = new FormData()
-        data.append('name', name)
-        data.append('mobile', mobileNo)
-        data.append('dob', dob)
-        RegisterApi.StudentRegister(data).then((res) => {
-          if (res.data) {
-            LocalStorage.setUser(res.data)
-            this.props.history.push('/student')
-          }
-        })
-      } else {
-        addErrorMsg('Please fill all the fields')
-      }
-    } else {
-      addErrorMsg('Please remove errors from all the fields')
+    this.handleSubmitDetails()
+  }
+
+  handleKeyDown = (event) => {
+    if (event.keyCode === 13) {
+      this.handleSubmitDetails()
     }
   }
 
-  handleChangeFields = (event, isError) => {
-    const { errorList } = this.state
+  handleSubmitDetails = () => {
+    const { phone, dob } = this.state
+    const data = {
+      phone: phone,
+      dob: dob,
+    }
+    if (phone !== '' && dob !== '') {
+      ForgotApi.forgotRegistration(data)
+    } else {
+      addErrorMsg('Fields cannot be empty')
+    }
+  }
 
-    setErrorFields(isError, errorList, event.target.name)
+  handleChangeFields = (event) => {
     this.setState({
-      errorList,
+      ...this.state,
       [event.target.name]: event.target.value,
     })
   }
@@ -80,73 +74,50 @@ class Registeration extends Component {
     const { classes } = this.props
     return (
       <div>
-        <Container component="main" maxWidth="sm">
+        <Container component="main" maxWidth="xs">
           <CssBaseline />
           <div className="center">
             <img alt="logo" src="agracollege.png" className={classes.logo} />
           </div>
-          <Card>
+          <Card cardFullHeight>
             <CardBody elevation={2} className={classes.paper}>
-              <Typography component="h1" variant="h5">
-                Registration
+              <Typography component="h1" variant="h6">
+                Enter the Details Below
               </Typography>
               <div className={classes.form} noValidate>
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={2}>
-                    <PersonIcon />
+                  <Grid container item xs={2} justifyContent="center">
+                    <ConfirmationNumberIcon />
                   </Grid>
                   <Grid item xs={10}>
                     <CustomInput
-                      isMandatory={true}
-                      minLength={5}
-                      maxLength={20}
-                      labelText="Name (as per highschool/secondary certificate)"
+                      labelText="Mobile No"
                       formControlProps={{
                         fullWidth: true,
                       }}
                       inputProps={{
-                        name: 'name',
-                      }}
-                      handleChange={this.handleChangeFields}
-                      errorMsg={'Name must be min. of 5 and max. 20 character'}
-                    />
-                  </Grid>
-                  <Grid item xs={2}>
-                    <CallIcon />
-                  </Grid>
-                  <Grid item xs={10}>
-                    <CustomInput
-                      isMandatory={true}
-                      maxLength={10}
-                      isNumber={true}
-                      labelText="Mobile No."
-                      formControlProps={{
-                        fullWidth: true,
-                      }}
-                      inputProps={{
-                        name: 'mobileNo',
+                        name: 'phone',
                         type: 'number',
+                        onKeyDown: this.handleKeyDown,
                       }}
                       handleChange={this.handleChangeFields}
-                      errorMsg={'Mobile no must be of 10 digit'}
                     />
                   </Grid>
-                  <Grid item xs={2}>
+                  <Grid container item xs={2} justifyContent="center">
                     <CakeIcon />
                   </Grid>
                   <Grid item xs={10}>
                     <CustomInput
-                      isMandatory={true}
                       formControlProps={{
                         fullWidth: true,
                       }}
                       inputProps={{
                         type: 'date',
                         name: 'dob',
+                        onKeyDown: this.handleKeyDown,
                         helperText: 'Date of Birth',
                       }}
                       handleChange={this.handleChangeFields}
-                      errorMsg={'Please select your dob'}
                     />
                   </Grid>
                   <Grid container item xs={12} justifyContent="center">
@@ -156,7 +127,7 @@ class Registeration extends Component {
                       className="sub"
                       onClick={this.handleSubmit}
                     >
-                      REGISTER
+                      Submit
                     </RegularButton>
                   </Grid>
                 </Grid>
@@ -169,4 +140,4 @@ class Registeration extends Component {
   }
 }
 
-export default withRouter(withStyles(useStyles)(Registeration))
+export default withRouter(withStyles(useStyles)(ForgotPassword))
