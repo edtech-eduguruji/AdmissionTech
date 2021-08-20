@@ -682,7 +682,7 @@ class Form extends React.Component {
     if (facultyId === '') {
       return false
     } else {
-      if (facultyId !== '#f5foc' && facultyId !== '#f6fom') {
+      if (facultyId !== 'f5foc' && facultyId !== 'f6fom') {
         return false
       } else {
         return true
@@ -696,7 +696,7 @@ class Form extends React.Component {
     let combination2 = ['$17Sanskrit', '$11pe']
     let combination3 = ['$17Sanskrit', '$18dp']
     let combination4 = ['$11pe', '$18dp']
-    if (faculty === '#f2Arts') {
+    if (faculty === 'f2Arts') {
       major1.map((item, i) => {
         if (combination1.includes(item.subjectId)) {
           combination1.splice(combination1.indexOf(item.subjectId), 1)
@@ -713,7 +713,7 @@ class Form extends React.Component {
       } else {
         return 1
       }
-    } else if (faculty === '#f3Language') {
+    } else if (faculty === 'f3Language') {
       major1.map((item) => {
         if (combination3.includes(item.subjectId)) {
           combination3.splice(combination3.indexOf(item.subjectId), 1)
@@ -730,7 +730,7 @@ class Form extends React.Component {
       } else {
         return 1
       }
-    } else if (faculty === '#f4fineArt') {
+    } else if (faculty === 'f4fineArt') {
       major1.map((item) => {
         if (combination3.includes(item.subjectId)) {
           combination3.splice(combination3.indexOf(item.subjectId), 1)
@@ -772,7 +772,7 @@ class Form extends React.Component {
         )
         subjects.splice(i, 1)
       }
-      if (major1.length > 0 && faculty === '#f2Arts') {
+      if (major1.length > 0 && faculty === 'f2Arts') {
         if (major1[0].subjectId === '$s7dss') {
           let i = subjects.findIndex(
             (item) => item.subjectId === '$s10Phylosophy'
@@ -2001,7 +2001,7 @@ class Form extends React.Component {
                       disabled={
                         (academicDetails[1].stream === '$s2Commerce' ||
                           academicDetails[1].stream === '$s3Arts') &&
-                        item.facultyId === '#f1Science'
+                        item.facultyId === 'f1Science'
                       }
                       value={item.facultyId}
                     >
@@ -2081,7 +2081,7 @@ class Form extends React.Component {
                             item.subjectId === '$21Bba' ||
                             ((academicDetails[1].stream === '$s2Commerce' ||
                               academicDetails[1].stream === '$s3Arts') &&
-                              item.facultyId === '#f1Science') ||
+                              item.facultyId === 'f1Science') ||
                             (!item.streamId.includes(
                               academicDetails[1].stream
                             ) &&
@@ -2138,7 +2138,7 @@ class Form extends React.Component {
                                   ((academicDetails[1].stream ===
                                     '$s2Commerce' ||
                                     academicDetails[1].stream === '$s3Arts') &&
-                                    item.facultyId === '#f1Science') ||
+                                    item.facultyId === 'f1Science') ||
                                   item.subjectId === major1[0].subjectId ||
                                   item.subjectId === major1[1].subjectId ||
                                   item.subjectId === major2.subjectId
@@ -2185,7 +2185,7 @@ class Form extends React.Component {
                                   ((academicDetails[1].stream ===
                                     '$s2Commerce' ||
                                     academicDetails[1].stream === '$s3Arts') &&
-                                    item.facultyId === '#f1Science') ||
+                                    item.facultyId === 'f1Science') ||
                                   item.subjectId === major1[0].subjectId ||
                                   item.subjectId === major1[1].subjectId ||
                                   item.subjectId === major2.subjectId

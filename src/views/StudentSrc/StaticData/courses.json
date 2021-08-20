@@ -18,37 +18,37 @@
         "courseId": "#c3Bcom"
     },
     {
-        "facultyId": "#f2Arts",
+        "facultyId": "f2Arts",
         "courseTypeId": "#ug1UG",
         "course": "BA",
         "courseId": "#c4BA"
     },
     {
-        "facultyId": "#f2Arts",
+        "facultyId": "f2Arts",
         "courseTypeId": "#pg2PG",
         "course": "MA",
         "courseId": "#c5MA"
     },
     {
-        "facultyId": "#f2Arts",
+        "facultyId": "f2Arts",
         "courseTypeId": "#ug1UG",
         "course": "Ba.LLB(5 Year)",
         "courseId": "#c6BaLLB"
     },
     {
-        "facultyId": "#f1Science",
+        "facultyId": "f1Science",
         "courseTypeId": "#ug1UG",
         "course": "Bsc. Maths",
         "courseId": "#c7BscMaths"
     },
     {
-        "facultyId": "#f1Science",
+        "facultyId": "f1Science",
         "courseTypeId": "#ug1UG",
         "course": "Bsc. Bio",
         "courseId": "#c8BscBio"
     },
     {
-        "facultyId": "#f1Science",
+        "facultyId": "f1Science",
         "courseTypeId": "#pg2PG",
         "course": "Msc",
         "courseId": "#c9MSC"

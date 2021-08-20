@@ -1,11 +1,9 @@
 [
     {
-        "faculty": ["#f1Science","#f5BBA","#f6BCA","#f2Arts","#Bio-Tech","#f4Commerce","#f3Law"],
         "courseType": "Under Graduate",
         "courseTypeId": "#ug1UG"
     },
     {
-        "faculty": ["#f2Arts","#f1Science","#f3Law","#f7BED"],
         "courseType":"Post Graduate",
         "courseTypeId": "#pg2PG"
     }
