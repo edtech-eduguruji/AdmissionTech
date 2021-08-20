@@ -8,8 +8,8 @@ const URLS = {
   GETFORM: API_URL + 'studentapi/getForm.php',
   STUDENTREGISTER: API_URL + 'studentapi/StudentRegister.php',
   FORGOT_REGISTRATION: API_URL + 'studentapi/ForgotRegistration.php',
-  MAKEPAYMENT: API_URL + 'studentapi/MakePayment.php',
   FETCHPAYMENTDETAILS: API_URL + 'studentapi/fetchPaymentDetails.php',
+  CHECKSUM: API_URL + 'checksum.php',
 }
 
 export default URLS

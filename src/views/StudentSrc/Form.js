@@ -24,17 +24,16 @@ import FileUploader from '../../common/FileUploader/FileUploader'
 import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import CustomInput from '../../components/CustomInput/CustomInput'
-import CustomTable from '../../components/Table/Table'
 import Success from '../../components/Typography/Success'
 import { ASSETS } from '../../constants/Constants'
 import {
   addErrorMsg,
-  createdDateTime,
   downloadPdf,
   errorDialog,
   mandatoryField,
   redirectUrl,
 } from '../../utils/Utils'
+import PaymentInfo from './PaymentInfo'
 import academicDetailsStatic from './StaticData/academic.json'
 import academicData from './StaticData/academicData.json'
 import categoryData from './StaticData/category.json'
@@ -168,7 +167,7 @@ class Form extends React.Component {
             }
             FormApi.fetchPaymentDetails(data).then((res) => {
               this.setState({
-                paymentDetails: this.formatPaymentData(res.data),
+                paymentDetails: res.data,
               })
             })
           }
@@ -792,19 +791,6 @@ class Form extends React.Component {
     } else {
       return []
     }
-  }
-
-  formatPaymentData = (data) => {
-    var formatted = data.map((item) => {
-      return [
-        item.paymentId,
-        createdDateTime(item.payment_date, 1),
-        item.mode,
-        '₹' + item.amount,
-        'SUCCESS',
-      ]
-    })
-    return formatted
   }
 
   render() {
@@ -2840,29 +2826,7 @@ class Form extends React.Component {
                 </RegularButton>
               </Grid>
             )}
-            {preview && (
-              <Grid container item xs={12} justifyContent="center">
-                <Grid container item xs={12} justifyContent="center">
-                  <Box p={4}>
-                    <Typography variant="h6">PAYMENT RECEIPT</Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12}>
-                  <CustomTable
-                    boldHeading
-                    isColumn={true}
-                    tableHead={[
-                      'Payment ID',
-                      'Payment Date',
-                      'Payment Mode',
-                      'Amount Paid',
-                      'Status',
-                    ]}
-                    tableData={paymentDetails}
-                  />
-                </Grid>
-              </Grid>
-            )}
+            {preview && <PaymentInfo paymentDetails={paymentDetails} />}
           </Grid>
           {preview && (
             <Grid container item xs={12} justifyContent="center">

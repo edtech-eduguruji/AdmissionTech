@@ -1,17 +1,43 @@
 import { Divider, Grid, Typography } from '@material-ui/core'
+import config from 'myconfig'
 import React from 'react'
 import { withRouter } from 'react-router-dom'
+import uuid from 'react-uuid'
+import FormApi from '../../apis/FormApi'
 import CardContainer from '../../common/CardContainer'
 import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import Success from '../../components/Typography/Success'
-import { downloadPdf, errorDialog } from '../../utils/Utils'
-
 class MakePayment extends React.Component {
+  constructor() {
+    super()
+    this.state = {
+      checksumVal: null,
+    }
+  }
+
   componentDidMount() {
     setTimeout(() => {
-      downloadPdf('p1234', 'RID')
+      //downloadPdf('p1234', 'RID')
     }, 3000)
+
+    const userId = LocalStorage.getUser().user_id
+    const na = 'NA'
+    const str = `${
+      config.MERCHANTID
+    }|${uuid()}|${na}|252.00|${na}|${na}|${na}|INR|NA|R|${
+      config.SECURITYID
+    }|${na}|${na}|F|F1SCIENCE|${userId}|${na}|${na}|${na}|${na}|${na}|${
+      config.RESPONSEURL
+    }`
+    const f = new FormData()
+    f.append('str', str)
+    FormApi.createCheckSum(f).then((res) => {
+      if (res.status === 200 && res.data) {
+        const checksumVal = `${str}|${res.data}`
+        this.setState({ checksumVal })
+      }
+    })
   }
 
   handleMakePayment = () => {
@@ -25,12 +51,22 @@ class MakePayment extends React.Component {
         this.props.history.push('/student')
       }
     }) */
-    errorDialog(
-      'Due to technical failure, payment process cannot be completed at this moment. Try again later'
-    )
+    // config
+    //     MerchantID|UniqueTxnID|NA|TxnAmount|NA|NA|NA|CurrencyType|NA|TypeField1|SecurityID|NA|N
+    // A|TypeField2|txtadditional1|txtadditional2|txtadditional3|txtadditional4|txtadditional5|txtadditional6
+    // |txtadditional7|RU
+    // errorDialog(
+    //   'Due to technical failure, payment process cannot be completed at this moment. Try again later'
+    // )
+    //     f.delete('str')
+    //         f.append('msg', checksumVal)
+    //         FormApi.doPayment(f).then((res)=>{
+    // console.log(res);
+    //         })
   }
 
   render() {
+    const { checksumVal } = this.state
     return (
       <div className="childContainer">
         <CardContainer heading="Payment">
@@ -100,9 +136,20 @@ class MakePayment extends React.Component {
               </Typography>
             </Grid>
             <Grid container item xs={12} justifyContent="center">
-              <RegularButton color="primary" onClick={this.handleMakePayment}>
-                Make Payment
-              </RegularButton>
+              <form
+                method="post"
+                action={config.PAYMENTAPI}
+                encType="application/x-www-form-urlencoded"
+              >
+                <input hidden name="msg" value={checksumVal} />
+                <RegularButton
+                  type="submit"
+                  color="primary"
+                  disabled={checksumVal ? false : true}
+                >
+                  Make Payment
+                </RegularButton>
+              </form>
             </Grid>
           </Grid>
         </CardContainer>

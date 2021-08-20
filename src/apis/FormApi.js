@@ -1,3 +1,4 @@
+import config from 'myconfig'
 import BaseApi from './BaseApi'
 import URLS from './Urls'
 
@@ -10,13 +11,18 @@ class FormApi {
   getForm(data) {
     return BaseApi.getWithParams(URLS.GETFORM, data)
   }
-  makePayment(data) {
-    return BaseApi.postFormData(URLS.MAKEPAYMENT, data).then((res) => {
+  fetchPaymentDetails(data) {
+    return BaseApi.getWithParams(URLS.FETCHPAYMENTDETAILS, data).then((res) => {
       return res
     })
   }
-  fetchPaymentDetails(data) {
-    return BaseApi.getWithParams(URLS.FETCHPAYMENTDETAILS, data).then((res) => {
+  createCheckSum(data) {
+    return BaseApi.postFormData(URLS.CHECKSUM, data).then((res) => {
+      return res
+    })
+  }
+  doPayment(data) {
+    return BaseApi.postFormData(config.PAYMENTAPI, data).then((res) => {
       return res
     })
   }

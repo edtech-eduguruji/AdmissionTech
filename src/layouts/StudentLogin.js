@@ -111,7 +111,7 @@ class Login extends Component {
               <Card cardFullHeight>
                 <CardBody className={classes.paper}>
                   <Typography component="h1" variant="h6">
-                    For registered users
+                    For Registered Users
                   </Typography>
                   <div className={classes.form} noValidate>
                     <Grid container spacing={2} alignItems="center">
@@ -169,7 +169,7 @@ class Login extends Component {
                   <Grid container spacing={2}>
                     <Grid container item xs={12} justifyContent="center">
                       <Typography component="h1" variant="h6">
-                        New user registration for Admission
+                        New User Registration for Admission
                       </Typography>
                     </Grid>
                     <Grid container item xs={12} justifyContent="center">
