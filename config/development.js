@@ -1,5 +1,5 @@
 module.exports = {
-  BASE_URL: 'http://localhost:3003/',
-  APIURL: 'http://localhost:8080/AdmissionTech-api/',
+  BASE_URL: 'https://eduguruji.com/admission/',
+  APIURL: 'https://eduguruji.com/admission/api/',
   ROLES: ['STUDENT', 'ADMIN'],
 }
