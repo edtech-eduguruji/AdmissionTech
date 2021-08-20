@@ -41,7 +41,7 @@ class Admin extends React.Component {
     if (user.payment == '0' && user.submitted === '0') {
       return <Redirect to="/student/payment"></Redirect>
     } else if (user.payment == '1' && user.submitted === '0') {
-      return <Redirect to="/student/form"></Redirect>
+      return <Redirect to="/student/summary"></Redirect>
     } else if (user.payment == '1' && user.submitted === '1') {
       return <Redirect to="/student/formsubmitted"></Redirect>
     }
