@@ -4,6 +4,7 @@ import React from 'react'
 import { HashRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { validateUser } from 'utils/Utils'
 import userDefineRoutes from '../routes'
+import PaymentInfo from '../views/StudentSrc/PaymentInfo'
 import asyncComponent from './AsyncComponent'
 import withRouteLayout from './EnhancedLayout'
 import ForgotPassword from './ForgotPassword'
@@ -59,6 +60,7 @@ const App = () => {
           <Route path="/preview" render={() => <Form isPreview="1" />} />
           <Route path="/admin" render={() => verify()} />
           <Route path="/aLogin" component={AdminLogin} />
+          <Route path="/paymentinfo" component={PaymentInfo} />
         </Switch>
       </HashRouter>
     </React.Fragment>

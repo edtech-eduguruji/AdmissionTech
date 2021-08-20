@@ -39,7 +39,7 @@ function withRouteLayout(
             />
           )
         } else {
-          return <Redirect to="/student/form"></Redirect>
+          return <Redirect to="/student/summary"></Redirect>
         }
       } else if (user.payment == '1' && user.submitted === '1') {
         if (

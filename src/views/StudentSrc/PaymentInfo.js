@@ -1,7 +1,8 @@
-import { Box, Grid, Typography } from '@material-ui/core'
+import { Box, Button, Grid, Typography } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import LocalStorage from '../../common/LocalStorage'
 import CustomTable from '../../components/Table/Table'
+import { redirectUrl } from '../../utils/Utils'
 
 const PaymentInfo = ({ paymentDetails }) => {
   const formatPaymentData = (data) => {
@@ -37,6 +38,10 @@ const PaymentInfo = ({ paymentDetails }) => {
     }, [])
   }
 
+  const handleNext = () => {
+    redirectUrl('sSummary')
+  }
+
   return (
     <Grid container item xs={12} justifyContent="center">
       <Grid container item xs={12} justifyContent="center">
@@ -58,6 +63,7 @@ const PaymentInfo = ({ paymentDetails }) => {
             ]}
             tableData={formatPaymentData(pInfo)}
           />
+          <Button onClick={handleNext}>Next</Button>
         </Grid>
       ) : (
         <div>Payment is not process completely. Try again after sometime.</div>
