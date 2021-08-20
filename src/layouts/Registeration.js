@@ -92,7 +92,7 @@ class Registeration extends Component {
               </Typography>
               <div className={classes.form} noValidate>
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={2}>
+                  <Grid container item xs={2} justifyContent="center">
                     <PersonIcon />
                   </Grid>
                   <Grid item xs={10}>
@@ -100,23 +100,26 @@ class Registeration extends Component {
                       isMandatory={true}
                       minLength={5}
                       maxLength={20}
-                      labelText="Name (as per highschool/secondary certificate)"
+                      labelText="Name"
                       formControlProps={{
                         fullWidth: true,
                       }}
                       inputProps={{
                         name: 'name',
+                        helperText:
+                          'Name (as per highschool/secondary certificate)',
                       }}
                       handleChange={this.handleChangeFields}
                       errorMsg={'Name must be min. of 5 and max. 20 character'}
                     />
                   </Grid>
-                  <Grid item xs={2}>
+                  <Grid container item xs={2} justifyContent="center">
                     <CallIcon />
                   </Grid>
                   <Grid item xs={10}>
                     <CustomInput
                       isMandatory={true}
+                      minLength={10}
                       maxLength={10}
                       isNumber={true}
                       labelText="Mobile No."
@@ -131,7 +134,7 @@ class Registeration extends Component {
                       errorMsg={'Mobile no must be of 10 digit'}
                     />
                   </Grid>
-                  <Grid item xs={2}>
+                  <Grid container item xs={2} justifyContent="center">
                     <CakeIcon />
                   </Grid>
                   <Grid item xs={10}>

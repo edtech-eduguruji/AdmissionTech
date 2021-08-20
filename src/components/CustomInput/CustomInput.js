@@ -17,7 +17,7 @@ const useStyles = makeStyles(styles)
 export default function CustomInput(props) {
   const classes = useStyles()
   const [isError, setError] = React.useState(false)
-  const [emptyMesaage, setMessage] = React.useState()
+  const [emptyMessage, setMessage] = React.useState()
   const {
     formControlProps,
     labelText,
@@ -52,21 +52,26 @@ export default function CustomInput(props) {
         return
       }
     }
-    if (minLength) {
-      if (event.target.value.length < minLength) {
-        setError(true)
-        setMessage(errorMsg)
-        handleChange(event, true)
-      } else {
-        handleInput(event)
+    if (minLength || maxLength) {
+      let isErrorExist = false
+      if (minLength) {
+        if (event.target.value.length < minLength) {
+          isErrorExist = true
+          setError(true)
+          setMessage(errorMsg)
+          handleChange(event, true)
+        } else {
+          handleInput(event)
+        }
       }
-    } else if (maxLength) {
-      if (event.target.value.length > maxLength) {
-        setError(true)
-        setMessage(errorMsg)
-        handleChange(event, true)
-      } else {
-        handleInput(event)
+      if (maxLength) {
+        if (event.target.value.length > maxLength) {
+          setError(true)
+          setMessage(errorMsg)
+          handleChange(event, true)
+        } else {
+          handleInput(event, isErrorExist)
+        }
       }
     } else {
       if (handleChange) {
@@ -86,14 +91,14 @@ export default function CustomInput(props) {
     }
   }
 
-  const handleInput = (event) => {
+  const handleInput = (event, isErrorExist) => {
     if (isMandatory && event.target.value.length === 0) {
       setError(true)
       setMessage('This field cannot be blank')
       handleChange(event, true)
     } else {
-      setError(false)
-      handleChange(event, false)
+      setError(isErrorExist)
+      handleChange(event, isErrorExist)
     }
   }
 
@@ -123,7 +128,7 @@ export default function CustomInput(props) {
       {error || isError ? (
         <React.Fragment>
           <Clear className={classes.feedback + ' ' + classes.labelRootError} />
-          <Danger>{emptyMesaage}</Danger>
+          <Danger>{emptyMessage}</Danger>
         </React.Fragment>
       ) : success ? (
         <Check className={classes.feedback + ' ' + classes.labelRootSuccess} />
