@@ -33,11 +33,16 @@ class FormSubmitted extends React.Component {
               <Typography component="span" variant="body1">
                 <ul>
                   <li>
-                    You can login to our portal using your registration id and
-                    date of birth on login page
+                    Download submitted form along with payment reciept and
+                    produce at the time of counselling.
                   </li>
                   <li>
-                    You can download application form and payment receipt below
+                    You can login to our portal using your registration id and
+                    date of birth on login page.
+                  </li>
+                  <li>
+                    You can download application form with payment receipt using
+                    below button.
                   </li>
                 </ul>
               </Typography>

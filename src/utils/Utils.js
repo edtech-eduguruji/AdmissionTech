@@ -284,6 +284,9 @@ export function createdDateTime(ms, onlyDateTime, format) {
 export function redirectUrl(id, value) {
   if (id && value == null) {
     history.push(id)
+  } else if (value > 1) {
+    const obj = dashboardRoutes.filter((item) => item.id === id)
+    if (obj.length > 0) history.replace(obj[0].layout + obj[0].path)
   } else {
     const obj = dashboardRoutes.filter((item) => item.id === id)
     if (obj.length > 0) history.push(obj[0].layout + obj[0].path)

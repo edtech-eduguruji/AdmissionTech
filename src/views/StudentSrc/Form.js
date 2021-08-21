@@ -149,6 +149,7 @@ class Form extends React.Component {
       token: '',
       paymentDetails: [],
       registrationNo: null,
+      uploadExtraMark: null,
     }
   }
 
@@ -456,6 +457,7 @@ class Form extends React.Component {
       totalMeritCount,
       mediumOfInstitution,
       signature,
+      uploadExtraMark,
     } = this.state
     var count = 0
     const data = new FormData()
@@ -534,6 +536,7 @@ class Form extends React.Component {
     data.append('totalMeritCount', totalMeritCount)
     data.append('signature', signature)
     data.append('submit', btnValue)
+    data.append('uploadExtraMark', uploadExtraMark)
     if (btnValue === 0) {
       if (dob === '') {
         count++
@@ -868,6 +871,7 @@ class Form extends React.Component {
       coCurriculumSem2,
       paymentDetails,
       registrationNo,
+      uploadExtraMark,
     } = this.state
     const { isPreview } = this.props
     const preview =
@@ -910,26 +914,29 @@ class Form extends React.Component {
             {!preview ? (
               <Grid item xs={12}>
                 <Typography variant="h6">
-                  Please read all the instructions before fill up form
+                  Please read below all the instructions carefully before
+                  filling up the form
                 </Typography>
                 <Divider />
                 <Typography variant="caption">
                   <ul>
                     <li>
-                      Please verify your form details once before click on
-                      'Submit' button
+                      Please verify your details before clicking on 'Submit'
+                      button
                     </li>
                     <li>
-                      After submitting FORM, you cannot modified or change any
-                      details
+                      After submitting FORM, it cannot be modified or changed
                     </li>
                     <li>
                       Please note down your registration id after click on 'Save
                       Draft' button
                     </li>
-                    <li>Your photo and signature must be image format</li>
                     <li>
-                      Any other uploads can be image(png/jpg/jpeg) or pdf{' '}
+                      Your photo and signature must be image format (jpeg/png)
+                    </li>
+                    <li>
+                      All other uploads in the form can be image(png/jpg/jpeg)
+                      or pdf format
                     </li>
                   </ul>
                 </Typography>
@@ -1044,6 +1051,10 @@ class Form extends React.Component {
             <Grid item md={6} xs={12}>
               <Grid container alignItems="center">
                 <Grid item xs={12}>
+                  <Typography>
+                    Enter university web registration no and upload
+                    certification (in PDF)
+                  </Typography>
                   <CustomInput
                     smallLabel
                     labelText={mandatoryField('Web Registration No.')}
@@ -1060,9 +1071,6 @@ class Form extends React.Component {
                 </Grid>
                 <Grid container item xs={12} justifyContent="center">
                   <div className="alignCenter">
-                    <Typography>
-                      Upload University Web Registration (PDF) &nbsp;
-                    </Typography>
                     {!preview && (
                       <FileUploader
                         buttonLabel="Upload Form"
@@ -2217,10 +2225,7 @@ class Form extends React.Component {
                     value={vocationalSem1}
                     onChange={this.handleChangeFields}
                   >
-                    <MenuItem value="1">1</MenuItem>
-                    <MenuItem value="2">2</MenuItem>
-                    <MenuItem value="3">3</MenuItem>
-                    <MenuItem value="4">4</MenuItem>
+                    <MenuItem value="1">Will be alloted later</MenuItem>
                   </TextField>
                 </Grid>
                 <Grid item xs={6}>
@@ -2244,10 +2249,7 @@ class Form extends React.Component {
                     value={vocationalSem2}
                     onChange={this.handleChangeFields}
                   >
-                    <MenuItem value="1">1</MenuItem>
-                    <MenuItem value="2">2</MenuItem>
-                    <MenuItem value="3">3</MenuItem>
-                    <MenuItem value="4">4</MenuItem>
+                    <MenuItem value="1">Will be alloted later</MenuItem>
                   </TextField>
                 </Grid>
                 <Grid item xs={12}>
@@ -2755,10 +2757,23 @@ class Form extends React.Component {
                   प्रवेश में
                 </MenuItem>
               </TextField>
+              <FileUploader
+                buttonLabel="Upload Certificate for Extra Merit Marks"
+                accept="image/jpg,image/jpeg,image/png,application/pdf"
+                maxSize={1}
+                handleChange={this.handleUpload}
+                id="uploadExtraMark"
+                name="uploadExtraMark"
+              />
+              <Grid item md={4} xs={6}>
+                {uploadExtraMark !== '' && uploadExtraMark !== null ? (
+                  <Success>Uploaded.</Success>
+                ) : null}
+              </Grid>
             </Grid>
             <Grid item xs={12}>
               <Typography>
-                Extra Marks : <b>{totalMeritCount}</b>
+                Extra Marks: <b>{totalMeritCount}</b>
               </Typography>
               <br />
               <Typography variant="caption">

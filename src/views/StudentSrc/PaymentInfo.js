@@ -42,7 +42,7 @@ class PaymentInfo extends React.Component {
   }
 
   handleNext = () => {
-    redirectUrl('sSummary', 1)
+    redirectUrl('sSummary', 2)
   }
 
   formatPaymentData = (data) => {

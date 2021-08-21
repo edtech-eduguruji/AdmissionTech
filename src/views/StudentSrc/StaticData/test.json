@@ -1,4 +1,8 @@
 {
+    "courseType":"Post Graduate",
+    "courseTypeId": "#pg2PG"
+}
+{
     "faculty": [
         {
             "id": "",
