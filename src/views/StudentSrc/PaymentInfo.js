@@ -49,8 +49,10 @@ class PaymentInfo extends React.Component {
     var formatted = data.map((item) => {
       return [
         item.paymentId,
+        item.TxnReferenceNo,
+        item.BankReferenceNo,
         item.TxnDate,
-        '',
+        item.TxnType,
         '₹' + item.TxnAmount,
         item.AuthMsg,
       ]
@@ -76,6 +78,8 @@ class PaymentInfo extends React.Component {
                       isColumn={true}
                       tableHead={[
                         'Payment ID',
+                        'Txn Reference No',
+                        'Bank Reference No',
                         'Payment Date',
                         'Payment Mode',
                         'Amount Paid',
