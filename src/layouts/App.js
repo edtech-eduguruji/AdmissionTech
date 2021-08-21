@@ -31,8 +31,7 @@ const verify = () => {
                 prop,
                 role,
                 config,
-                userDefineRoutes,
-                user
+                userDefineRoutes
               )}
               key={key}
             />
@@ -41,7 +40,7 @@ const verify = () => {
       }
       return null
     })
-    return <AdminAsync user={user} role={user.role} routesLink={routesLink} />
+    return <AdminAsync role={user.role} routesLink={routesLink} />
   } else {
     return <Redirect to="/login" />
   }

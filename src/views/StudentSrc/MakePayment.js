@@ -8,6 +8,7 @@ import CardContainer from '../../common/CardContainer'
 import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import Success from '../../components/Typography/Success'
+import { downloadPdf } from '../../utils/Utils'
 class MakePayment extends React.Component {
   constructor() {
     super()
@@ -17,10 +18,6 @@ class MakePayment extends React.Component {
   }
 
   componentDidMount() {
-    setTimeout(() => {
-      //downloadPdf('p1234', 'RID')
-    }, 3000)
-
     const userId = LocalStorage.getUser().user_id
     const na = 'NA'
     const str = `${
@@ -38,6 +35,10 @@ class MakePayment extends React.Component {
         this.setState({ checksumVal })
       }
     })
+  }
+
+  downloadRId = () => {
+    downloadPdf('p1234', 'RID')
   }
 
   handleMakePayment = () => {
@@ -83,10 +84,16 @@ class MakePayment extends React.Component {
                   Your Registration ID
                   <Success>{LocalStorage.getUser().user_id}</Success>
                   <Typography variant="body1" component="div">
-                    Please note down your registration id before making payment.
+                    Please copy or download your registration id before making
+                    payment.
                   </Typography>
                 </Typography>
               </div>
+              <br />
+              <br />
+              <RegularButton color="primary" onClick={this.downloadRId}>
+                Download Registration No
+              </RegularButton>
             </Grid>
             <Grid
               container

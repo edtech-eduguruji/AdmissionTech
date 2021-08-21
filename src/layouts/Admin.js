@@ -17,6 +17,7 @@ class Admin extends React.Component {
     this.state = {
       routesLink: props.routesLink,
       mobileOpen: false,
+      user: LocalStorage.getUser(),
     }
     this.mainPanel = React.createRef()
   }
@@ -37,7 +38,7 @@ class Admin extends React.Component {
   }
 
   handleRedirects = () => {
-    const { user } = this.props
+    const user = LocalStorage.getUser()
     if (user.payment == '0' && user.submitted === '0') {
       return <Redirect to="/student/payment"></Redirect>
     } else if (user.payment == '1' && user.submitted === '0') {
@@ -48,8 +49,8 @@ class Admin extends React.Component {
   }
 
   render() {
-    const { classes, role, user } = this.props
-    const { mobileOpen, routesLink } = this.state
+    const { classes, role } = this.props
+    const { mobileOpen, routesLink, user } = this.state
     return (
       <div className={classes.wrapper}>
         {role === ROLES_KEY.ADMIN && (

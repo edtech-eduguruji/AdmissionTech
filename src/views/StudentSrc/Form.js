@@ -172,7 +172,10 @@ class Form extends React.Component {
             })
           }
           Object.keys(response.data).map((item) => {
-            if (response.data[item] === 'null') {
+            if (
+              response.data[item] === null ||
+              response.data[item] === 'null'
+            ) {
               response.data[item] = ''
             }
           })
@@ -540,6 +543,7 @@ class Form extends React.Component {
         addErrorMsg("Please verify you're not a robot")
       }
     } else {
+      debugger
       if (
         !photo ||
         !wrn ||
@@ -618,7 +622,8 @@ class Form extends React.Component {
       FormApi.submitForm(data).then((response) => {
         if (btnValue === 1) {
           errorDialog('Your application is submitted successfully', 'Form')
-          let user = { ...LocalStorage.getUser(), submitted: '1' }
+          const user = LocalStorage.getUser()
+          user.submitted = '1'
           LocalStorage.setUser(user)
           redirectUrl('sFormSubmit', 1)
         } else {

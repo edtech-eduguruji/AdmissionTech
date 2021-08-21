@@ -1,17 +1,18 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
+import LocalStorage from '../common/LocalStorage'
 
 function withRouteLayout(
   WrappedComponent,
   currentRoute,
   currentRole,
   config,
-  routes,
-  user
+  routes
 ) {
   // ...and returns another component...
   return class extends React.Component {
     handleRedirects = () => {
+      const user = LocalStorage.getUser()
       if (user.payment == '0' && user.submitted === '0') {
         if (currentRoute.layout + currentRoute.path == '/student/payment') {
           return (
