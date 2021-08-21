@@ -25,7 +25,7 @@ import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import CustomInput from '../../components/CustomInput/CustomInput'
 import Success from '../../components/Typography/Success'
-import { ASSETS } from '../../constants/Constants'
+import { ASSETS, PAYMENT } from '../../constants/Constants'
 import {
   addErrorMsg,
   downloadPdf,
@@ -153,50 +153,61 @@ class Form extends React.Component {
   }
 
   componentDidMount() {
-    let data = {
-      registrationNo: LocalStorage.getUser() && LocalStorage.getUser().user_id,
-    }
-    FormApi.getForm(data).then((response) => {
-      if (response.data) {
-        if (response.data.submitted === '1' && !this.props.isPreview) {
-          this.props.history.push('/formsubmitted')
-        } else {
-          if (this.props.isPreview) {
-            const data = {
-              registrationNo: LocalStorage.getUser().user_id,
-            }
-            FormApi.fetchPaymentDetails(data).then((res) => {
-              this.setState({
-                paymentDetails: res.data,
-              })
-            })
-          }
-          Object.keys(response.data).map((item) => {
-            if (
-              response.data[item] === null ||
-              response.data[item] === 'null'
-            ) {
-              response.data[item] = ''
-            }
-          })
-          response.data.academicDetails = response.data.academicDetails
-            ? JSON.parse(response.data.academicDetails)
-            : []
-          response.data.documents = response.data.documents
-            ? JSON.parse(response.data.documents)
-            : []
-          response.data.major1 = response.data.major1
-            ? JSON.parse(response.data.major1)
-            : []
-          response.data.major2 = response.data.major2
-            ? JSON.parse(response.data.major2)
-            : []
-          response.data.coCurriculumSem1 = 'Food, Nutrition and Hygiene'
-          response.data.coCurriculumSem2 = 'First Aid and Basic health'
-          this.setState({ ...response.data })
-        }
+    if (this.props.isPreview) {
+      const data = {
+        registrationNo: LocalStorage.getUser().user_id,
       }
-    })
+      FormApi.fetchPaymentDetails(data).then((res) => {
+        this.setState({
+          paymentDetails: this.formatPaymentData(res.data),
+        })
+      })
+    }
+    if (this.props.isView) {
+      this.setState({
+        ...this.props.data,
+      })
+    } else {
+      if (LocalStorage.getUser().payment === PAYMENT.NOT_DONE) {
+        redirectUrl('sPayment', 1)
+      } else {
+        let data = {
+          registrationNo:
+            LocalStorage.getUser() && LocalStorage.getUser().user_id,
+        }
+        FormApi.getForm(data).then((response) => {
+          if (response.data) {
+            if (response.data.submitted === '1' && !this.props.isPreview) {
+              this.props.history.push('/formsubmitted')
+            } else {
+              Object.keys(response.data).map((item) => {
+                if (
+                  response.data[item] === null ||
+                  response.data[item] === 'null'
+                ) {
+                  response.data[item] = ''
+                }
+              })
+              response.data.academicDetails = response.data.academicDetails
+                ? JSON.parse(response.data.academicDetails)
+                : []
+              response.data.documents = response.data.documents
+                ? JSON.parse(response.data.documents)
+                : []
+              response.data.major1 = response.data.major1
+                ? JSON.parse(response.data.major1)
+                : []
+              response.data.major2 = response.data.major2
+                ? JSON.parse(response.data.major2)
+                : ''
+              response.data.coCurriculumSem1 = 'Food, Nutrition and Hygiene'
+              response.data.coCurriculumSem2 = 'First Aid and Basic health'
+              this.setState({ ...response.data })
+            }
+          }
+        })
+      }
+    }
   }
 
   handleUpload = (file, index, name) => {
@@ -221,11 +232,13 @@ class Form extends React.Component {
         this.setState({
           academicDetails: academicDetailsStatic.UG,
           documents: documentsStatic.UG,
+          [event.target.name]: event.target.value,
         })
       } else if (event.target.value === '#pg2PG') {
         this.setState({
           academicDetails: academicDetailsStatic.PG,
           documents: documentsStatic.PG,
+          [event.target.name]: event.target.value,
         })
       }
       // else if (event.target.value === 'LLM') {
@@ -233,14 +246,19 @@ class Form extends React.Component {
       //     academicDetails: academicDetailsStatic.LLM,
       //     documents: documentsStatic.LLM,
       //   })
-      // }
+    } else if (name === 'major3') {
+      this.setState({
+        [event.target.name]: JSON.parse(event.target.value),
+      })
     } else if (name === 'major3') {
       this.setState({
         major4: '',
+        [event.target.name]: event.target.value,
       })
     } else if (name === 'major4') {
       this.setState({
         major3: '',
+        [event.target.name]: event.target.value,
       })
     } else if (name === 'faculty') {
       this.setState({
@@ -249,12 +267,13 @@ class Form extends React.Component {
         major3: '',
         major4: '',
         vocationalSem1: '',
+        [event.target.name]: event.target.value,
+      })
+    } else {
+      this.setState({
+        [event.target.name]: event.target.value,
       })
     }
-    this.setState({
-      [event.target.name]:
-        name === 'major2' ? JSON.parse(event.target.value) : event.target.value,
-    })
   }
 
   handleFieldChecked = (event) => {
@@ -869,7 +888,7 @@ class Form extends React.Component {
       paymentDetails,
       registrationNo,
     } = this.state
-    const { isPreview } = this.props
+    const { isPreview, isView } = this.props
     const preview =
       submitted === '1' && isPreview && isPreview === '1' ? true : false
     return (
@@ -2057,33 +2076,34 @@ class Form extends React.Component {
                     fullWidth
                     variant={preview ? 'standard' : 'outlined'}
                     name="major2"
-                    value={JSON.stringify(major2)}
+                    value={major2 ? JSON.stringify(major2) : ''}
                     onChange={this.handleChangeFields}
                   >
                     {major1.length === 2 &&
-                      majorSubjectsData.map((item, key) => (
-                        <MenuItem
-                          disabled={
-                            major1.some(
-                              (itm) => item.subjectId === itm.subjectId
-                            ) ||
-                            this.checkCombination(item.subjectId) === 0 ||
-                            item.subjectId === '$20Bcom' ||
-                            item.subjectId === '$21Bba' ||
-                            ((academicDetails[1].stream === '$s2Commerce' ||
-                              academicDetails[1].stream === '$s3Arts') &&
-                              item.facultyId === 'f1Science') ||
-                            (!item.streamId.includes(
-                              academicDetails[1].stream
-                            ) &&
-                              item.facultyId === faculty)
-                          }
-                          key={key}
-                          value={JSON.stringify(item)}
-                        >
-                          {item.subjectName}
-                        </MenuItem>
-                      ))}
+                      majorSubjectsData.map((item, key) =>
+                        item.subjectId !== '$20Bcom' &&
+                        item.subjectId !== '$21Bba' ? (
+                          <MenuItem
+                            disabled={
+                              major1.some(
+                                (itm) => item.subjectId === itm.subjectId
+                              ) ||
+                              this.checkCombination(item.subjectId) === 0 ||
+                              ((academicDetails[1].stream === '$s2Commerce' ||
+                                academicDetails[1].stream === '$s3Arts') &&
+                                item.facultyId === 'f1Science') ||
+                              (!item.streamId.includes(
+                                academicDetails[1].stream
+                              ) &&
+                                item.facultyId === faculty)
+                            }
+                            key={key}
+                            value={JSON.stringify(item)}
+                          >
+                            {item.subjectName}
+                          </MenuItem>
+                        ) : null
+                      )}
                   </TextField>
                 </Grid>
                 <Grid item xs={12}>

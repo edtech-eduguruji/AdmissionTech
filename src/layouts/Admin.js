@@ -38,13 +38,17 @@ class Admin extends React.Component {
   }
 
   handleRedirects = () => {
-    const user = LocalStorage.getUser()
-    if (user.payment == '0' && user.submitted === '0') {
-      return <Redirect to="/student/payment"></Redirect>
-    } else if (user.payment == '1' && user.submitted === '0') {
-      return <Redirect to="/student/summary"></Redirect>
-    } else if (user.payment == '1' && user.submitted === '1') {
-      return <Redirect to="/student/formsubmitted"></Redirect>
+    const { user, role } = this.props
+    if (role === 'ADMIN') {
+      return <Redirect to="/admin/registrations"></Redirect>
+    } else {
+      if (user.payment == '0' && user.submitted === '0') {
+        return <Redirect to="/student/payment"></Redirect>
+      } else if (user.payment == '1' && user.submitted === '0') {
+        return <Redirect to="/student/summary"></Redirect>
+      } else if (user.payment == '1' && user.submitted === '1') {
+        return <Redirect to="/student/formsubmitted"></Redirect>
+      }
     }
   }
 
