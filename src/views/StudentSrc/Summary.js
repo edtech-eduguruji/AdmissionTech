@@ -1,5 +1,4 @@
 import { Divider, Grid, Hidden, Typography } from '@material-ui/core'
-import { withStyles } from '@material-ui/core/styles'
 import GetAppIcon from '@material-ui/icons/GetApp'
 import React from 'react'
 import { withRouter } from 'react-router-dom'
@@ -7,8 +6,6 @@ import CardContainer from '../../common/CardContainer'
 import RegularButton from '../../components/CustomButtons/Button'
 import { ASSETS } from '../../constants/Constants'
 import { redirectUrl } from '../../utils/Utils'
-
-const styles = {}
 class Summary extends React.Component {
   render() {
     return (
@@ -70,4 +67,4 @@ class Summary extends React.Component {
   }
 }
 
-export default withRouter(withStyles(styles)(Summary))
+export default withRouter(Summary)

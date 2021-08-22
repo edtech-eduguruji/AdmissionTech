@@ -19,8 +19,7 @@ export const ExcelExport = ({ csvData, fileName }) => {
   return (
     <RegularButton
       disabled={csvData && csvData.length == 0}
-      fullWidth
-      color={csvData && csvData.length == 0 ? "" :"warning"}
+      color={csvData && csvData.length == 0 ? '' : 'primary'}
       onClick={() => exportToCSV(csvData, fileName)}
     >
       Download in Excel

@@ -114,7 +114,7 @@ class Login extends Component {
                       handleChange={this.handleChangeFields}
                     />
                   </Grid>
-                  <Grid container item xs={8} justifyContent="flex-end">
+                  <Grid container item xs={12} justifyContent="center">
                     <RegularButton
                       color="primary"
                       variant="contained"
@@ -122,15 +122,6 @@ class Login extends Component {
                       onClick={this.handleSubmit}
                     >
                       SIGN IN
-                    </RegularButton>
-                  </Grid>
-                  <Grid container item xs={4} justifyContent="flex-end">
-                    <RegularButton
-                      color="transparent"
-                      size="sm"
-                      onClick={() => this.props.history.push('/Register')}
-                    >
-                      Register ?
                     </RegularButton>
                   </Grid>
                 </Grid>
