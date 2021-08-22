@@ -42,16 +42,16 @@ class MakePayment extends React.Component {
   }
 
   handleMakePayment = () => {
-    /* const data = new FormData()
+    const data = new FormData()
     data.append('registrationNo', LocalStorage.getUser().user_id)
     FormApi.makePayment(data).then((res) => {
       if (res.status === 200) {
         addSuccessMsg('Payment is Successfully done.')
         let user = { ...LocalStorage.getUser(), payment: '1' }
         LocalStorage.setUser(user)
-        this.props.history.push('/student')
+        this.props.history.push('/student/form')
       }
-    }) */
+    })
     // config
     //     MerchantID|UniqueTxnID|NA|TxnAmount|NA|NA|NA|CurrencyType|NA|TypeField1|SecurityID|NA|N
     // A|TypeField2|txtadditional1|txtadditional2|txtadditional3|txtadditional4|txtadditional5|txtadditional6
