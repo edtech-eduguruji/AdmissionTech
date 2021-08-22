@@ -121,7 +121,7 @@ const CardContainer = (props) => {
 
 CardContainer.propTypes = {
   heading: PropTypes.string.isRequired,
-  children: PropTypes.element.isRequired,
+  children: PropTypes.node,
   buttons: PropTypes.array,
   subTitle: PropTypes.string,
   isBack: PropTypes.bool,
