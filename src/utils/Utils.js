@@ -154,61 +154,13 @@ export function closeDialog() {
 
 export function getAxios() {
   const axios = Axios
-  const userId = LocalStorage.getUser() && LocalStorage.getUser().user_id
+  const userId = LocalStorage.getUser()
   axios.defaults.headers.common['Authorization'] = `${userId}`
   return axios
 }
 
-export function getUserClasses() {
-  if (LocalStorage.getUser() && LocalStorage.getUser().class_id) {
-    if (Array.isArray(LocalStorage.getUser().class_id))
-      return LocalStorage.getUser().class_id.map((item) => item.classId)
-    else {
-      return LocalStorage.getUser().class_id
-    }
-  } else {
-    return null
-  }
-}
-
-export function getUserSubject() {
-  let sub =
-    LocalStorage.getUser() &&
-    LocalStorage.getUser().class_id &&
-    Array.isArray(LocalStorage.getUser().class_id) &&
-    LocalStorage.getUser()
-      .class_id.filter((item) => item.subject != null)
-      .map(
-        (item) =>
-          item.subject &&
-          item.subject.length > 0 &&
-          item.subject.map((sItem) => sItem.subjectId)
-      )
-
-  if (sub && sub.length) {
-    return sub[0]
-  }
-}
-
 export function getUserRole() {
   return LocalStorage.getUser() && LocalStorage.getUser().role
-}
-
-/**value: 1= teacher, 0= student */
-export function filterSubjectWise(sid, data, value) {
-  if (value) {
-    return data.filter(
-      (item) =>
-        item.subjects &&
-        item.subjects.find(
-          (i) => i.subject && i.subject.find((x) => x.subjectId === sid)
-        )
-    )
-  } else {
-    return data.filter(
-      (item) => item.Subjects && item.Subjects.find((i) => sid === i.subjectId)
-    )
-  }
 }
 
 export function validateUser() {

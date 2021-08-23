@@ -57,12 +57,16 @@ class Login extends Component {
       username: registrationNo,
       password: dob,
     }
-    LoginApi.userLogin(data).then((response) => {
-      if (response.data && response.data.length > 0) {
-        LocalStorage.setUser(response.data[0])
-        this.props.history.push('/student')
-      }
-    })
+    LoginApi.userLogin(data)
+      .then((response) => {
+        if (response.data) {
+          LocalStorage.setUser(response.data)
+          this.props.history.push('/student')
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
   handleChangeFields = (event) => {

@@ -46,10 +46,7 @@ class MakePayment extends React.Component {
     data.append('registrationNo', LocalStorage.getUser().user_id)
     FormApi.makePayment(data).then((res) => {
       if (res.status === 200) {
-        addSuccessMsg('Payment is Successfully done.')
-        let user = { ...LocalStorage.getUser(), payment: '1' }
-        LocalStorage.setUser(user)
-        this.props.history.push('/student')
+        
       }
     }) */
     // config

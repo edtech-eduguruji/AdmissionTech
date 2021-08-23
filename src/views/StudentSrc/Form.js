@@ -15,6 +15,7 @@ import AddIcon from '@material-ui/icons/Add'
 import DeleteIcon from '@material-ui/icons/Delete'
 import GetAppIcon from '@material-ui/icons/GetApp'
 import Autocomplete from '@material-ui/lab/Autocomplete'
+import jwtDecode from 'jwt-decode'
 import React from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { withRouter } from 'react-router-dom'
@@ -167,9 +168,11 @@ class Form extends React.Component {
               registrationNo: LocalStorage.getUser().user_id,
             }
             FormApi.fetchPaymentDetails(data).then((res) => {
-              this.setState({
-                paymentDetails: res.data,
-              })
+              if (res.data) {
+                this.setState({
+                  paymentDetails: jwtDecode(res.data).data,
+                })
+              }
             })
           }
           Object.keys(response.data).map((item) => {
@@ -623,20 +626,21 @@ class Form extends React.Component {
     }
     if (count === 0) {
       FormApi.submitForm(data).then((response) => {
-        if (btnValue === 1) {
-          errorDialog('Your application is submitted successfully', 'Form')
-          const user = LocalStorage.getUser()
-          user.submitted = '1'
-          LocalStorage.setUser(user)
-          redirectUrl('sFormSubmit', 1)
-        } else {
-          errorDialog(
-            'Your application is saved. Your registration no. is : ' +
-              response.data.user_id,
-            'Form'
-          )
-          LocalStorage.removeUser()
-          redirectUrl('/login')
+        if (response.data) {
+          if (btnValue === 1) {
+            errorDialog('Your application is submitted successfully', 'Form')
+            LocalStorage.setUser(response.data)
+            redirectUrl('sFormSubmit', 1)
+          } else {
+            const user = jwtDecode(response.data).data
+            errorDialog(
+              'Your application is saved. Your registration no. is : ' +
+                user.user_id,
+              'Form'
+            )
+            LocalStorage.removeUser()
+            redirectUrl('/login')
+          }
         }
       })
     }

@@ -52,7 +52,7 @@ class Login extends Component {
     }
     LoginApi.userLogin(data).then((response) => {
       if (response.data && response.data.length > 0) {
-        LocalStorage.setUser(response.data[0])
+        LocalStorage.setUser(response.data)
         this.props.history.push('/admin')
       }
     })

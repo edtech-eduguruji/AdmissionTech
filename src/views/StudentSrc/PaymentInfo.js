@@ -1,6 +1,7 @@
 import { Box, Grid, Typography } from '@material-ui/core'
+import jwtDecode from 'jwt-decode'
+import queryString from 'query-string'
 import React from 'react'
-import FormApi from '../../apis/FormApi'
 import CardContainer from '../../common/CardContainer'
 import LocalStorage from '../../common/LocalStorage'
 import CustomTable from '../../components/Table/Table'
@@ -21,23 +22,22 @@ class PaymentInfo extends React.Component {
     if (this.props.paymentDetails && this.props.paymentDetails.length > 0) {
       this.setState({ isLoading: false })
     } else {
-      const data = {
-        registrationNo: LocalStorage.getUser().user_id,
-      }
-      FormApi.fetchPaymentDetails(data).then((res) => {
-        if (res.data && res.data.length > 0) {
-          const pInfo = res.data
-          if (pInfo[0].AuthStatusCode == '300') {
-            this.setState({ paymentDetails: res.data, isLoading: false })
-            const user = LocalStorage.getUser()
-            user.payment = '1'
-            LocalStorage.setUser(user)
+      if (window.location.search) {
+        const parsed = queryString.parse(window.location.search)
+        if (parsed.token) {
+          const data = jwtDecode(parsed.token).data
+
+          if (data.AuthStatusCode == '300') {
+            this.setState({ paymentDetails: data, isLoading: false })
+            LocalStorage.setUser(parsed.token)
             setTimeout(() => {
               this.handleNext()
             }, 10000)
+          } else {
+            this.setState({ isLoading: false })
           }
         }
-      })
+      }
     }
   }
 
