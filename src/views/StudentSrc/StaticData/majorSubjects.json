@@ -14,7 +14,7 @@
     {
         "facultyId": "f1Science",
         "subjectId": "$s3Chemistry",
-        "streamId": ["$s1.2PCB","$s1.3PCMB"],
+        "streamId": ["$s1Science","$s1.2PCB","$s1.3PCMB"],
         "subjectName": "Chemistry"
     },
     {

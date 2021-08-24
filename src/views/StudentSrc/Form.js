@@ -925,22 +925,22 @@ class Form extends React.Component {
                 <Typography variant="caption">
                   <ul>
                     <li>
-                      Please verify your details before clicking on 'Submit'
-                      button
+                      Please verify your details before clicking 'Submit' button
                     </li>
                     <li>
-                      After submitting FORM, it cannot be modified or changed
+                      After submitting FORM, it cannot be modify or change
                     </li>
                     <li>
-                      Please note down your registration id after click on 'Save
+                      Please note down your registration id after clicking 'Save
                       Draft' button
                     </li>
                     <li>
-                      Your photo and signature must be image format (jpeg/png)
+                      Your photo and signature must be in image format
+                      (jpeg/png)
                     </li>
                     <li>
-                      All other uploads in the form can be image(png/jpg/jpeg)
-                      or pdf format
+                      All other uploads in the form can be in
+                      image(png/jpg/jpeg) or pdf format
                     </li>
                   </ul>
                 </Typography>
@@ -2790,7 +2790,7 @@ class Form extends React.Component {
             <Grid item xs={12}>
               <Typography variant="body1">
                 I solemnly declare that the above mentioned information is
-                correct and I fulfill the eligibility condition of the course.
+                correct and I fulfill the eligibility condition for the course.
                 Further, if admitted, I promise to abide by the rules and norms
                 of discipline of the institute.
               </Typography>

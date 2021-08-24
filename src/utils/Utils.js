@@ -3,6 +3,7 @@ import Axios from 'axios'
 import { ROLES_KEY } from 'constants/Constants'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
+import config from 'myconfig'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import FormDialog from '../common/FormDialog'
@@ -198,6 +199,7 @@ export function createdDateTime(ms, onlyDateTime, format) {
     })
     var hour = dateObject.getHours()
     var minute = dateObject.toLocaleString('en-US', { minute: 'numeric' })
+    var second = dateObject.toLocaleString('en-US', { second: 'numeric' })
     var min = minute > 9 ? minute : '0' + minute
     var ampm = hour >= 12 ? 'PM' : 'AM'
     if (onlyDateTime === 1) {
@@ -209,6 +211,9 @@ export function createdDateTime(ms, onlyDateTime, format) {
           '-' +
           `${date <= 9 ? 0 + date : date}`
         )
+      }
+      if (format === 'yyyymmddhhmmss') {
+        return `${year}${month}${date}${hour}${min}${second}`
       } else {
         return date + '-' + month + '-' + year
       }
@@ -238,7 +243,10 @@ export function redirectUrl(id, value) {
     history.push(id)
   } else if (value > 1) {
     const obj = dashboardRoutes.filter((item) => item.id === id)
-    if (obj.length > 0) history.replace(obj[0].layout + obj[0].path)
+    if (obj.length > 0)
+      window.location.replace(
+        config.BASE_URL + '#' + obj[0].layout + obj[0].path
+      )
   } else {
     const obj = dashboardRoutes.filter((item) => item.id === id)
     if (obj.length > 0) history.push(obj[0].layout + obj[0].path)

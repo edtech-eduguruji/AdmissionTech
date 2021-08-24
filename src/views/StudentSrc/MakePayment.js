@@ -32,6 +32,7 @@ class MakePayment extends React.Component {
     FormApi.createCheckSum(f).then((res) => {
       if (res.status === 200 && res.data) {
         const checksumVal = `${str}|${res.data}`
+        console.log('checksumVal', checksumVal)
         this.setState({ checksumVal })
       }
     })
@@ -110,20 +111,23 @@ class MakePayment extends React.Component {
                     on home page.
                   </li>
                   <li>
-                    Application form fees is Rs. 250 and registration fees is
-                    Rs. 2 which is non-refundable.
+                    Prospectus and Application form fees is Rs. 250 and
+                    registration fees is Rs. 2 which is non-refundable.
                   </li>
-                  <li>Download prospectus form after making payment</li>
                   <li>
-                    Read prospectus form before submitting application form
-                    online.
+                    Download prospectus and application form after making
+                    payment
+                  </li>
+                  <li>
+                    Read prospectus before submitting application form online.
                   </li>
                   <li>
                     Follow admission guidelines before submitting application
                     form
                   </li>
                   <li>
-                    Once form is submitted, it cannot be edited or changed
+                    Once application form is submitted, it cannot be edited or
+                    changed
                   </li>
                 </ul>
               </Typography>

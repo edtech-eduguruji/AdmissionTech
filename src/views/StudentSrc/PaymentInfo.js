@@ -5,56 +5,57 @@ import React from 'react'
 import CardContainer from '../../common/CardContainer'
 import LocalStorage from '../../common/LocalStorage'
 import CustomTable from '../../components/Table/Table'
+import Danger from '../../components/Typography/Danger'
+import Success from '../../components/Typography/Success'
 import { redirectUrl } from '../../utils/Utils'
 
+const successCode = '0300'
 class PaymentInfo extends React.Component {
   constructor(props) {
     super()
     this.state = {
-      isPreview:
-        props.paymentDetails && props.paymentDetails.length > 0 ? false : true,
+      isPreview: props.paymentDetails ? false : true,
       paymentDetails: props.paymentDetails,
       isLoading: true,
     }
   }
 
   componentDidMount() {
-    if (this.props.paymentDetails && this.props.paymentDetails.length > 0) {
+    if (this.props.paymentDetails) {
       this.setState({ isLoading: false })
     } else {
       if (window.location.search) {
         const parsed = queryString.parse(window.location.search)
         if (parsed.token) {
           const data = jwtDecode(parsed.token).data
-
-          if (data.AuthStatusCode == '300') {
-            this.setState({ paymentDetails: data, isLoading: false })
+          this.setState({ paymentDetails: data, isLoading: false })
+          if (data.AuthStatusCode == successCode) {
             LocalStorage.setUser(parsed.token)
-            setTimeout(() => {
-              this.handleNext()
-            }, 10000)
           } else {
             this.setState({ isLoading: false })
           }
+          setTimeout(() => {
+            this.handleNext(data)
+          }, 10000)
         }
       }
     }
   }
 
-  handleNext = () => {
-    redirectUrl('sSummary', 2)
+  handleNext = (data) => {
+    redirectUrl(data.AuthStatusCode == successCode ? 'sSummary' : 'sPayment', 2)
   }
 
-  formatPaymentData = (data) => {
+  successPaymentData = (data) => {
     var formatted = data.map((item) => {
       return [
-        item.paymentId,
+        'Online PG',
         item.TxnReferenceNo,
-        item.BankReferenceNo,
-        item.TxnDate,
-        item.TxnType,
         '₹' + item.TxnAmount,
         item.AuthMsg,
+        'Admission Fees',
+        item.TxnDate,
+        item.AuthStatusCode != successCode ? item.errorDescription : '',
       ]
     })
     return formatted
@@ -71,27 +72,37 @@ class PaymentInfo extends React.Component {
               <div>Please wait.....</div>
             ) : (
               <React.Fragment>
-                {paymentDetails && paymentDetails.length > 0 ? (
+                {paymentDetails ? (
                   <Grid item xs={12}>
+                    {paymentDetails.AuthStatusCode != successCode ? (
+                      <Danger>Failure</Danger>
+                    ) : (
+                      <Success>Success</Success>
+                    )}
+                    <br />
                     <CustomTable
                       boldHeading
                       isColumn={true}
                       tableHead={[
-                        'Payment ID',
-                        'Txn Reference No',
-                        'Bank Reference No',
-                        'Payment Date',
                         'Payment Mode',
-                        'Amount Paid',
-                        'Status',
+                        'Transaction Reference No',
+                        'Transaction Amount',
+                        'Payment Status',
+                        'Purpose of Payment',
+                        'Payment Date',
+                        paymentDetails.AuthStatusCode != successCode
+                          ? 'Failure Description'
+                          : '',
                       ]}
-                      tableData={this.formatPaymentData(paymentDetails)}
+                      tableData={this.successPaymentData([paymentDetails])}
                     />
+
                     <br />
                     <br />
                     {isPreview && (
                       <Typography component="div" variant="body1">
-                        You will be redirecting to form within 10 seconds
+                        You will be redirecting back to the site within 10
+                        seconds
                       </Typography>
                     )}
                   </Grid>

@@ -4,6 +4,7 @@ import React from 'react'
 import { HashRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { validateUser } from 'utils/Utils'
 import userDefineRoutes from '../routes'
+import QueryApi from '../views/AdminSrc/QueryApi'
 import PaymentInfo from '../views/StudentSrc/PaymentInfo'
 import asyncComponent from './AsyncComponent'
 import withRouteLayout from './EnhancedLayout'
@@ -60,6 +61,7 @@ const App = () => {
           <Route path="/admin" render={() => verify()} />
           <Route path="/aLogin" component={AdminLogin} />
           <Route path="/paymentinfo" component={PaymentInfo} />
+          <Route path="/queryapi" component={QueryApi} />
         </Switch>
       </HashRouter>
     </React.Fragment>

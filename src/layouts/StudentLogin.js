@@ -93,8 +93,8 @@ class Login extends Component {
                   <Typography>
                     <ul>
                       <li>
-                        If you didn't remember your 'REGISTERED ID' then click
-                        the button 'FORGET REGISTRATION'
+                        If you don't remember your 'REGISTERED ID' then click
+                        the button 'FORGOT REGISTRATION'
                       </li>
                       <li>
                         Candidate has to register on university website

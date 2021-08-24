@@ -6,4 +6,5 @@ module.exports = {
   SECURITYID: 'bdskuaty',
   PAYMENTAPI: 'https://uat.billdesk.com/pgidsk/PGIMerchantPayment',
   RESPONSEURL: 'https://eduguruji.com/admission/api/payment.php',
+  QUERYAPI: 'https://uat.billdesk.com/pgidsk/PGIQueryController',
 }
