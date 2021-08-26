@@ -8,6 +8,11 @@ const LocalStorage = () => {
     setUser(obj) {
       sessionStorage.setItem('user_obj', obj)
     },
+    getUserToken() {
+      return (
+        sessionStorage.getItem('user_obj') && sessionStorage.getItem('user_obj')
+      )
+    },
     getUser() {
       return (
         sessionStorage.getItem('user_obj') &&

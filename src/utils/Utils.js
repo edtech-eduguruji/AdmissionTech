@@ -155,8 +155,13 @@ export function closeDialog() {
 
 export function getAxios() {
   const axios = Axios
-  const userId = LocalStorage.getUser()
-  axios.defaults.headers.common['Authorization'] = `${userId}`
+  const userData = LocalStorage.getUser() && LocalStorage.getUser()
+  if (userData) {
+    axios.defaults.headers.common['Authorization'] = `${userData.user_id}`
+    const token = LocalStorage.getUserToken()
+    axios.defaults.headers['Authentication'] = `${token}`
+  }
+
   return axios
 }
 
@@ -379,6 +384,7 @@ export function getMilliDifference(endTime, startTime, isTimer) {
 export function unauthorizedUser(error) {
   var arr = error.toString().split(' ')
   if (arr[arr.length - 1] === '401') {
+    addErrorMsg('Invalid Authentication.')
     return true
   } else {
     return false
