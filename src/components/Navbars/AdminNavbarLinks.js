@@ -55,7 +55,7 @@ export default function AdminNavbarLinks(props) {
         {props.userName}
       </Typography>
       <Button
-        color={window.innerWidth > 959 ? 'inherit' : 'white'}
+        color={window.innerWidth > 959 ? 'transparent' : 'white'}
         justIcon={window.innerWidth > 959}
         simple={!(window.innerWidth > 959)}
         aria-owns={openProfile ? 'profile-menu-list-grow' : null}
