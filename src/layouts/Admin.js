@@ -10,6 +10,7 @@ import { Redirect, Switch } from 'react-router-dom'
 import LocalStorage from '../common/LocalStorage'
 import { ROLES_KEY } from '../constants/Constants'
 import userDefineRoutes from '../routes'
+import { errorDialog, validateUser } from '../utils/Utils'
 
 class Admin extends React.Component {
   constructor(props) {
@@ -38,17 +39,22 @@ class Admin extends React.Component {
   }
 
   handleRedirects = () => {
-    const { user, role } = this.props
-    if (role === 'ADMIN') {
-      return <Redirect to="/admin/registrations"></Redirect>
-    } else {
-      if (user.payment == '0' && user.submitted === '0') {
-        return <Redirect to="/student/payment"></Redirect>
-      } else if (user.payment == '1' && user.submitted === '0') {
-        return <Redirect to="/student/summary"></Redirect>
-      } else if (user.payment == '1' && user.submitted === '1') {
-        return <Redirect to="/student/formsubmitted"></Redirect>
+    const { role } = this.props
+    if (validateUser()) {
+      const user = LocalStorage.getUser()
+      if (role === 'ADMIN') {
+        return <Redirect to="/admin/registrations"></Redirect>
+      } else {
+        if (user.payment == '0' && user.submitted === '0') {
+          return <Redirect to="/student/payment"></Redirect>
+        } else if (user.payment == '1' && user.submitted === '0') {
+          return <Redirect to="/student/summary"></Redirect>
+        } else if (user.payment == '1' && user.submitted === '1') {
+          return <Redirect to="/student/formsubmitted"></Redirect>
+        }
       }
+    } else {
+      errorDialog('Kindly refresh the page and try again')
     }
   }
 

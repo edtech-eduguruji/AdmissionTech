@@ -26,13 +26,14 @@ import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import CustomInput from '../../components/CustomInput/CustomInput'
 import Success from '../../components/Typography/Success'
-import { ASSETS, PAYMENT } from '../../constants/Constants'
+import { ASSETS } from '../../constants/Constants'
 import {
   addErrorMsg,
   downloadPdf,
   errorDialog,
   mandatoryField,
   redirectUrl,
+  validateUser,
 } from '../../utils/Utils'
 import PaymentInfo from './PaymentInfo'
 import academicDetailsStatic from './StaticData/academic.json'
@@ -156,9 +157,11 @@ class Form extends React.Component {
         registrationNo: LocalStorage.getUser().user_id,
       }
       FormApi.fetchPaymentDetails(data).then((res) => {
-        this.setState({
-          paymentDetails: this.formatPaymentData(res.data),
-        })
+        if (res.data) {
+          this.setState({
+            paymentDetails: jwtDecode(res.data).data,
+          })
+        }
       })
     }
     if (this.props.isView) {
@@ -166,9 +169,7 @@ class Form extends React.Component {
         ...this.props.data,
       })
     } else {
-      if (LocalStorage.getUser().payment === PAYMENT.NOT_DONE) {
-        redirectUrl('sPayment', 1)
-      } else {
+      if (validateUser()) {
         let data = {
           registrationNo:
             LocalStorage.getUser() && LocalStorage.getUser().user_id,
@@ -991,16 +992,15 @@ class Form extends React.Component {
                   </ul>
                 </Typography>
               </Grid>
-            ) : (
-              <Grid item xs={12}>
-                <Typography variant="h6" component="div" gutterBottom>
-                  Your registration no: {registrationNo}
-                </Typography>
-                <Divider />
-                <br />
-                <br />
-              </Grid>
-            )}
+            ) : null}
+            <Grid item xs={12}>
+              <Typography variant="h6" component="div" gutterBottom>
+                Your registration no: {registrationNo}
+              </Typography>
+              <Divider />
+              <br />
+              <br />
+            </Grid>
             <Grid item xs={12} md={6}>
               <TextField
                 InputLabelProps={{
@@ -2719,7 +2719,7 @@ class Form extends React.Component {
                           disabled={preview}
                         />
                       }
-                      label="(NSS) National Seva Scheme ?"
+                      label="(NSS) National Service Scheme ?"
                     />
                   </Grid>
                   <Grid item md={3} xs={6}>

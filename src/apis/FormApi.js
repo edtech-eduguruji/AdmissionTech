@@ -21,8 +21,8 @@ class FormApi {
       return res
     })
   }
-  doPayment(data) {
-    return BaseApi.postFormData(config.PAYMENTAPI, data).then((res) => {
+  queryPayment(data) {
+    return BaseApi.postFormData(config.QUERYAPI, data).then((res) => {
       return res
     })
   }

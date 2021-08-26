@@ -8,7 +8,7 @@ import CardContainer from '../../common/CardContainer'
 import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import Success from '../../components/Typography/Success'
-import { downloadPdf } from '../../utils/Utils'
+import { downloadPdf, errorDialog, validateUser } from '../../utils/Utils'
 class MakePayment extends React.Component {
   constructor() {
     super()
@@ -18,54 +18,39 @@ class MakePayment extends React.Component {
   }
 
   componentDidMount() {
-    const userId = LocalStorage.getUser().user_id
-    const na = 'NA'
-    const str = `${
-      config.MERCHANTID
-    }|${uuid()}|${na}|252.00|${na}|${na}|${na}|INR|NA|R|${
-      config.SECURITYID
-    }|${na}|${na}|F|F1SCIENCE|${userId}|${na}|${na}|${na}|${na}|${na}|${
-      config.RESPONSEURL
-    }`
-    const f = new FormData()
-    f.append('str', str)
-    FormApi.createCheckSum(f).then((res) => {
-      if (res.status === 200 && res.data) {
-        const checksumVal = `${str}|${res.data}`
-        console.log('checksumVal', checksumVal)
-        this.setState({ checksumVal })
-      }
-    })
+    if (validateUser()) {
+      const userId = LocalStorage.getUser().user_id
+      const na = 'NA'
+      const str = `${
+        config.MERCHANTID
+      }|${uuid()}|${na}|252.00|${na}|${na}|${na}|INR|NA|R|${
+        config.SECURITYID
+      }|${na}|${na}|F|F1SCIENCE|${userId}|${na}|${na}|${na}|${na}|${na}|${
+        config.RESPONSEURL
+      }`
+      const f = new FormData()
+      f.append('str', str)
+      FormApi.createCheckSum(f)
+        .then((res) => {
+          if (res.status === 200 && res.data) {
+            const checksumVal = `${str}|${res.data}`
+            console.log('checksumVal', checksumVal)
+            this.setState({ checksumVal })
+          } else {
+            errorDialog('Please try after sometime.')
+          }
+        })
+        .catch(() => {
+          errorDialog('Please try after sometime.')
+        })
+    } else {
+      errorDialog('Kindly refresh the page and try again')
+    }
   }
 
   downloadRId = () => {
     downloadPdf('p1234', 'RID')
   }
-
-  // handleMakePayment = () => {
-  //   const data = new FormData()
-  //   data.append('registrationNo', LocalStorage.getUser().user_id)
-  //   FormApi.makePayment(data).then((res) => {
-  //     if (res.status === 200) {
-  //       addSuccessMsg('Payment is Successfully done.')
-  //       let user = { ...LocalStorage.getUser(), payment: '1' }
-  //       LocalStorage.setUser(user)
-  //       this.props.history.push('/student/form')
-  //     }
-  //   })
-  //   // config
-  //   //     MerchantID|UniqueTxnID|NA|TxnAmount|NA|NA|NA|CurrencyType|NA|TypeField1|SecurityID|NA|N
-  //   // A|TypeField2|txtadditional1|txtadditional2|txtadditional3|txtadditional4|txtadditional5|txtadditional6
-  //   // |txtadditional7|RU
-  //   // errorDialog(
-  //   //   'Due to technical failure, payment process cannot be completed at this moment. Try again later'
-  //   // )
-  //   //     f.delete('str')
-  //   //         f.append('msg', checksumVal)
-  //   //         FormApi.doPayment(f).then((res)=>{
-  //   // console.log(res);
-  //   //         })
-  // }
 
   render() {
     const { checksumVal } = this.state

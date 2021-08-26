@@ -29,9 +29,13 @@ class QueryApi extends React.Component {
       if (res.status === 200 && res.data) {
         const checksumVal = `${str}|${res.data}`
         console.log('checksumVal', checksumVal)
-        this.setState({ checksumVal }, () => {
-          document.getElementById('tIdform').submit()
-        })
+        FormApi.queryPayment({ msg: checksumVal })
+          .then((res) => {
+            console.log(res)
+          })
+          .catch((err) => {
+            console.log(err)
+          })
       }
     })
   }
@@ -48,19 +52,7 @@ class QueryApi extends React.Component {
           <Grid container spacing={2}>
             <input name="tId" value={tId} onChange={this.handleChange} />
             <Grid container item xs={12} justifyContent="center">
-              <form
-                id="tIdform"
-                method="post"
-                action={config.QUERYAPI}
-                encType="application/x-www-form-urlencoded"
-              >
-                <input hidden name="msg" value={checksumVal} />
-              </form>
-              <RegularButton
-                type="submit"
-                color="primary"
-                onClick={this.handleSubmit}
-              >
+              <RegularButton color="primary" onClick={this.handleSubmit}>
                 Make Payment
               </RegularButton>
             </Grid>
