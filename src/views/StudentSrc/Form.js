@@ -44,11 +44,13 @@ import documentsStatic from './StaticData/documents.json'
 import documentTypeData from './StaticData/documentType.json'
 import facultyData from './StaticData/faculty.json'
 import majorSubjectsData from './StaticData/majorSubjects.json'
+import meritCalculateData from './StaticData/meritCalculate.json'
 import religionData from './StaticData/religion.json'
 import semesterSubjectsData from './StaticData/semesterSubjects.json'
 import statesData from './StaticData/states.json'
 import streamData from './StaticData/stream.json'
 import subCategoryData from './StaticData/subCategory.json'
+import Validation from './Validation.json'
 
 const styles = {
   profilePhoto: {
@@ -128,13 +130,7 @@ class Form extends React.Component {
       rrDocument: '',
       bcom: false,
       other: '',
-      totalMerit: {
-        nationalCompetition: 0,
-        otherCompetition: 0,
-        ncc: 0,
-        roverRanger: 0,
-        other: 0,
-      },
+      totalMerit: meritCalculateData,
       totalMeritCount: 0,
       mediumOfInstitution: '',
       signature: '',
@@ -185,7 +181,8 @@ class Form extends React.Component {
               Object.keys(response.data).map((item) => {
                 if (
                   response.data[item] === null ||
-                  response.data[item] === 'null'
+                  response.data[item] === 'null' ||
+                  response.data[item] === 'false'
                 ) {
                   response.data[item] = ''
                 }
@@ -204,7 +201,33 @@ class Form extends React.Component {
                 : ''
               response.data.coCurriculumSem1 = 'Food, Nutrition and Hygiene'
               response.data.coCurriculumSem2 = 'First Aid and Basic health'
-              this.setState({ ...response.data })
+              this.setState({
+                ...response.data,
+                totalMerit: {
+                  nationalCompetition: response.data.nationalCompetition
+                    ? parseInt(response.data.nationalCompetition.split(',')[1])
+                    : 0,
+                  otherCompetition: response.data.otherCompetition
+                    ? parseInt(response.data.otherCompetition.split(',')[1])
+                    : 0,
+                  freedomFighter: !response.data.freedomFighter ? 0 : 5,
+                  nationalSevaScheme: !response.data.nationalSevaScheme ? 0 : 5,
+                  ncc: 0,
+                  roverRanger: 0,
+                  otherRoverRanger: 0,
+                  // ncc: response.data.ncc
+                  //   ? parseInt(response.data.ncc.split(',')[1])
+                  //   : 0,
+                  // roverRanger: response.data.roverRanger
+                  //   ? parseInt(response.data.roverRanger.split(',')[1])
+                  //   : 0,
+                  // otherRoverRanger: !response.data.nationalSevaScheme ? 0 : 3,
+                  bcom: !response.data.bcom ? 0 : 5,
+                  other: response.data.other
+                    ? parseInt(response.data.other.split(',')[1])
+                    : 0,
+                },
+              })
             }
           }
         })
@@ -359,14 +382,19 @@ class Form extends React.Component {
 
   handleCalculateMeritCheck = (event) => {
     const { totalMeritCount } = this.state
-    var total = 0
+    let { totalMerit } = this.state
+    if (!event.target.checked) {
+      totalMerit[event.target.name] = 0
+    }
+    let total = 0
     total = !event.target.checked
-      ? totalMeritCount - parseInt(event.target.value)
+      ? Object.values(totalMerit).reduce(
+          (currentVal, nextVal) => currentVal + nextVal
+        )
       : parseInt(event.target.value) + totalMeritCount <= 17
       ? parseInt(event.target.value) + totalMeritCount
       : 17
     if (event.target.name === 'otherRoverRanger') {
-      var { totalMerit } = this.state
       if (totalMerit.roverRanger !== 0) {
         total = total - totalMerit.roverRanger
         totalMerit.roverRanger = 0
@@ -375,12 +403,13 @@ class Form extends React.Component {
         roverRanger: '',
         [event.target.name]: event.target.checked,
         totalMerit,
-        totalMeritCount: total,
+        totalMeritCount: total > 17 ? 17 : total,
       })
     } else {
       this.setState({
-        totalMeritCount: total,
+        totalMeritCount: total > 17 ? 17 : total,
         [event.target.name]: event.target.checked,
+        totalMerit,
       })
     }
   }
@@ -972,7 +1001,6 @@ class Form extends React.Component {
                 <br />
               </Grid>
             )}
-
             <Grid item xs={12} md={6}>
               <TextField
                 InputLabelProps={{
@@ -1001,7 +1029,6 @@ class Form extends React.Component {
                 ))}
               </TextField>
             </Grid>
-
             <Grid item xs={12} md={6}>
               <TextField
                 InputLabelProps={{
@@ -1027,7 +1054,6 @@ class Form extends React.Component {
                 <MenuItem value="english">English</MenuItem>
               </TextField>
             </Grid>
-
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">Basic Details</Typography>
             </Grid>
@@ -1077,6 +1103,9 @@ class Form extends React.Component {
                     certification (in PDF)
                   </Typography>
                   <CustomInput
+                    isMandatory={true}
+                    minLength={Validation['wrn']['minLength']}
+                    maxLength={Validation['wrn']['maxLength']}
                     smallLabel
                     labelText={mandatoryField('Web Registration No.')}
                     formControlProps={{
@@ -1154,6 +1183,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item md={11} xs={8}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['fullname']['minLength']}
+                maxLength={Validation['fullname']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('Full Name')}
                 formControlProps={{
@@ -1356,6 +1388,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['personalMobile']['minLength']}
+                maxLength={Validation['personalMobile']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('Mobile No. of Student')}
                 formControlProps={{
@@ -1372,6 +1407,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['parentMobile']['minLength']}
+                maxLength={Validation['parentMobile']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('Mobile No. of Parent')}
                 formControlProps={{
@@ -1388,6 +1426,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['aadharNo']['minLength']}
+                maxLength={Validation['aadharNo']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('Aadhar No.')}
                 formControlProps={{
@@ -1404,6 +1445,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['email']['minLength']}
+                maxLength={Validation['email']['maxLength']}
                 smallLabel
                 labelText="Email"
                 formControlProps={{
@@ -1424,6 +1468,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['fatherName']['minLength']}
+                maxLength={Validation['fatherName']['maxLength']}
                 smallLabel
                 labelText={mandatoryField("Father's / Husband Name")}
                 formControlProps={{
@@ -1439,6 +1486,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['motherName']['minLength']}
+                maxLength={Validation['motherName']['maxLength']}
                 smallLabel
                 labelText={mandatoryField("Mother's Name")}
                 formControlProps={{
@@ -1454,6 +1504,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={12}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['parentsOccupation']['minLength']}
+                maxLength={Validation['parentsOccupation']['maxLength']}
                 smallLabel
                 labelText={mandatoryField("Parent's Occupation")}
                 formControlProps={{
@@ -1469,6 +1522,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['guardianName']['minLength']}
+                maxLength={Validation['guardianName']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('Guardian Name')}
                 formControlProps={{
@@ -1484,6 +1540,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['relationOfApplicant']['minLength']}
+                maxLength={Validation['relationOfApplicant']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('Relation with Student')}
                 formControlProps={{
@@ -1502,6 +1561,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item md={6} xs={12}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['houseNo']['minLength']}
+                maxLength={Validation['houseNo']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('House/Flat No.')}
                 formControlProps={{
@@ -1517,6 +1579,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item md={6} xs={12}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['street']['minLength']}
+                maxLength={Validation['street']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('Colony/Street/Mohalla/Village')}
                 formControlProps={{
@@ -1532,6 +1597,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['pincode']['minLength']}
+                maxLength={Validation['pincode']['maxLength']}
                 smallLabel
                 labelText={'Pincode'}
                 formControlProps={{
@@ -1548,6 +1616,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['postOffice']['minLength']}
+                maxLength={Validation['postOffice']['maxLength']}
                 smallLabel
                 labelText={'Post Office'}
                 formControlProps={{
@@ -1636,6 +1707,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item md={6} xs={12}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['houseNo']['minLength']}
+                maxLength={Validation['houseNo']['maxLength']}
                 smallLabel
                 labelText="House/Flat No."
                 formControlProps={{
@@ -1651,6 +1725,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item md={6} xs={12}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['street']['minLength']}
+                maxLength={Validation['street']['maxLength']}
                 smallLabel
                 labelText="Colony/Street/Mohalla/Village"
                 formControlProps={{
@@ -1666,6 +1743,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['pincode']['minLength']}
+                maxLength={Validation['pincode']['maxLength']}
                 smallLabel
                 labelText="Pincode"
                 formControlProps={{
@@ -1682,6 +1762,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['postOffice']['minLength']}
+                maxLength={Validation['postOffice']['maxLength']}
                 smallLabel
                 labelText="Post Office"
                 formControlProps={{
@@ -1757,7 +1840,6 @@ class Form extends React.Component {
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">Academic Details</Typography>
             </Grid>
-
             {courseType !== '' ? (
               <Grid item xs={12}>
                 {academicDetails.map((item, i) => (
@@ -1765,6 +1847,9 @@ class Form extends React.Component {
                     <Grid container spacing={2} alignItems="center">
                       <Grid item md={2} xs={12}>
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['nameOfExam']['minLength']}
+                          maxLength={Validation['nameOfExam']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Name of Exam')}
                           formControlProps={{
@@ -1780,6 +1865,9 @@ class Form extends React.Component {
                       </Grid>
                       <Grid item md={2} xs={12}>
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['board']['minLength']}
+                          maxLength={Validation['board']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Name of Board')}
                           formControlProps={{
@@ -1793,6 +1881,9 @@ class Form extends React.Component {
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['institution']['minLength']}
+                          maxLength={Validation['institution']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Name of Institution')}
                           formControlProps={{
@@ -1808,6 +1899,9 @@ class Form extends React.Component {
                       </Grid>
                       <Grid item md={1} xs={6}>
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['year']['minLength']}
+                          maxLength={Validation['year']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Year')}
                           formControlProps={{
@@ -1823,6 +1917,9 @@ class Form extends React.Component {
                       </Grid>
                       <Grid item md={1} xs={6}>
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['rollNo']['minLength']}
+                          maxLength={Validation['rollNo']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Roll No.')}
                           formControlProps={{
@@ -1838,6 +1935,9 @@ class Form extends React.Component {
                       </Grid>
                       <Grid item md={2} xs={6}>
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['totalMarks']['minLength']}
+                          maxLength={Validation['totalMarks']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Total Marks')}
                           formControlProps={{
@@ -1852,6 +1952,9 @@ class Form extends React.Component {
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['marksObtained']['minLength']}
+                          maxLength={Validation['marksObtained']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Marks Obtained')}
                           formControlProps={{
@@ -1868,6 +1971,9 @@ class Form extends React.Component {
                       </Grid>
                       <Grid item md={1} xs={6}>
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['percentage']['minLength']}
+                          maxLength={Validation['percentage']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Percentage')}
                           formControlProps={{
@@ -1883,6 +1989,9 @@ class Form extends React.Component {
                       </Grid>
                       <Grid item md={1} xs={12}>
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['subjects']['minLength']}
+                          maxLength={Validation['subjects']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Subjects')}
                           formControlProps={{
@@ -1987,7 +2096,7 @@ class Form extends React.Component {
                 Selection of Faculty
               </Typography>
               <Typography variant="caption">
-                You can choose "Facult of Science" only if you are from science
+                You can choose "Faculty of Science" only if you are from science
                 stream in 12th
               </Typography>
               <Divider />
@@ -2588,7 +2697,6 @@ class Form extends React.Component {
                           <Checkbox
                             value="5"
                             checked={!freedomFighter ? false : true}
-                            s
                             onChange={this.handleCalculateMeritCheck}
                             name="freedomFighter"
                             color="primary"

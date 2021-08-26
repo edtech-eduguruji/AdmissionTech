@@ -36,7 +36,6 @@ export default function CustomInput(props) {
   } = props
 
   const underlineClasses = classNames({
-    [classes.underlineError]: error || isError,
     [classes.underlineSuccess]: success && (!error || !isError),
     [classes.underline]: true,
     [classes.labelRoot]: smallLabel,
@@ -108,6 +107,7 @@ export default function CustomInput(props) {
       className={formControlProps.className + formControlClasses}
     >
       <TextField
+        error={error || isError}
         InputLabelProps={{
           classes: {
             root: underlineClasses,
