@@ -93,7 +93,7 @@ export default function CustomInput(props) {
   const handleInput = (event, isErrorExist) => {
     if (isMandatory && event.target.value.length === 0) {
       setError(true)
-      setMessage('This field cannot be blank')
+      setMessage(errorMsg)
       handleChange(event, true)
     } else {
       setError(isErrorExist)
