@@ -148,7 +148,7 @@ class FileUploader extends Component {
     div.addEventListener('drop', this.handleUploadFile)
   }
 
-  componentWillUnmount() {
+  UNSAFE_componentWillReceiveProps() {
     let div = this.dropRef.current
     div.removeEventListener('dragenter', this.handleDragIn)
     div.removeEventListener('dragleave', this.handleDragOut)

@@ -1,5 +1,9 @@
 [
     {
+    "subCategoryId": "none",
+    "subCategory": "None"
+    },
+    {
     "subCategoryId": "#sc1FF",
     "subCategory": "Freedom Fighter"
     },

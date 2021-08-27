@@ -45,7 +45,7 @@ class Registeration extends Component {
     }
   }
   handleSubmit = () => {
-    const { name, email, mobileNo, dob, errorList } = this.state
+    const { name, mobileNo, dob, errorList } = this.state
     if (!errorList.length) {
       if (name !== '' && mobileNo !== '' && dob !== '') {
         const data = new FormData()
@@ -53,7 +53,7 @@ class Registeration extends Component {
         data.append('mobile', mobileNo)
         data.append('dob', dob)
         RegisterApi.StudentRegister(data).then((res) => {
-          if (res.data) {
+          if (res.status === 200 && res.data && !res.data.error) {
             LocalStorage.setUser(res.data)
             this.props.history.push('/student')
           }

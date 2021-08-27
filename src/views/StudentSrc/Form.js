@@ -272,7 +272,7 @@ class Form extends React.Component {
       //     academicDetails: academicDetailsStatic.LLM,
       //     documents: documentsStatic.LLM,
       //   })
-    } else if (name === 'major3') {
+    } else if (name === 'major2') {
       this.setState({
         [event.target.name]: JSON.parse(event.target.value),
       })
@@ -615,6 +615,9 @@ class Form extends React.Component {
       ) {
         count++
         addErrorMsg("Fill the empty fields in 'Basic Details' Section")
+      } else if (category !== '#c1General' && !categoryCertificate) {
+        count++
+        addErrorMsg('Upload Category Certificate')
       } else if (
         !fatherName ||
         !motherName ||
@@ -1911,6 +1914,7 @@ class Form extends React.Component {
                             name: 'year',
                             value: item.year,
                             disabled: preview,
+                            type: 'number',
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
