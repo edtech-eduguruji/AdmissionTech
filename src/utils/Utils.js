@@ -3,6 +3,7 @@ import Axios from 'axios'
 import { ROLES_KEY } from 'constants/Constants'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
+import config from 'myconfig'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import FormDialog from '../common/FormDialog'
@@ -154,61 +155,18 @@ export function closeDialog() {
 
 export function getAxios() {
   const axios = Axios
-  const userId = LocalStorage.getUser() && LocalStorage.getUser().user_id
-  axios.defaults.headers.common['Authorization'] = `${userId}`
+  const userData = LocalStorage.getUser() && LocalStorage.getUser()
+  if (userData) {
+    axios.defaults.headers.common['Authorization'] = `${userData.user_id}`
+    const token = LocalStorage.getUserToken()
+    axios.defaults.headers['Authentication'] = `${token}`
+  }
+
   return axios
-}
-
-export function getUserClasses() {
-  if (LocalStorage.getUser() && LocalStorage.getUser().class_id) {
-    if (Array.isArray(LocalStorage.getUser().class_id))
-      return LocalStorage.getUser().class_id.map((item) => item.classId)
-    else {
-      return LocalStorage.getUser().class_id
-    }
-  } else {
-    return null
-  }
-}
-
-export function getUserSubject() {
-  let sub =
-    LocalStorage.getUser() &&
-    LocalStorage.getUser().class_id &&
-    Array.isArray(LocalStorage.getUser().class_id) &&
-    LocalStorage.getUser()
-      .class_id.filter((item) => item.subject != null)
-      .map(
-        (item) =>
-          item.subject &&
-          item.subject.length > 0 &&
-          item.subject.map((sItem) => sItem.subjectId)
-      )
-
-  if (sub && sub.length) {
-    return sub[0]
-  }
 }
 
 export function getUserRole() {
   return LocalStorage.getUser() && LocalStorage.getUser().role
-}
-
-/**value: 1= teacher, 0= student */
-export function filterSubjectWise(sid, data, value) {
-  if (value) {
-    return data.filter(
-      (item) =>
-        item.subjects &&
-        item.subjects.find(
-          (i) => i.subject && i.subject.find((x) => x.subjectId === sid)
-        )
-    )
-  } else {
-    return data.filter(
-      (item) => item.Subjects && item.Subjects.find((i) => sid === i.subjectId)
-    )
-  }
 }
 
 export function validateUser() {
@@ -245,7 +203,10 @@ export function createdDateTime(ms, onlyDateTime, format) {
       year: 'numeric',
     })
     var hour = dateObject.getHours()
+    hour = hour > 9 ? hour : '0' + hour
     var minute = dateObject.toLocaleString('en-US', { minute: 'numeric' })
+    var second = dateObject.toLocaleString('en-US', { second: 'numeric' })
+    second = second > 9 ? second : '0' + second
     var min = minute > 9 ? minute : '0' + minute
     var ampm = hour >= 12 ? 'PM' : 'AM'
     if (onlyDateTime === 1) {
@@ -257,6 +218,9 @@ export function createdDateTime(ms, onlyDateTime, format) {
           '-' +
           `${date <= 9 ? 0 + date : date}`
         )
+      }
+      if (format === 'yyyymmddhhmmss') {
+        return `${year}${month}${date}${hour}${min}${second}`
       } else {
         return date + '-' + month + '-' + year
       }
@@ -284,6 +248,12 @@ export function createdDateTime(ms, onlyDateTime, format) {
 export function redirectUrl(id, value) {
   if (id && value == null) {
     history.push(id)
+  } else if (value > 1) {
+    const obj = dashboardRoutes.filter((item) => item.id === id)
+    if (obj.length > 0)
+      window.location.replace(
+        config.BASE_URL + '#' + obj[0].layout + obj[0].path
+      )
   } else {
     const obj = dashboardRoutes.filter((item) => item.id === id)
     if (obj.length > 0) history.push(obj[0].layout + obj[0].path)
@@ -416,6 +386,7 @@ export function getMilliDifference(endTime, startTime, isTimer) {
 export function unauthorizedUser(error) {
   var arr = error.toString().split(' ')
   if (arr[arr.length - 1] === '401') {
+    addErrorMsg('Invalid Authentication.')
     return true
   } else {
     return false

@@ -45,7 +45,7 @@ class Registeration extends Component {
     }
   }
   handleSubmit = () => {
-    const { name, email, mobileNo, dob, errorList } = this.state
+    const { name, mobileNo, dob, errorList } = this.state
     if (!errorList.length) {
       if (name !== '' && mobileNo !== '' && dob !== '') {
         const data = new FormData()
@@ -53,7 +53,7 @@ class Registeration extends Component {
         data.append('mobile', mobileNo)
         data.append('dob', dob)
         RegisterApi.StudentRegister(data).then((res) => {
-          if (res.data) {
+          if (res.status === 200 && res.data && !res.data.error) {
             LocalStorage.setUser(res.data)
             this.props.history.push('/student')
           }
@@ -92,7 +92,7 @@ class Registeration extends Component {
               </Typography>
               <div className={classes.form} noValidate>
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={2}>
+                  <Grid container item xs={2} justifyContent="center">
                     <PersonIcon />
                   </Grid>
                   <Grid item xs={10}>
@@ -100,23 +100,26 @@ class Registeration extends Component {
                       isMandatory={true}
                       minLength={5}
                       maxLength={20}
-                      labelText="Name (as per highschool/secondary certificate)"
+                      labelText="Name"
                       formControlProps={{
                         fullWidth: true,
                       }}
                       inputProps={{
                         name: 'name',
+                        helperText:
+                          'Name (as per highschool/secondary certificate)',
                       }}
                       handleChange={this.handleChangeFields}
                       errorMsg={'Name must be min. of 5 and max. 20 character'}
                     />
                   </Grid>
-                  <Grid item xs={2}>
+                  <Grid container item xs={2} justifyContent="center">
                     <CallIcon />
                   </Grid>
                   <Grid item xs={10}>
                     <CustomInput
                       isMandatory={true}
+                      minLength={10}
                       maxLength={10}
                       isNumber={true}
                       labelText="Mobile No."
@@ -131,7 +134,7 @@ class Registeration extends Component {
                       errorMsg={'Mobile no must be of 10 digit'}
                     />
                   </Grid>
-                  <Grid item xs={2}>
+                  <Grid container item xs={2} justifyContent="center">
                     <CakeIcon />
                   </Grid>
                   <Grid item xs={10}>

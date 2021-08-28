@@ -57,12 +57,16 @@ class Login extends Component {
       username: registrationNo,
       password: dob,
     }
-    LoginApi.userLogin(data).then((response) => {
-      if (response.data && response.data.length > 0) {
-        LocalStorage.setUser(response.data[0])
-        this.props.history.push('/student')
-      }
-    })
+    LoginApi.userLogin(data)
+      .then((response) => {
+        if (response.data) {
+          LocalStorage.setUser(response.data)
+          this.props.history.push('/student')
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
   handleChangeFields = (event) => {
@@ -89,8 +93,8 @@ class Login extends Component {
                   <Typography>
                     <ul>
                       <li>
-                        If you didn't remember your 'REGISTERED ID' then click
-                        the button 'FORGET REGISTRATION'
+                        If you don't remember your 'REGISTERED ID' then click
+                        the button 'FORGOT REGISTRATION'
                       </li>
                       <li>
                         Candidate has to register on university website
@@ -111,7 +115,7 @@ class Login extends Component {
               <Card cardFullHeight>
                 <CardBody className={classes.paper}>
                   <Typography component="h1" variant="h6">
-                    For registered users
+                    For Registered Users
                   </Typography>
                   <div className={classes.form} noValidate>
                     <Grid container spacing={2} alignItems="center">
@@ -169,7 +173,7 @@ class Login extends Component {
                   <Grid container spacing={2}>
                     <Grid container item xs={12} justifyContent="center">
                       <Typography component="h1" variant="h6">
-                        New user registration for Admission
+                        New User Registration for Admission
                       </Typography>
                     </Grid>
                     <Grid container item xs={12} justifyContent="center">

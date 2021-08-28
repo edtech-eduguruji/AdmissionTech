@@ -5,6 +5,7 @@ import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
 import PropTypes from 'prop-types'
 import React from 'react'
+import { HashRouter } from 'react-router-dom'
 import { closeDialog } from '../utils/Utils'
 
 const FormDialog = (props) => {
@@ -14,33 +15,35 @@ const FormDialog = (props) => {
   }
   const { title, component, maxSize, action, fullScreen } = props
   return (
-    <Dialog
-      fullScreen={fullScreen}
-      fullWidth
-      maxWidth={maxSize}
-      open={true}
-      onClose={() => (action ? doAction() : closeDialog())}
-    >
-      {title !== null && title && (
-        <DialogTitle>
-          <Grid container>
-            <Grid item xs={11}>
-              <Typography variant="subtitle1">{title}</Typography>
+    <HashRouter>
+      <Dialog
+        fullScreen={fullScreen}
+        fullWidth
+        maxWidth={maxSize}
+        open={true}
+        onClose={() => (action ? doAction() : closeDialog())}
+      >
+        {title !== null && title && (
+          <DialogTitle>
+            <Grid container>
+              <Grid item xs={11}>
+                <Typography variant="subtitle1">{title}</Typography>
+              </Grid>
+              <Grid container item xs={1} justifyContent="flex-end">
+                <IconButton
+                  size="small"
+                  aria-label="close"
+                  onClick={() => closeDialog()}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Grid>
             </Grid>
-            <Grid container item xs={1} justifyContent="flex-end">
-              <IconButton
-                size="small"
-                aria-label="close"
-                onClick={() => closeDialog()}
-              >
-                <CloseIcon />
-              </IconButton>
-            </Grid>
-          </Grid>
-        </DialogTitle>
-      )}
-      <DialogContent dividers>{component}</DialogContent>
-    </Dialog>
+          </DialogTitle>
+        )}
+        <DialogContent dividers>{component}</DialogContent>
+      </Dialog>
+    </HashRouter>
   )
 }
 

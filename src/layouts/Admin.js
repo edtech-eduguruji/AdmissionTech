@@ -6,10 +6,11 @@ import Navbar from 'components/Navbars/Navbar'
 import Sidebar from 'components/Sidebar/Sidebar'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
 import React from 'react'
-import { Switch } from 'react-router-dom'
+import { Redirect, Switch } from 'react-router-dom'
 import LocalStorage from '../common/LocalStorage'
 import { ROLES_KEY } from '../constants/Constants'
 import userDefineRoutes from '../routes'
+import { errorDialog, validateUser } from '../utils/Utils'
 
 class Admin extends React.Component {
   constructor(props) {
@@ -17,6 +18,7 @@ class Admin extends React.Component {
     this.state = {
       routesLink: props.routesLink,
       mobileOpen: false,
+      user: LocalStorage.getUser(),
     }
     this.mainPanel = React.createRef()
   }
@@ -36,9 +38,29 @@ class Admin extends React.Component {
     window.location.reload()
   }
 
+  handleRedirects = () => {
+    const { role } = this.props
+    if (validateUser()) {
+      const user = LocalStorage.getUser()
+      if (role === 'ADMIN') {
+        return <Redirect to="/admin/registrations"></Redirect>
+      } else {
+        if (user.payment == '0' && user.submitted === '0') {
+          return <Redirect to="/student/payment"></Redirect>
+        } else if (user.payment == '1' && user.submitted === '0') {
+          return <Redirect to="/student/summary"></Redirect>
+        } else if (user.payment == '1' && user.submitted === '1') {
+          return <Redirect to="/student/formsubmitted"></Redirect>
+        }
+      }
+    } else {
+      errorDialog('Kindly refresh the page and try again')
+    }
+  }
+
   render() {
-    const { classes, role, user } = this.props
-    const { mobileOpen, routesLink } = this.state
+    const { classes, role } = this.props
+    const { mobileOpen, routesLink, user } = this.state
     return (
       <div className={classes.wrapper}>
         {role === ROLES_KEY.ADMIN && (
@@ -80,6 +102,7 @@ class Admin extends React.Component {
           <div className={classes.content}>
             <div className={classes.container}>
               <Switch>{routesLink}</Switch>
+              {this.handleRedirects()}
             </div>
           </div>
         </div>

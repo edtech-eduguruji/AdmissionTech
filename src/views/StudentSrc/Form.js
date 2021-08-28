@@ -15,6 +15,7 @@ import AddIcon from '@material-ui/icons/Add'
 import DeleteIcon from '@material-ui/icons/Delete'
 import GetAppIcon from '@material-ui/icons/GetApp'
 import Autocomplete from '@material-ui/lab/Autocomplete'
+import jwtDecode from 'jwt-decode'
 import React from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { withRouter } from 'react-router-dom'
@@ -24,17 +25,17 @@ import FileUploader from '../../common/FileUploader/FileUploader'
 import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import CustomInput from '../../components/CustomInput/CustomInput'
-import CustomTable from '../../components/Table/Table'
 import Success from '../../components/Typography/Success'
 import { ASSETS } from '../../constants/Constants'
 import {
   addErrorMsg,
-  createdDateTime,
   downloadPdf,
   errorDialog,
   mandatoryField,
   redirectUrl,
+  validateUser,
 } from '../../utils/Utils'
+import PaymentInfo from './PaymentInfo'
 import academicDetailsStatic from './StaticData/academic.json'
 import academicData from './StaticData/academicData.json'
 import categoryData from './StaticData/category.json'
@@ -44,11 +45,13 @@ import documentsStatic from './StaticData/documents.json'
 import documentTypeData from './StaticData/documentType.json'
 import facultyData from './StaticData/faculty.json'
 import majorSubjectsData from './StaticData/majorSubjects.json'
+import meritCalculateData from './StaticData/meritCalculate.json'
 import religionData from './StaticData/religion.json'
 import semesterSubjectsData from './StaticData/semesterSubjects.json'
 import statesData from './StaticData/states.json'
 import streamData from './StaticData/stream.json'
 import subCategoryData from './StaticData/subCategory.json'
+import Validation from './Validation.json'
 
 const styles = {
   profilePhoto: {
@@ -128,13 +131,7 @@ class Form extends React.Component {
       rrDocument: '',
       bcom: false,
       other: '',
-      totalMerit: {
-        nationalCompetition: 0,
-        otherCompetition: 0,
-        ncc: 0,
-        roverRanger: 0,
-        other: 0,
-      },
+      totalMerit: meritCalculateData,
       totalMeritCount: 0,
       mediumOfInstitution: '',
       signature: '',
@@ -150,51 +147,93 @@ class Form extends React.Component {
       token: '',
       paymentDetails: [],
       registrationNo: null,
+      uploadExtraMark: null,
     }
   }
 
   componentDidMount() {
-    let data = {
-      registrationNo: LocalStorage.getUser() && LocalStorage.getUser().user_id,
-    }
-    FormApi.getForm(data).then((response) => {
-      if (response.data) {
-        if (response.data.submitted === '1' && !this.props.isPreview) {
-          this.props.history.push('/formsubmitted')
-        } else {
-          if (this.props.isPreview) {
-            const data = {
-              registrationNo: LocalStorage.getUser().user_id,
-            }
-            FormApi.fetchPaymentDetails(data).then((res) => {
-              this.setState({
-                paymentDetails: this.formatPaymentData(res.data),
-              })
-            })
-          }
-          Object.keys(response.data).map((item) => {
-            if (response.data[item] === 'null') {
-              response.data[item] = ''
-            }
-          })
-          response.data.academicDetails = response.data.academicDetails
-            ? JSON.parse(response.data.academicDetails)
-            : []
-          response.data.documents = response.data.documents
-            ? JSON.parse(response.data.documents)
-            : []
-          response.data.major1 = response.data.major1
-            ? JSON.parse(response.data.major1)
-            : []
-          response.data.major2 = response.data.major2
-            ? JSON.parse(response.data.major2)
-            : []
-          response.data.coCurriculumSem1 = 'Food, Nutrition and Hygiene'
-          response.data.coCurriculumSem2 = 'First Aid and Basic health'
-          this.setState({ ...response.data })
-        }
+    if (this.props.isPreview) {
+      const data = {
+        registrationNo: LocalStorage.getUser().user_id,
       }
-    })
+      FormApi.fetchPaymentDetails(data).then((res) => {
+        if (res.data) {
+          this.setState({
+            paymentDetails: jwtDecode(res.data).data,
+          })
+        }
+      })
+    }
+    if (this.props.isView) {
+      this.setState({
+        ...this.props.data,
+      })
+    } else {
+      if (validateUser()) {
+        let data = {
+          registrationNo:
+            LocalStorage.getUser() && LocalStorage.getUser().user_id,
+        }
+        FormApi.getForm(data).then((response) => {
+          if (response.data) {
+            if (response.data.submitted === '1' && !this.props.isPreview) {
+              this.props.history.push('/formsubmitted')
+            } else {
+              Object.keys(response.data).map((item) => {
+                if (
+                  response.data[item] === null ||
+                  response.data[item] === 'null' ||
+                  response.data[item] === 'false'
+                ) {
+                  response.data[item] = ''
+                }
+              })
+              response.data.academicDetails = response.data.academicDetails
+                ? JSON.parse(response.data.academicDetails)
+                : []
+              response.data.documents = response.data.documents
+                ? JSON.parse(response.data.documents)
+                : []
+              response.data.major1 = response.data.major1
+                ? JSON.parse(response.data.major1)
+                : []
+              response.data.major2 = response.data.major2
+                ? JSON.parse(response.data.major2)
+                : ''
+              response.data.coCurriculumSem1 = 'Food, Nutrition and Hygiene'
+              response.data.coCurriculumSem2 = 'First Aid and Basic health'
+              this.setState({
+                ...response.data,
+                totalMerit: {
+                  nationalCompetition: response.data.nationalCompetition
+                    ? parseInt(response.data.nationalCompetition.split(',')[1])
+                    : 0,
+                  otherCompetition: response.data.otherCompetition
+                    ? parseInt(response.data.otherCompetition.split(',')[1])
+                    : 0,
+                  freedomFighter: !response.data.freedomFighter ? 0 : 5,
+                  nationalSevaScheme: !response.data.nationalSevaScheme ? 0 : 5,
+                  ncc: 0,
+                  roverRanger: 0,
+                  otherRoverRanger: 0,
+                  // ncc: response.data.ncc
+                  //   ? parseInt(response.data.ncc.split(',')[1])
+                  //   : 0,
+                  // roverRanger: response.data.roverRanger
+                  //   ? parseInt(response.data.roverRanger.split(',')[1])
+                  //   : 0,
+                  // otherRoverRanger: !response.data.nationalSevaScheme ? 0 : 3,
+                  bcom: !response.data.bcom ? 0 : 5,
+                  other: response.data.other
+                    ? parseInt(response.data.other.split(',')[1])
+                    : 0,
+                },
+              })
+            }
+          }
+        })
+      }
+    }
   }
 
   handleUpload = (file, index, name) => {
@@ -219,11 +258,13 @@ class Form extends React.Component {
         this.setState({
           academicDetails: academicDetailsStatic.UG,
           documents: documentsStatic.UG,
+          [event.target.name]: event.target.value,
         })
       } else if (event.target.value === '#pg2PG') {
         this.setState({
           academicDetails: academicDetailsStatic.PG,
           documents: documentsStatic.PG,
+          [event.target.name]: event.target.value,
         })
       }
       // else if (event.target.value === 'LLM') {
@@ -231,14 +272,19 @@ class Form extends React.Component {
       //     academicDetails: academicDetailsStatic.LLM,
       //     documents: documentsStatic.LLM,
       //   })
-      // }
+    } else if (name === 'major2') {
+      this.setState({
+        [event.target.name]: JSON.parse(event.target.value),
+      })
     } else if (name === 'major3') {
       this.setState({
         major4: '',
+        [event.target.name]: event.target.value,
       })
     } else if (name === 'major4') {
       this.setState({
         major3: '',
+        [event.target.name]: event.target.value,
       })
     } else if (name === 'faculty') {
       this.setState({
@@ -247,12 +293,13 @@ class Form extends React.Component {
         major3: '',
         major4: '',
         vocationalSem1: '',
+        [event.target.name]: event.target.value,
+      })
+    } else {
+      this.setState({
+        [event.target.name]: event.target.value,
       })
     }
-    this.setState({
-      [event.target.name]:
-        name === 'major2' ? JSON.parse(event.target.value) : event.target.value,
-    })
   }
 
   handleFieldChecked = (event) => {
@@ -336,14 +383,19 @@ class Form extends React.Component {
 
   handleCalculateMeritCheck = (event) => {
     const { totalMeritCount } = this.state
-    var total = 0
+    let { totalMerit } = this.state
+    if (!event.target.checked) {
+      totalMerit[event.target.name] = 0
+    }
+    let total = 0
     total = !event.target.checked
-      ? totalMeritCount - parseInt(event.target.value)
+      ? Object.values(totalMerit).reduce(
+          (currentVal, nextVal) => currentVal + nextVal
+        )
       : parseInt(event.target.value) + totalMeritCount <= 17
       ? parseInt(event.target.value) + totalMeritCount
       : 17
     if (event.target.name === 'otherRoverRanger') {
-      var { totalMerit } = this.state
       if (totalMerit.roverRanger !== 0) {
         total = total - totalMerit.roverRanger
         totalMerit.roverRanger = 0
@@ -352,12 +404,13 @@ class Form extends React.Component {
         roverRanger: '',
         [event.target.name]: event.target.checked,
         totalMerit,
-        totalMeritCount: total,
+        totalMeritCount: total > 17 ? 17 : total,
       })
     } else {
       this.setState({
-        totalMeritCount: total,
+        totalMeritCount: total > 17 ? 17 : total,
         [event.target.name]: event.target.checked,
+        totalMerit,
       })
     }
   }
@@ -454,6 +507,7 @@ class Form extends React.Component {
       totalMeritCount,
       mediumOfInstitution,
       signature,
+      uploadExtraMark,
     } = this.state
     var count = 0
     const data = new FormData()
@@ -532,6 +586,7 @@ class Form extends React.Component {
     data.append('totalMeritCount', totalMeritCount)
     data.append('signature', signature)
     data.append('submit', btnValue)
+    data.append('uploadExtraMark', uploadExtraMark)
     if (btnValue === 0) {
       if (dob === '') {
         count++
@@ -541,6 +596,7 @@ class Form extends React.Component {
         addErrorMsg("Please verify you're not a robot")
       }
     } else {
+      debugger
       if (
         !photo ||
         !wrn ||
@@ -559,6 +615,9 @@ class Form extends React.Component {
       ) {
         count++
         addErrorMsg("Fill the empty fields in 'Basic Details' Section")
+      } else if (category !== '#c1General' && !categoryCertificate) {
+        count++
+        addErrorMsg('Upload Category Certificate')
       } else if (
         !fatherName ||
         !motherName ||
@@ -617,19 +676,21 @@ class Form extends React.Component {
     }
     if (count === 0) {
       FormApi.submitForm(data).then((response) => {
-        if (btnValue === 1) {
-          errorDialog('Your application is submitted successfully', 'Form')
-          let user = { ...LocalStorage.getUser(), submitted: '1' }
-          LocalStorage.setUser(user)
-          redirectUrl('sFormSubmit', 1)
-        } else {
-          errorDialog(
-            'Your application is saved. Your registration no. is : ' +
-              response.data.user_id,
-            'Form'
-          )
-          LocalStorage.removeUser()
-          redirectUrl('/login')
+        if (response.data) {
+          if (btnValue === 1) {
+            errorDialog('Your application is submitted successfully', 'Form')
+            LocalStorage.setUser(response.data)
+            redirectUrl('sFormSubmit', 1)
+          } else {
+            const user = jwtDecode(response.data).data
+            errorDialog(
+              'Your application is saved. Your registration no. is : ' +
+                user.user_id,
+              'Form'
+            )
+            LocalStorage.removeUser()
+            redirectUrl('/login')
+          }
         }
       })
     }
@@ -682,7 +743,7 @@ class Form extends React.Component {
     if (facultyId === '') {
       return false
     } else {
-      if (facultyId !== '#f5foc' && facultyId !== '#f6fom') {
+      if (facultyId !== 'f5foc' && facultyId !== 'f6fom') {
         return false
       } else {
         return true
@@ -696,7 +757,7 @@ class Form extends React.Component {
     let combination2 = ['$17Sanskrit', '$11pe']
     let combination3 = ['$17Sanskrit', '$18dp']
     let combination4 = ['$11pe', '$18dp']
-    if (faculty === '#f2Arts') {
+    if (faculty === 'f2Arts') {
       major1.map((item, i) => {
         if (combination1.includes(item.subjectId)) {
           combination1.splice(combination1.indexOf(item.subjectId), 1)
@@ -713,7 +774,7 @@ class Form extends React.Component {
       } else {
         return 1
       }
-    } else if (faculty === '#f3Language') {
+    } else if (faculty === 'f3Language') {
       major1.map((item) => {
         if (combination3.includes(item.subjectId)) {
           combination3.splice(combination3.indexOf(item.subjectId), 1)
@@ -730,7 +791,7 @@ class Form extends React.Component {
       } else {
         return 1
       }
-    } else if (faculty === '#f4fineArt') {
+    } else if (faculty === 'f4fineArt') {
       major1.map((item) => {
         if (combination3.includes(item.subjectId)) {
           combination3.splice(combination3.indexOf(item.subjectId), 1)
@@ -772,7 +833,7 @@ class Form extends React.Component {
         )
         subjects.splice(i, 1)
       }
-      if (major1.length > 0 && faculty === '#f2Arts') {
+      if (major1.length > 0 && faculty === 'f2Arts') {
         if (major1[0].subjectId === '$s7dss') {
           let i = subjects.findIndex(
             (item) => item.subjectId === '$s10Phylosophy'
@@ -792,19 +853,6 @@ class Form extends React.Component {
     } else {
       return []
     }
-  }
-
-  formatPaymentData = (data) => {
-    var formatted = data.map((item) => {
-      return [
-        item.paymentId,
-        createdDateTime(item.payment_date, 1),
-        item.mode,
-        '₹' + item.amount,
-        'SUCCESS',
-      ]
-    })
-    return formatted
   }
 
   render() {
@@ -877,8 +925,9 @@ class Form extends React.Component {
       coCurriculumSem2,
       paymentDetails,
       registrationNo,
+      uploadExtraMark,
     } = this.state
-    const { isPreview } = this.props
+    const { isPreview, isView } = this.props
     const preview =
       submitted === '1' && isPreview && isPreview === '1' ? true : false
     return (
@@ -919,41 +968,42 @@ class Form extends React.Component {
             {!preview ? (
               <Grid item xs={12}>
                 <Typography variant="h6">
-                  Please read all the instructions before fill up form
+                  Please read below all the instructions carefully before
+                  filling up the form
                 </Typography>
                 <Divider />
                 <Typography variant="caption">
                   <ul>
                     <li>
-                      Please verify your form details once before click on
-                      'Submit' button
+                      Please verify your details before clicking 'Submit' button
                     </li>
                     <li>
-                      After submitting FORM, you cannot modified or change any
-                      details
+                      After submitting FORM, it cannot be modify or change
                     </li>
                     <li>
-                      Please note down your registration id after click on 'Save
+                      Please note down your registration id after clicking 'Save
                       Draft' button
                     </li>
-                    <li>Your photo and signature must be image format</li>
                     <li>
-                      Any other uploads can be image(png/jpg/jpeg) or pdf{' '}
+                      Your photo and signature must be in image format
+                      (jpeg/png)
+                    </li>
+                    <li>
+                      All other uploads in the form can be in
+                      image(png/jpg/jpeg) or pdf format
                     </li>
                   </ul>
                 </Typography>
               </Grid>
-            ) : (
-              <Grid item xs={12}>
-                <Typography variant="h6" component="div" gutterBottom>
-                  Your registration no: {registrationNo}
-                </Typography>
-                <Divider />
-                <br />
-                <br />
-              </Grid>
-            )}
-
+            ) : null}
+            <Grid item xs={12}>
+              <Typography variant="h6" component="div" gutterBottom>
+                Your registration no: {registrationNo}
+              </Typography>
+              <Divider />
+              <br />
+              <br />
+            </Grid>
             <Grid item xs={12} md={6}>
               <TextField
                 InputLabelProps={{
@@ -982,7 +1032,6 @@ class Form extends React.Component {
                 ))}
               </TextField>
             </Grid>
-
             <Grid item xs={12} md={6}>
               <TextField
                 InputLabelProps={{
@@ -1008,7 +1057,6 @@ class Form extends React.Component {
                 <MenuItem value="english">English</MenuItem>
               </TextField>
             </Grid>
-
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">Basic Details</Typography>
             </Grid>
@@ -1053,7 +1101,14 @@ class Form extends React.Component {
             <Grid item md={6} xs={12}>
               <Grid container alignItems="center">
                 <Grid item xs={12}>
+                  <Typography>
+                    Enter university web registration no and upload
+                    certification (in PDF)
+                  </Typography>
                   <CustomInput
+                    isMandatory={true}
+                    minLength={Validation['wrn']['minLength']}
+                    maxLength={Validation['wrn']['maxLength']}
                     smallLabel
                     labelText={mandatoryField('Web Registration No.')}
                     formControlProps={{
@@ -1069,9 +1124,6 @@ class Form extends React.Component {
                 </Grid>
                 <Grid container item xs={12} justifyContent="center">
                   <div className="alignCenter">
-                    <Typography>
-                      Upload University Web Registration (PDF) &nbsp;
-                    </Typography>
                     {!preview && (
                       <FileUploader
                         buttonLabel="Upload Form"
@@ -1134,6 +1186,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item md={11} xs={8}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['fullname']['minLength']}
+                maxLength={Validation['fullname']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('Full Name')}
                 formControlProps={{
@@ -1336,6 +1391,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['personalMobile']['minLength']}
+                maxLength={Validation['personalMobile']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('Mobile No. of Student')}
                 formControlProps={{
@@ -1352,6 +1410,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['parentMobile']['minLength']}
+                maxLength={Validation['parentMobile']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('Mobile No. of Parent')}
                 formControlProps={{
@@ -1368,6 +1429,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['aadharNo']['minLength']}
+                maxLength={Validation['aadharNo']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('Aadhar No.')}
                 formControlProps={{
@@ -1384,6 +1448,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['email']['minLength']}
+                maxLength={Validation['email']['maxLength']}
                 smallLabel
                 labelText="Email"
                 formControlProps={{
@@ -1404,6 +1471,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['fatherName']['minLength']}
+                maxLength={Validation['fatherName']['maxLength']}
                 smallLabel
                 labelText={mandatoryField("Father's / Husband Name")}
                 formControlProps={{
@@ -1419,6 +1489,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['motherName']['minLength']}
+                maxLength={Validation['motherName']['maxLength']}
                 smallLabel
                 labelText={mandatoryField("Mother's Name")}
                 formControlProps={{
@@ -1434,6 +1507,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={12}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['parentsOccupation']['minLength']}
+                maxLength={Validation['parentsOccupation']['maxLength']}
                 smallLabel
                 labelText={mandatoryField("Parent's Occupation")}
                 formControlProps={{
@@ -1449,6 +1525,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['guardianName']['minLength']}
+                maxLength={Validation['guardianName']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('Guardian Name')}
                 formControlProps={{
@@ -1464,6 +1543,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['relationOfApplicant']['minLength']}
+                maxLength={Validation['relationOfApplicant']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('Relation with Student')}
                 formControlProps={{
@@ -1482,6 +1564,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item md={6} xs={12}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['houseNo']['minLength']}
+                maxLength={Validation['houseNo']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('House/Flat No.')}
                 formControlProps={{
@@ -1497,6 +1582,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item md={6} xs={12}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['street']['minLength']}
+                maxLength={Validation['street']['maxLength']}
                 smallLabel
                 labelText={mandatoryField('Colony/Street/Mohalla/Village')}
                 formControlProps={{
@@ -1512,6 +1600,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['pincode']['minLength']}
+                maxLength={Validation['pincode']['maxLength']}
                 smallLabel
                 labelText={'Pincode'}
                 formControlProps={{
@@ -1528,6 +1619,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['postOffice']['minLength']}
+                maxLength={Validation['postOffice']['maxLength']}
                 smallLabel
                 labelText={'Post Office'}
                 formControlProps={{
@@ -1616,6 +1710,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item md={6} xs={12}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['houseNo']['minLength']}
+                maxLength={Validation['houseNo']['maxLength']}
                 smallLabel
                 labelText="House/Flat No."
                 formControlProps={{
@@ -1631,6 +1728,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item md={6} xs={12}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['street']['minLength']}
+                maxLength={Validation['street']['maxLength']}
                 smallLabel
                 labelText="Colony/Street/Mohalla/Village"
                 formControlProps={{
@@ -1646,6 +1746,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['pincode']['minLength']}
+                maxLength={Validation['pincode']['maxLength']}
                 smallLabel
                 labelText="Pincode"
                 formControlProps={{
@@ -1662,6 +1765,9 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={6}>
               <CustomInput
+                isMandatory={true}
+                minLength={Validation['postOffice']['minLength']}
+                maxLength={Validation['postOffice']['maxLength']}
                 smallLabel
                 labelText="Post Office"
                 formControlProps={{
@@ -1737,7 +1843,6 @@ class Form extends React.Component {
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">Academic Details</Typography>
             </Grid>
-
             {courseType !== '' ? (
               <Grid item xs={12}>
                 {academicDetails.map((item, i) => (
@@ -1745,6 +1850,9 @@ class Form extends React.Component {
                     <Grid container spacing={2} alignItems="center">
                       <Grid item md={2} xs={12}>
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['nameOfExam']['minLength']}
+                          maxLength={Validation['nameOfExam']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Name of Exam')}
                           formControlProps={{
@@ -1760,6 +1868,9 @@ class Form extends React.Component {
                       </Grid>
                       <Grid item md={2} xs={12}>
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['board']['minLength']}
+                          maxLength={Validation['board']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Name of Board')}
                           formControlProps={{
@@ -1773,6 +1884,9 @@ class Form extends React.Component {
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['institution']['minLength']}
+                          maxLength={Validation['institution']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Name of Institution')}
                           formControlProps={{
@@ -1788,6 +1902,9 @@ class Form extends React.Component {
                       </Grid>
                       <Grid item md={1} xs={6}>
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['year']['minLength']}
+                          maxLength={Validation['year']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Year')}
                           formControlProps={{
@@ -1797,12 +1914,16 @@ class Form extends React.Component {
                             name: 'year',
                             value: item.year,
                             disabled: preview,
+                            type: 'number',
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                       </Grid>
                       <Grid item md={1} xs={6}>
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['rollNo']['minLength']}
+                          maxLength={Validation['rollNo']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Roll No.')}
                           formControlProps={{
@@ -1818,6 +1939,9 @@ class Form extends React.Component {
                       </Grid>
                       <Grid item md={2} xs={6}>
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['totalMarks']['minLength']}
+                          maxLength={Validation['totalMarks']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Total Marks')}
                           formControlProps={{
@@ -1832,6 +1956,9 @@ class Form extends React.Component {
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['marksObtained']['minLength']}
+                          maxLength={Validation['marksObtained']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Marks Obtained')}
                           formControlProps={{
@@ -1848,6 +1975,9 @@ class Form extends React.Component {
                       </Grid>
                       <Grid item md={1} xs={6}>
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['percentage']['minLength']}
+                          maxLength={Validation['percentage']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Percentage')}
                           formControlProps={{
@@ -1863,6 +1993,9 @@ class Form extends React.Component {
                       </Grid>
                       <Grid item md={1} xs={12}>
                         <CustomInput
+                          isMandatory={true}
+                          minLength={Validation['subjects']['minLength']}
+                          maxLength={Validation['subjects']['maxLength']}
                           smallLabel
                           labelText={mandatoryField('Subjects')}
                           formControlProps={{
@@ -1967,7 +2100,7 @@ class Form extends React.Component {
                 Selection of Faculty
               </Typography>
               <Typography variant="caption">
-                You can choose "Facult of Science" only if you are from science
+                You can choose "Faculty of Science" only if you are from science
                 stream in 12th
               </Typography>
               <Divider />
@@ -2001,7 +2134,7 @@ class Form extends React.Component {
                       disabled={
                         (academicDetails[1].stream === '$s2Commerce' ||
                           academicDetails[1].stream === '$s3Arts') &&
-                        item.facultyId === '#f1Science'
+                        item.facultyId === 'f1Science'
                       }
                       value={item.facultyId}
                     >
@@ -2066,33 +2199,34 @@ class Form extends React.Component {
                     fullWidth
                     variant={preview ? 'standard' : 'outlined'}
                     name="major2"
-                    value={JSON.stringify(major2)}
+                    value={major2 ? JSON.stringify(major2) : ''}
                     onChange={this.handleChangeFields}
                   >
                     {major1.length === 2 &&
-                      majorSubjectsData.map((item, key) => (
-                        <MenuItem
-                          disabled={
-                            major1.some(
-                              (itm) => item.subjectId === itm.subjectId
-                            ) ||
-                            this.checkCombination(item.subjectId) === 0 ||
-                            item.subjectId === '$20Bcom' ||
-                            item.subjectId === '$21Bba' ||
-                            ((academicDetails[1].stream === '$s2Commerce' ||
-                              academicDetails[1].stream === '$s3Arts') &&
-                              item.facultyId === '#f1Science') ||
-                            (!item.streamId.includes(
-                              academicDetails[1].stream
-                            ) &&
-                              item.facultyId === faculty)
-                          }
-                          key={key}
-                          value={JSON.stringify(item)}
-                        >
-                          {item.subjectName}
-                        </MenuItem>
-                      ))}
+                      majorSubjectsData.map((item, key) =>
+                        item.subjectId !== '$20Bcom' &&
+                        item.subjectId !== '$21Bba' ? (
+                          <MenuItem
+                            disabled={
+                              major1.some(
+                                (itm) => item.subjectId === itm.subjectId
+                              ) ||
+                              this.checkCombination(item.subjectId) === 0 ||
+                              ((academicDetails[1].stream === '$s2Commerce' ||
+                                academicDetails[1].stream === '$s3Arts') &&
+                                item.facultyId === 'f1Science') ||
+                              (!item.streamId.includes(
+                                academicDetails[1].stream
+                              ) &&
+                                item.facultyId === faculty)
+                            }
+                            key={key}
+                            value={JSON.stringify(item)}
+                          >
+                            {item.subjectName}
+                          </MenuItem>
+                        ) : null
+                      )}
                   </TextField>
                 </Grid>
                 <Grid item xs={12}>
@@ -2101,7 +2235,7 @@ class Form extends React.Component {
                   </Typography>
                   <Typography variant="caption">
                     You can only select one subject either from Semester 1 or
-                    Semester 2
+                    Semester 2 (NOTE: Subject to the Availability of the Sheet)
                   </Typography>
                   <Divider />
                 </Grid>
@@ -2138,7 +2272,7 @@ class Form extends React.Component {
                                   ((academicDetails[1].stream ===
                                     '$s2Commerce' ||
                                     academicDetails[1].stream === '$s3Arts') &&
-                                    item.facultyId === '#f1Science') ||
+                                    item.facultyId === 'f1Science') ||
                                   item.subjectId === major1[0].subjectId ||
                                   item.subjectId === major1[1].subjectId ||
                                   item.subjectId === major2.subjectId
@@ -2185,7 +2319,7 @@ class Form extends React.Component {
                                   ((academicDetails[1].stream ===
                                     '$s2Commerce' ||
                                     academicDetails[1].stream === '$s3Arts') &&
-                                    item.facultyId === '#f1Science') ||
+                                    item.facultyId === 'f1Science') ||
                                   item.subjectId === major1[0].subjectId ||
                                   item.subjectId === major1[1].subjectId ||
                                   item.subjectId === major2.subjectId
@@ -2226,10 +2360,7 @@ class Form extends React.Component {
                     value={vocationalSem1}
                     onChange={this.handleChangeFields}
                   >
-                    <MenuItem value="1">1</MenuItem>
-                    <MenuItem value="2">2</MenuItem>
-                    <MenuItem value="3">3</MenuItem>
-                    <MenuItem value="4">4</MenuItem>
+                    <MenuItem value="1">Will be alloted later</MenuItem>
                   </TextField>
                 </Grid>
                 <Grid item xs={6}>
@@ -2253,10 +2384,7 @@ class Form extends React.Component {
                     value={vocationalSem2}
                     onChange={this.handleChangeFields}
                   >
-                    <MenuItem value="1">1</MenuItem>
-                    <MenuItem value="2">2</MenuItem>
-                    <MenuItem value="3">3</MenuItem>
-                    <MenuItem value="4">4</MenuItem>
+                    <MenuItem value="1">Will be alloted later</MenuItem>
                   </TextField>
                 </Grid>
                 <Grid item xs={12}>
@@ -2573,7 +2701,6 @@ class Form extends React.Component {
                           <Checkbox
                             value="5"
                             checked={!freedomFighter ? false : true}
-                            s
                             onChange={this.handleCalculateMeritCheck}
                             name="freedomFighter"
                             color="primary"
@@ -2596,7 +2723,7 @@ class Form extends React.Component {
                           disabled={preview}
                         />
                       }
-                      label="(NSS) National Seva Scheme ?"
+                      label="(NSS) National Service Scheme ?"
                     />
                   </Grid>
                   <Grid item md={3} xs={6}>
@@ -2764,10 +2891,23 @@ class Form extends React.Component {
                   प्रवेश में
                 </MenuItem>
               </TextField>
+              <FileUploader
+                buttonLabel="Upload Certificate for Extra Merit Marks"
+                accept="image/jpg,image/jpeg,image/png,application/pdf"
+                maxSize={1}
+                handleChange={this.handleUpload}
+                id="uploadExtraMark"
+                name="uploadExtraMark"
+              />
+              <Grid item md={4} xs={6}>
+                {uploadExtraMark !== '' && uploadExtraMark !== null ? (
+                  <Success>Uploaded.</Success>
+                ) : null}
+              </Grid>
             </Grid>
             <Grid item xs={12}>
               <Typography>
-                Extra Marks : <b>{totalMeritCount}</b>
+                Extra Marks: <b>{totalMeritCount}</b>
               </Typography>
               <br />
               <Typography variant="caption">
@@ -2780,7 +2920,7 @@ class Form extends React.Component {
             <Grid item xs={12}>
               <Typography variant="body1">
                 I solemnly declare that the above mentioned information is
-                correct and I fulfill the eligibility condition of the course.
+                correct and I fulfill the eligibility condition for the course.
                 Further, if admitted, I promise to abide by the rules and norms
                 of discipline of the institute.
               </Typography>
@@ -2840,29 +2980,7 @@ class Form extends React.Component {
                 </RegularButton>
               </Grid>
             )}
-            {preview && (
-              <Grid container item xs={12} justifyContent="center">
-                <Grid container item xs={12} justifyContent="center">
-                  <Box p={4}>
-                    <Typography variant="h6">PAYMENT RECEIPT</Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12}>
-                  <CustomTable
-                    boldHeading
-                    isColumn={true}
-                    tableHead={[
-                      'Payment ID',
-                      'Payment Date',
-                      'Payment Mode',
-                      'Amount Paid',
-                      'Status',
-                    ]}
-                    tableData={paymentDetails}
-                  />
-                </Grid>
-              </Grid>
-            )}
+            {preview && <PaymentInfo paymentDetails={paymentDetails} />}
           </Grid>
           {preview && (
             <Grid container item xs={12} justifyContent="center">
