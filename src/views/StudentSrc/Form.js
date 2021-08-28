@@ -2235,7 +2235,7 @@ class Form extends React.Component {
                   </Typography>
                   <Typography variant="caption">
                     You can only select one subject either from Semester 1 or
-                    Semester 2
+                    Semester 2 (NOTE: Subject to the Availability of the Sheet)
                   </Typography>
                   <Divider />
                 </Grid>

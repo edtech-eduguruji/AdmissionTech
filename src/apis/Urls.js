@@ -10,6 +10,7 @@ const URLS = {
   FORGOT_REGISTRATION: API_URL + 'studentapi/ForgotRegistration.php',
   FETCHPAYMENTDETAILS: API_URL + 'studentapi/fetchPaymentDetails.php',
   CHECKSUM: API_URL + 'checksum.php',
+  QUERYAPI: API_URL + 'queryapi.php',
 }
 
 export default URLS

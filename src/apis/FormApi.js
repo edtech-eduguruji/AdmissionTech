@@ -1,4 +1,3 @@
-import config from 'myconfig'
 import BaseApi from './BaseApi'
 import URLS from './Urls'
 
@@ -22,7 +21,7 @@ class FormApi {
     })
   }
   queryPayment(data) {
-    return BaseApi.postFormData(config.QUERYAPI, data).then((res) => {
+    return BaseApi.postFormData(URLS.QUERYAPI, data).then((res) => {
       return res
     })
   }

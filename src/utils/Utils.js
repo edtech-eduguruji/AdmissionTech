@@ -203,8 +203,10 @@ export function createdDateTime(ms, onlyDateTime, format) {
       year: 'numeric',
     })
     var hour = dateObject.getHours()
+    hour = hour > 9 ? hour : '0' + hour
     var minute = dateObject.toLocaleString('en-US', { minute: 'numeric' })
     var second = dateObject.toLocaleString('en-US', { second: 'numeric' })
+    second = second > 9 ? second : '0' + second
     var min = minute > 9 ? minute : '0' + minute
     var ampm = hour >= 12 ? 'PM' : 'AM'
     if (onlyDateTime === 1) {
