@@ -200,14 +200,14 @@ class Form extends React.Component {
                 this.setState({
                   ...response.data,
                   totalMerit: {
-                    nationalCompetition: response.data.nationalCompetition
-                      ? parseInt(
+                    nationalCompetition: !response.data.nationalCompetition
+                      ? 0
+                      : parseInt(
                           response.data.nationalCompetition.split(',')[1]
-                        )
-                      : 0,
-                    otherCompetition: response.data.otherCompetition
-                      ? parseInt(response.data.otherCompetition.split(',')[1])
-                      : 0,
+                        ),
+                    otherCompetition: !response.data.otherCompetition
+                      ? 0
+                      : parseInt(response.data.otherCompetition.split(',')[1]),
                     freedomFighter: !response.data.freedomFighter ? 0 : 5,
                     nationalSevaScheme: !response.data.nationalSevaScheme
                       ? 0
@@ -223,9 +223,9 @@ class Form extends React.Component {
                     //   : 0,
                     // otherRoverRanger: !response.data.nationalSevaScheme ? 0 : 3,
                     bcom: !response.data.bcom ? 0 : 5,
-                    other: response.data.other
-                      ? parseInt(response.data.other.split(',')[1])
-                      : 0,
+                    other: !response.data.other
+                      ? 0
+                      : parseInt(response.data.other.split(',')[1]),
                   },
                 })
               }
@@ -382,19 +382,16 @@ class Form extends React.Component {
   }
 
   handleCalculateMeritCheck = (event) => {
-    const { totalMeritCount } = this.state
     let { totalMerit } = this.state
     if (!event.target.checked) {
       totalMerit[event.target.name] = 0
+    } else {
+      totalMerit[event.target.name] = parseInt(event.target.value)
     }
     let total = 0
-    total = !event.target.checked
-      ? Object.values(totalMerit).reduce(
-          (currentVal, nextVal) => currentVal + nextVal
-        )
-      : parseInt(event.target.value) + totalMeritCount <= 17
-      ? parseInt(event.target.value) + totalMeritCount
-      : 17
+    total = Object.values(totalMerit).reduce(
+      (currentVal, nextVal) => currentVal + nextVal
+    )
     if (event.target.name === 'otherRoverRanger') {
       if (totalMerit.roverRanger !== 0) {
         total = total - totalMerit.roverRanger
@@ -417,12 +414,13 @@ class Form extends React.Component {
 
   handleCalculateMerit = (event) => {
     var { totalMerit } = this.state
-    var total = 0
+    let total = 0
     totalMerit[event.target.name] = parseInt(event.target.value.split(',')[1])
-    Object.keys(totalMerit).map((item) => {
-      total = totalMerit[item] + total
-    })
+    total = Object.values(totalMerit).reduce(
+      (currentVal, nextVal) => currentVal + nextVal
+    )
     this.setState({
+      totalMerit,
       totalMeritCount: total <= 17 ? total : 17,
       [event.target.name]: event.target.value,
     })
@@ -666,6 +664,25 @@ class Form extends React.Component {
       } else if (this.checkJSONfields(documents) !== 0) {
         count++
         addErrorMsg("Fill the empty fields in 'Upload Documents' Section")
+      } else if (
+        (nationalCompetition && !nationalCertificate) ||
+        (!nationalCompetition && nationalCertificate)
+      ) {
+        count++
+        addErrorMsg(
+          'Select any option in "Participation in Zone / National Competition" and Upload Certificate'
+        )
+      } else if ((ncc && !nccCertificate) || (!ncc && nccCertificate)) {
+        count++
+        addErrorMsg('Select any option in "NCC/Cadet" and Upload Certificate')
+      } else if (nationalSevaScheme && !nssDocument) {
+        count++
+        addErrorMsg('Upload NSS Document')
+      } else if ((other && !uploadExtraMark) || (!other && uploadExtraMark)) {
+        count++
+        addErrorMsg(
+          "'Select any option in 'Other Details / Extra Marks' and Upload Certificate"
+        )
       } else if (!signature) {
         count++
         addErrorMsg('Upload Signature')
@@ -2563,7 +2580,7 @@ class Form extends React.Component {
                   </Typography>
                 </Grid>
               ) : (
-                <Grid container spacing={2}>
+                <Grid container spacing={2} alignItems="center">
                   <Grid item md={6} xs={12}>
                     <TextField
                       InputLabelProps={{
@@ -2593,7 +2610,7 @@ class Form extends React.Component {
                     </TextField>
                   </Grid>
                   {!preview && (
-                    <Grid item md={2} xs={6}>
+                    <Grid item md={3} xs={6}>
                       <FileUploader
                         buttonLabel="Upload Document"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -2604,7 +2621,7 @@ class Form extends React.Component {
                       />
                     </Grid>
                   )}
-                  <Grid item md={4} xs={6}>
+                  <Grid item md={3} xs={6}>
                     {nationalCertificate !== '' &&
                     nationalCertificate !== null ? (
                       <Success>Uploaded.</Success>
@@ -2641,7 +2658,7 @@ class Form extends React.Component {
                     </Grid>
                   )}
                   {courseType === '#pg2PG' && !preview && (
-                    <Grid item md={2} xs={6}>
+                    <Grid item md={3} xs={6}>
                       <FileUploader
                         buttonLabel="Upload Document"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -2653,7 +2670,7 @@ class Form extends React.Component {
                     </Grid>
                   )}
                   {courseType === '#pg2PG' && (
-                    <Grid item md={4} xs={6}>
+                    <Grid item md={3} xs={6}>
                       {otherCertificate !== '' && otherCertificate !== null ? (
                         <Success>Uploaded.</Success>
                       ) : null}
@@ -2690,7 +2707,7 @@ class Form extends React.Component {
                     </TextField>
                   </Grid>
                   {!preview && (
-                    <Grid item md={2} xs={6}>
+                    <Grid item md={3} xs={6}>
                       <FileUploader
                         buttonLabel="Upload Document"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -2701,7 +2718,7 @@ class Form extends React.Component {
                       />
                     </Grid>
                   )}
-                  <Grid item md={4} xs={6}>
+                  <Grid item md={3} xs={6}>
                     {nccCertificate !== '' && nccCertificate !== null ? (
                       <Success>Uploaded.</Success>
                     ) : null}
@@ -2966,7 +2983,8 @@ class Form extends React.Component {
             {!preview && (
               <Grid container item xs={12} justifyContent="center">
                 <ReCAPTCHA
-                  sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                  sitekey="6LdIozEcAAAAAFh_c4g4xLAygUWBo2V9sIrhZyoC"
+                  // sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"   -- test key
                   onChange={(token) => this.handleReCaptcha(token)}
                   onExpired={() => this.handleReCaptcha('')}
                 />
