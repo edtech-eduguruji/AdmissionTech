@@ -29,7 +29,8 @@ class QueryApi extends React.Component {
       if (res.status === 200 && res.data) {
         const checksumVal = `${str}|${res.data}`
         console.log('checksumVal', checksumVal)
-        FormApi.queryPayment({ msg: checksumVal })
+        f.append('msg', checksumVal)
+        FormApi.queryPayment(f)
           .then((res) => {
             console.log(res)
           })

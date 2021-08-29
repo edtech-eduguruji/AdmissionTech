@@ -152,84 +152,84 @@ class Form extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.isPreview) {
-      const data = {
-        registrationNo: LocalStorage.getUser().user_id,
-      }
-      FormApi.fetchPaymentDetails(data).then((res) => {
-        if (res.data) {
-          this.setState({
-            paymentDetails: jwtDecode(res.data).data,
-          })
-        }
-      })
-    }
     if (this.props.isView) {
       this.setState({
         ...this.props.data,
       })
     } else {
       if (validateUser()) {
-        let data = {
+        const data = {
           registrationNo:
             LocalStorage.getUser() && LocalStorage.getUser().user_id,
         }
         FormApi.getForm(data).then((response) => {
           if (response.data) {
-            if (response.data.submitted === '1' && !this.props.isPreview) {
-              this.props.history.push('/formsubmitted')
-            } else {
-              Object.keys(response.data).map((item) => {
-                if (
-                  response.data[item] === null ||
-                  response.data[item] === 'null' ||
-                  response.data[item] === 'false'
-                ) {
-                  response.data[item] = ''
-                }
-              })
-              response.data.academicDetails = response.data.academicDetails
-                ? JSON.parse(response.data.academicDetails)
-                : []
-              response.data.documents = response.data.documents
-                ? JSON.parse(response.data.documents)
-                : []
-              response.data.major1 = response.data.major1
-                ? JSON.parse(response.data.major1)
-                : []
-              response.data.major2 = response.data.major2
-                ? JSON.parse(response.data.major2)
-                : ''
-              response.data.coCurriculumSem1 = 'Food, Nutrition and Hygiene'
-              response.data.coCurriculumSem2 = 'First Aid and Basic health'
-              this.setState({
-                ...response.data,
-                totalMerit: {
-                  nationalCompetition: response.data.nationalCompetition
-                    ? parseInt(response.data.nationalCompetition.split(',')[1])
-                    : 0,
-                  otherCompetition: response.data.otherCompetition
-                    ? parseInt(response.data.otherCompetition.split(',')[1])
-                    : 0,
-                  freedomFighter: !response.data.freedomFighter ? 0 : 5,
-                  nationalSevaScheme: !response.data.nationalSevaScheme ? 0 : 5,
-                  ncc: 0,
-                  roverRanger: 0,
-                  otherRoverRanger: 0,
-                  // ncc: response.data.ncc
-                  //   ? parseInt(response.data.ncc.split(',')[1])
-                  //   : 0,
-                  // roverRanger: response.data.roverRanger
-                  //   ? parseInt(response.data.roverRanger.split(',')[1])
-                  //   : 0,
-                  // otherRoverRanger: !response.data.nationalSevaScheme ? 0 : 3,
-                  bcom: !response.data.bcom ? 0 : 5,
-                  other: response.data.other
-                    ? parseInt(response.data.other.split(',')[1])
-                    : 0,
-                },
-              })
-            }
+            FormApi.fetchPaymentDetails(data).then((payResponse) => {
+              if (payResponse.data) {
+                this.setState({
+                  paymentDetails: jwtDecode(payResponse.data).data,
+                })
+              }
+
+              if (response.data.submitted === '1' && !this.props.isPreview) {
+                this.props.history.push('/formsubmitted')
+              } else {
+                Object.keys(response.data).map((item) => {
+                  if (
+                    response.data[item] === null ||
+                    response.data[item] === 'null' ||
+                    response.data[item] === 'false'
+                  ) {
+                    response.data[item] = ''
+                  }
+                })
+                response.data.academicDetails = response.data.academicDetails
+                  ? JSON.parse(response.data.academicDetails)
+                  : []
+                response.data.documents = response.data.documents
+                  ? JSON.parse(response.data.documents)
+                  : []
+                response.data.major1 = response.data.major1
+                  ? JSON.parse(response.data.major1)
+                  : []
+                response.data.major2 = response.data.major2
+                  ? JSON.parse(response.data.major2)
+                  : ''
+                response.data.coCurriculumSem1 = 'Food, Nutrition and Hygiene'
+                response.data.coCurriculumSem2 = 'First Aid and Basic health'
+                this.setState({
+                  ...response.data,
+                  totalMerit: {
+                    nationalCompetition: response.data.nationalCompetition
+                      ? parseInt(
+                          response.data.nationalCompetition.split(',')[1]
+                        )
+                      : 0,
+                    otherCompetition: response.data.otherCompetition
+                      ? parseInt(response.data.otherCompetition.split(',')[1])
+                      : 0,
+                    freedomFighter: !response.data.freedomFighter ? 0 : 5,
+                    nationalSevaScheme: !response.data.nationalSevaScheme
+                      ? 0
+                      : 5,
+                    ncc: 0,
+                    roverRanger: 0,
+                    otherRoverRanger: 0,
+                    // ncc: response.data.ncc
+                    //   ? parseInt(response.data.ncc.split(',')[1])
+                    //   : 0,
+                    // roverRanger: response.data.roverRanger
+                    //   ? parseInt(response.data.roverRanger.split(',')[1])
+                    //   : 0,
+                    // otherRoverRanger: !response.data.nationalSevaScheme ? 0 : 3,
+                    bcom: !response.data.bcom ? 0 : 5,
+                    other: response.data.other
+                      ? parseInt(response.data.other.split(',')[1])
+                      : 0,
+                  },
+                })
+              }
+            })
           }
         })
       }
@@ -701,7 +701,13 @@ class Form extends React.Component {
     if (data.length > 0) {
       data.map((item) => {
         Object.values(item).map((value) => {
-          if (value === null || value === '') {
+          if (
+            value === undefined ||
+            value === 'undefined' ||
+            value === 'null' ||
+            value === null ||
+            value === ''
+          ) {
             isNull++
           }
         })
@@ -1104,6 +1110,8 @@ class Form extends React.Component {
                   <Typography>
                     Enter university web registration no and upload
                     certification (in PDF)
+                    <br />
+                    (*Mandatory to upload)
                   </Typography>
                   <CustomInput
                     isMandatory={true}
@@ -2102,6 +2110,10 @@ class Form extends React.Component {
               <Typography variant="caption">
                 You can choose "Faculty of Science" only if you are from science
                 stream in 12th
+                <br />
+                NOTE: (Statistics as major subject will be available only in
+                combination with Math, Physics, Chemistry and English as other
+                major subjects.)
               </Typography>
               <Divider />
             </Grid>
