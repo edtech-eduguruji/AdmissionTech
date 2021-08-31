@@ -594,11 +594,8 @@ class Form extends React.Component {
         addErrorMsg("Please verify you're not a robot")
       }
     } else {
-      debugger
       if (
         !photo ||
-        !wrn ||
-        !form ||
         !nameTitle ||
         !name ||
         !dob ||
@@ -613,6 +610,17 @@ class Form extends React.Component {
       ) {
         count++
         addErrorMsg("Fill the empty fields in 'Basic Details' Section")
+      } else if (
+        !wrn ||
+        !form ||
+        form == undefined ||
+        form == null ||
+        form == 'null' ||
+        form == 'undefined' ||
+        !data.get('form')
+      ) {
+        count++
+        addErrorMsg('Please enter wrn number and upload wrn certificate')
       } else if (category !== '#c1General' && !categoryCertificate) {
         count++
         addErrorMsg('Upload Category Certificate')
@@ -664,25 +672,33 @@ class Form extends React.Component {
       } else if (this.checkJSONfields(documents) !== 0) {
         count++
         addErrorMsg("Fill the empty fields in 'Upload Documents' Section")
-      } else if (
-        (nationalCompetition && !nationalCertificate) ||
-        (!nationalCompetition && nationalCertificate)
-      ) {
-        count++
-        addErrorMsg(
-          'Select any option in "Participation in Zone / National Competition" and Upload Certificate'
-        )
-      } else if ((ncc && !nccCertificate) || (!ncc && nccCertificate)) {
-        count++
-        addErrorMsg('Select any option in "NCC/Cadet" and Upload Certificate')
-      } else if (nationalSevaScheme && !nssDocument) {
-        count++
-        addErrorMsg('Upload NSS Document')
-      } else if ((other && !uploadExtraMark) || (!other && uploadExtraMark)) {
-        count++
-        addErrorMsg(
-          "'Select any option in 'Other Details / Extra Marks' and Upload Certificate"
-        )
+      } else if (nationalCompetition !== 'none,0' || nationalCertificate) {
+        if (
+          (nationalCompetition && !nationalCertificate) ||
+          (!nationalCompetition && nationalCertificate)
+        ) {
+          count++
+          addErrorMsg(
+            'Select any option in "Participation in Zone / National Competition" and Upload Certificate'
+          )
+        }
+      } else if (ncc !== 'none,0' || nccCertificate) {
+        if ((ncc && !nccCertificate) || (!ncc && nccCertificate)) {
+          count++
+          addErrorMsg('Select any option in "NCC/Cadet" and Upload Certificate')
+        }
+      } else if (nationalSevaScheme || nssDocument) {
+        if (nationalSevaScheme && !nssDocument) {
+          count++
+          addErrorMsg('Upload NSS Document')
+        }
+      } else if (other !== 'none,0' || uploadExtraMark) {
+        if ((other && !uploadExtraMark) || (!other && uploadExtraMark)) {
+          count++
+          addErrorMsg(
+            "'Select any option in 'Other Details / Extra Marks' and Upload Certificate"
+          )
+        }
       } else if (!signature) {
         count++
         addErrorMsg('Upload Signature')
@@ -1125,8 +1141,8 @@ class Form extends React.Component {
               <Grid container alignItems="center">
                 <Grid item xs={12}>
                   <Typography>
-                    Enter university web registration no and upload
-                    certification (in PDF)
+                    Enter (WRN Number) university web registration no and upload
+                    certification (in PDF or Image)
                     <br />
                     (*Mandatory to upload)
                   </Typography>
