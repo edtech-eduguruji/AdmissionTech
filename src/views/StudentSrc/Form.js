@@ -197,6 +197,9 @@ class Form extends React.Component {
                   : ''
                 response.data.coCurriculumSem1 = 'Food, Nutrition and Hygiene'
                 response.data.coCurriculumSem2 = 'First Aid and Basic health'
+                response.data.totalMeritCount = !response.data.totalMeritCount
+                  ? 0
+                  : parseInt(response.data.totalMeritCount)
                 this.setState({
                   ...response.data,
                   totalMerit: {
@@ -382,48 +385,82 @@ class Form extends React.Component {
   }
 
   handleCalculateMeritCheck = (event) => {
+    const name = event.target.name
+    const checked = event.target.checked
     let { totalMerit } = this.state
-    if (!event.target.checked) {
-      totalMerit[event.target.name] = 0
+    if (!checked) {
+      totalMerit[name] = 0
     } else {
-      totalMerit[event.target.name] = parseInt(event.target.value)
+      totalMerit[name] = parseInt(event.target.value)
     }
     let total = 0
     total = Object.values(totalMerit).reduce(
       (currentVal, nextVal) => currentVal + nextVal
     )
-    if (event.target.name === 'otherRoverRanger') {
+    if (name === 'otherRoverRanger') {
       if (totalMerit.roverRanger !== 0) {
         total = total - totalMerit.roverRanger
         totalMerit.roverRanger = 0
       }
       this.setState({
         roverRanger: '',
-        [event.target.name]: event.target.checked,
+        [name]: checked,
+        totalMerit,
+        totalMeritCount: total > 17 ? 17 : total,
+      })
+    } else if (name === 'nationalSevaScheme' && !checked) {
+      this.setState({
+        nssDocument: null,
+        [name]: checked,
         totalMerit,
         totalMeritCount: total > 17 ? 17 : total,
       })
     } else {
       this.setState({
         totalMeritCount: total > 17 ? 17 : total,
-        [event.target.name]: event.target.checked,
+        [name]: checked,
         totalMerit,
       })
     }
   }
 
   handleCalculateMerit = (event) => {
+    const name = event.target.name
+    const value = event.target.value
     var { totalMerit } = this.state
     let total = 0
-    totalMerit[event.target.name] = parseInt(event.target.value.split(',')[1])
+    totalMerit[name] = parseInt(value.split(',')[1])
     total = Object.values(totalMerit).reduce(
       (currentVal, nextVal) => currentVal + nextVal
     )
-    this.setState({
-      totalMerit,
-      totalMeritCount: total <= 17 ? total : 17,
-      [event.target.name]: event.target.value,
-    })
+    if (name === 'other' && value === 'none,0') {
+      this.setState({
+        totalMerit,
+        totalMeritCount: total <= 17 ? total : 17,
+        [name]: value,
+        uploadExtraMark: null,
+      })
+    } else if (name === 'ncc' && value === 'none,0') {
+      this.setState({
+        totalMerit,
+        totalMeritCount: total <= 17 ? total : 17,
+        [name]: value,
+        nccCertificate: null,
+      })
+    } else if (name === 'nationalCompetition' && value === 'none,0') {
+      this.setState({
+        totalMerit,
+        totalMeritCount: total <= 17 ? total : 17,
+        [name]: value,
+        nationalCertificate: null,
+      })
+    } else {
+      this.setState({
+        totalMerit,
+        totalMeritCount: total <= 17 ? total : 17,
+        [name]: value,
+      })
+    }
   }
 
   handleFillCorrespondenceAddress = () => {
@@ -672,33 +709,24 @@ class Form extends React.Component {
       } else if (this.checkJSONfields(documents) !== 0) {
         count++
         addErrorMsg("Fill the empty fields in 'Upload Documents' Section")
-      } else if (nationalCompetition !== 'none,0' || nationalCertificate) {
-        if (
-          (nationalCompetition && !nationalCertificate) ||
-          (!nationalCompetition && nationalCertificate)
-        ) {
-          count++
-          addErrorMsg(
-            'Select any option in "Participation in Zone / National Competition" and Upload Certificate'
-          )
-        }
-      } else if (ncc !== 'none,0' || nccCertificate) {
-        if ((ncc && !nccCertificate) || (!ncc && nccCertificate)) {
-          count++
-          addErrorMsg('Select any option in "NCC/Cadet" and Upload Certificate')
-        }
-      } else if (nationalSevaScheme || nssDocument) {
-        if (nationalSevaScheme && !nssDocument) {
-          count++
-          addErrorMsg('Upload NSS Document')
-        }
-      } else if (other !== 'none,0' || uploadExtraMark) {
-        if ((other && !uploadExtraMark) || (!other && uploadExtraMark)) {
-          count++
-          addErrorMsg(
-            "'Select any option in 'Other Details / Extra Marks' and Upload Certificate"
-          )
-        }
+      } else if (
+        nationalCompetition &&
+        nationalCompetition !== 'none,0' &&
+        !nationalCertificate
+      ) {
+        count++
+        addErrorMsg(
+          'Upload "Participation in Zone / National Competition" Certificate'
+        )
+      } else if (ncc && ncc !== 'none,0' && !nccCertificate) {
+        count++
+        addErrorMsg('Upload "NCC/Cadet" Certificate')
+      } else if (nationalSevaScheme && !nssDocument) {
+        count++
+        addErrorMsg('Upload "NSS" Document')
+      } else if (other && other !== 'none,0' && !uploadExtraMark) {
+        count++
+        addErrorMsg('Upload "Other Details / Extra Marks" Certificate')
       } else if (!signature) {
         count++
         addErrorMsg('Upload Signature')
@@ -782,7 +810,11 @@ class Form extends React.Component {
     if (facultyId === '') {
       return false
     } else {
-      if (facultyId !== 'f5foc' && facultyId !== 'f6fom') {
+      if (
+        facultyId !== 'f5foc' &&
+        facultyId !== 'f6fom' &&
+        facultyId !== 'f7fols'
+      ) {
         return false
       } else {
         return true
@@ -2625,18 +2657,20 @@ class Form extends React.Component {
                       <MenuItem value="Participant,2">Participant</MenuItem>
                     </TextField>
                   </Grid>
-                  {!preview && (
-                    <Grid item md={3} xs={6}>
-                      <FileUploader
-                        buttonLabel="Upload Document"
-                        accept="image/jpg,image/jpeg,image/png,application/pdf"
-                        maxSize={5}
-                        handleChange={this.handleUpload}
-                        id={'nationalCompetition'}
-                        name="nationalCertificate"
-                      />
-                    </Grid>
-                  )}
+                  {nationalCompetition &&
+                    nationalCompetition !== 'none,0' &&
+                    !preview && (
+                      <Grid item md={3} xs={6}>
+                        <FileUploader
+                          buttonLabel="Upload Document"
+                          accept="image/jpg,image/jpeg,image/png,application/pdf"
+                          maxSize={5}
+                          handleChange={this.handleUpload}
+                          id={'nationalCompetition'}
+                          name="nationalCertificate"
+                        />
+                      </Grid>
+                    )}
                   <Grid item md={3} xs={6}>
                     {nationalCertificate !== '' &&
                     nationalCertificate !== null ? (
@@ -2722,7 +2756,7 @@ class Form extends React.Component {
                       </MenuItem>
                     </TextField>
                   </Grid>
-                  {!preview && (
+                  {ncc && ncc !== 'none,0' && !preview && (
                     <Grid item md={3} xs={6}>
                       <FileUploader
                         buttonLabel="Upload Document"
@@ -2936,14 +2970,16 @@ class Form extends React.Component {
                   प्रवेश में
                 </MenuItem>
               </TextField>
-              <FileUploader
-                buttonLabel="Upload Certificate for Extra Merit Marks"
-                accept="image/jpg,image/jpeg,image/png,application/pdf"
-                maxSize={1}
-                handleChange={this.handleUpload}
-                id="uploadExtraMark"
-                name="uploadExtraMark"
-              />
+              {other && other !== 'none,0' && (
+                <FileUploader
+                  buttonLabel="Upload Certificate for Extra Merit Marks"
+                  accept="image/jpg,image/jpeg,image/png,application/pdf"
+                  maxSize={1}
+                  handleChange={this.handleUpload}
+                  id="uploadExtraMark"
+                  name="uploadExtraMark"
+                />
+              )}
               <Grid item md={4} xs={6}>
                 {uploadExtraMark !== '' && uploadExtraMark !== null ? (
                   <Success>Uploaded.</Success>
