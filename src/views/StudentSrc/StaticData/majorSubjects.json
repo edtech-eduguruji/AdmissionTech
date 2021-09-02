@@ -124,5 +124,11 @@
         "subjectId": "$21Bba",
         "streamId": ["$s2Commerce","$s1.3PCMB","$s1.2PCB","$s1Science","$s3Arts"],
         "subjectName": "BBA"
+    },
+    {
+        "facultyId": "f7fols",
+        "subjectId": "$22ballb",
+        "streamId": ["$s2Commerce","$s1.3PCMB","$s1.2PCB","$s1Science","$s3Arts"],
+        "subjectName": "B.A. LLB"
     }
 ]
