@@ -545,7 +545,7 @@ class Form extends React.Component {
       signature,
       uploadExtraMark,
     } = this.state
-    var count = 0
+
     const data = new FormData()
     data.append(
       'registrationNo',
@@ -623,120 +623,211 @@ class Form extends React.Component {
     data.append('signature', signature)
     data.append('submit', btnValue)
     data.append('uploadExtraMark', uploadExtraMark)
+    let tryToSubmit = 0
     if (btnValue === 0) {
       if (dob === '') {
-        count++
         addErrorMsg('For saving the draft date of birth is mandatory.')
+        return
       } else if (!token) {
-        count++
         addErrorMsg("Please verify you're not a robot")
+        return
       }
+      tryToSubmit = 1
     } else {
+      debugger
       if (
-        !photo ||
-        !nameTitle ||
-        !name ||
-        !dob ||
-        !gender ||
-        !religion ||
-        !caste ||
-        !category ||
-        !personalMobile ||
-        !parentMobile ||
-        !aadharNo ||
-        !email
+        photo &&
+        nameTitle &&
+        name &&
+        dob &&
+        gender &&
+        religion &&
+        caste &&
+        personalMobile &&
+        parentMobile &&
+        aadharNo &&
+        email &&
+        mediumOfInstitution
       ) {
-        count++
+        if (
+          wrn &&
+          (form ||
+            form != undefined ||
+            form != null ||
+            form != 'null' ||
+            form != 'undefined' ||
+            data.get('form'))
+        ) {
+          let cat = 0
+          let subCat = 0
+          if (!category || category == '') {
+            addErrorMsg('Please select Category')
+            return
+          } else {
+            if (category != '#c1General') {
+              if (categoryCertificate) {
+                cat = 1
+              } else {
+                addErrorMsg('Upload Category Certificate')
+                return
+              }
+            } else {
+              cat = 1
+            }
+          }
+
+          if (!subCategory || subCategory == '') {
+            addErrorMsg('Please select Sub-Category')
+            return
+          } else {
+            if (subCategory != 'none') {
+              if (subCategoryCertificate) {
+                subCat = 1
+              } else {
+                addErrorMsg('Upload Sub-Category Certificate')
+                return
+              }
+            } else {
+              subCat = 1
+            }
+          }
+
+          if (
+            cat == 1 &&
+            subCat == 1 &&
+            fatherName &&
+            motherName &&
+            parentsOccupation &&
+            guardianName &&
+            relationOfApplicant
+          ) {
+            if (houseNo && street && state && city && pincode && postOffice) {
+              if (this.checkJSONfields(academicDetails) <= 0 && courseType) {
+                if (faculty && faculty !== '') {
+                  let fac = 0
+                  if (
+                    //for other than bcom,bba and legal
+                    this.checkFaculty(faculty) === 0 &&
+                    major1.length >= 2 &&
+                    major2 &&
+                    (major3 || major4) &&
+                    vocationalSem1 &&
+                    vocationalSem2
+                  ) {
+                    fac = 1
+                  } else if (
+                    this.checkFaculty(faculty) > 0 &&
+                    major1.length >= 1
+                  ) {
+                    fac = 1
+                  } else {
+                    addErrorMsg(
+                      "Fill the empty fields in 'Faculty and Courses Details' Section"
+                    )
+                    return
+                  }
+
+                  if (fac == 1 && this.checkJSONfields(documents) <= 0) {
+                    let naCCount = 0,
+                      nccCount = 0,
+                      nSSCount = 0,
+                      otherCount = 0
+                    if (
+                      (!nationalCompetition ||
+                        nationalCompetition == 'none,0') &&
+                      !nationalCertificate
+                    ) {
+                      naCCount = 1
+                    } else if (
+                      nationalCompetition !== 'none,0' &&
+                      nationalCertificate
+                    ) {
+                      naCCount = 1
+                    } else {
+                      addErrorMsg(
+                        'Upload "Participation in Zone / National Competition" Certificate'
+                      )
+                      return
+                    }
+
+                    if ((!ncc || ncc == 'none,0') && !nccCertificate) {
+                      nccCount = 1
+                    } else if (ncc !== 'none,0' && nccCertificate) {
+                      nccCount = 1
+                    } else {
+                      addErrorMsg('Upload "NCC/Cadet" Certificate')
+                      return
+                    }
+
+                    if (!nationalSevaScheme) {
+                      nSSCount = 1
+                    } else if (nationalSevaScheme && nssDocument) {
+                      nSSCount = 1
+                    } else {
+                      addErrorMsg('Upload "NSS" Document')
+                      return
+                    }
+
+                    if ((!other || other == 'none,0') && !uploadExtraMark) {
+                      otherCount = 1
+                    } else if (other !== 'none,0' && uploadExtraMark) {
+                      otherCount = 1
+                    } else {
+                      addErrorMsg(
+                        'Upload "Other Details / Extra Marks" Certificate'
+                      )
+                      return
+                    }
+
+                    if (
+                      naCCount == 1 &&
+                      nccCount == 1 &&
+                      nSSCount == 1 &&
+                      otherCount == 1 &&
+                      signature
+                    ) {
+                      if (token) {
+                        tryToSubmit = 1
+                      } else {
+                        addErrorMsg("Please verify you're not a robot")
+                      }
+                    } else {
+                      addErrorMsg('Upload Signature')
+                    }
+                  } else {
+                    addErrorMsg(
+                      "Fill the empty fields in 'Upload Documents' Section"
+                    )
+                  }
+                } else {
+                  addErrorMsg(
+                    "Fill the empty fields in 'Faculty and Courses Details' Section"
+                  )
+                }
+              } else {
+                addErrorMsg(
+                  "Fill the empty fields in 'Academic Details' Section"
+                )
+              }
+            } else {
+              addErrorMsg(
+                "Fill the empty fields in 'Permanent Address' Section"
+              )
+            }
+          } else {
+            addErrorMsg(
+              "Fill the empty fields in 'Parent & Guardian Details' Section"
+            )
+          }
+        } else {
+          addErrorMsg('Please enter wrn number and upload wrn certificate')
+        }
+      } else {
         addErrorMsg("Fill the empty fields in 'Basic Details' Section")
-      } else if (
-        !wrn ||
-        !form ||
-        form == undefined ||
-        form == null ||
-        form == 'null' ||
-        form == 'undefined' ||
-        !data.get('form')
-      ) {
-        count++
-        addErrorMsg('Please enter wrn number and upload wrn certificate')
-      } else if (category !== '#c1General' && !categoryCertificate) {
-        count++
-        addErrorMsg('Upload Category Certificate')
-      } else if (
-        !fatherName ||
-        !motherName ||
-        !parentsOccupation ||
-        !guardianName ||
-        !relationOfApplicant
-      ) {
-        count++
-        addErrorMsg(
-          "Fill the empty fields in 'Parent & Guardian Details' Section"
-        )
-      } else if (
-        !houseNo ||
-        !street ||
-        !state ||
-        !city ||
-        (!pincode && !postOffice)
-      ) {
-        count++
-        addErrorMsg("Fill the empty fields in 'Permanent Address' Section")
-      } else if (this.checkJSONfields(academicDetails) !== 0 || !courseType) {
-        count++
-        addErrorMsg("Fill the empty fields in 'Academic Details' Section")
-      } else if (!mediumOfInstitution || !faculty || major1.length === 0) {
-        count++
-        addErrorMsg(
-          "Fill the empty fields in 'Faculty and Courses Details' Section"
-        )
-      } else if (this.checkFaculty(faculty) && major1.length === 0) {
-        count++
-        addErrorMsg(
-          "Fill the empty fields in 'Faculty and Courses Details' Section"
-        )
-      } else if (
-        (!this.checkFaculty(faculty) &&
-          (major1.length !== 2 ||
-            !major2 ||
-            (!major3 && !major4) ||
-            !vocationalSem1)) ||
-        !vocationalSem2
-      ) {
-        count++
-        addErrorMsg(
-          "Fill the empty fields in 'Faculty and Courses Details' Section"
-        )
-      } else if (this.checkJSONfields(documents) !== 0) {
-        count++
-        addErrorMsg("Fill the empty fields in 'Upload Documents' Section")
-      } else if (
-        nationalCompetition &&
-        nationalCompetition !== 'none,0' &&
-        !nationalCertificate
-      ) {
-        count++
-        addErrorMsg(
-          'Upload "Participation in Zone / National Competition" Certificate'
-        )
-      } else if (ncc && ncc !== 'none,0' && !nccCertificate) {
-        count++
-        addErrorMsg('Upload "NCC/Cadet" Certificate')
-      } else if (nationalSevaScheme && !nssDocument) {
-        count++
-        addErrorMsg('Upload "NSS" Document')
-      } else if (other && other !== 'none,0' && !uploadExtraMark) {
-        count++
-        addErrorMsg('Upload "Other Details / Extra Marks" Certificate')
-      } else if (!signature) {
-        count++
-        addErrorMsg('Upload Signature')
-      } else if (!token) {
-        count++
-        addErrorMsg("Please verify you're not a robot")
       }
     }
-    if (count === 0) {
+
+    if (tryToSubmit === 1) {
       FormApi.submitForm(data).then((response) => {
         if (response.data) {
           if (btnValue === 1) {
@@ -758,26 +849,27 @@ class Form extends React.Component {
     }
   }
 
+  // 0: not null, >1: null
   checkJSONfields = (data) => {
     let isNull = 0
-    if (data.length > 0) {
+    if (data && data.length > 0) {
       data.map((item) => {
-        Object.values(item).map((value) => {
+        for (let k in item) {
           if (
-            value === undefined ||
-            value === 'undefined' ||
-            value === 'null' ||
-            value === null ||
-            value === ''
+            typeof item[k] == 'string' &&
+            (item[k] == undefined ||
+              item[k] == 'undefined' ||
+              item[k] == 'null' ||
+              item[k] == null ||
+              item[k] == '')
           ) {
-            isNull++
+            isNull = isNull + 1
+            break
           }
-        })
+        }
       })
-      return isNull
-    } else {
-      return 1
     }
+    return isNull
   }
 
   handleDownloadForm = () => {
@@ -785,6 +877,7 @@ class Form extends React.Component {
   }
 
   handleMultiDropDownData = (event, value) => {
+    const { faculty } = this.state
     if (this.state.major1.length > value.length || value.length === 0) {
       this.setState({
         major1: value,
@@ -795,10 +888,18 @@ class Form extends React.Component {
         vocationalSem2: '',
       })
     } else {
-      if (value.length <= 2) {
-        this.setState({ major1: value })
+      if (this.checkFaculty(faculty) > 0) {
+        if (value.length <= 1) {
+          this.setState({ major1: value })
+        } else {
+          addErrorMsg('You can select only 1 subjects.')
+        }
       } else {
-        addErrorMsg('You can select only 2 subjects.')
+        if (value.length <= 2) {
+          this.setState({ major1: value })
+        } else {
+          addErrorMsg('You can select only 2 subjects.')
+        }
       }
     }
   }
@@ -808,18 +909,15 @@ class Form extends React.Component {
   }
 
   checkFaculty = (facultyId) => {
-    if (facultyId === '') {
-      return false
+    if (
+      facultyId == 'f5foc' ||
+      facultyId == 'f6fom' ||
+      facultyId == 'f7fols' ||
+      facultyId == 'f8fobt'
+    ) {
+      return 1
     } else {
-      if (
-        facultyId !== 'f5foc' &&
-        facultyId !== 'f6fom' &&
-        facultyId !== 'f7fols'
-      ) {
-        return false
-      } else {
-        return true
-      }
+      return 0
     }
   }
 
@@ -2264,7 +2362,7 @@ class Form extends React.Component {
                 )}
               />
             </Grid>
-            {!this.checkFaculty(faculty) && (
+            {this.checkFaculty(faculty) == 0 && (
               <Grid container spacing={2} item xs={12}>
                 <Grid item xs={12}>
                   <Typography variant="subtitle1" component="div" gutterBottom>
@@ -3051,7 +3149,9 @@ class Form extends React.Component {
             {!preview && (
               <Grid container item xs={12} justifyContent="center">
                 <ReCAPTCHA
+                  //prod key
                   sitekey="6LdIozEcAAAAAFh_c4g4xLAygUWBo2V9sIrhZyoC"
+                  // -- test key
                   // sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
                   onChange={(token) => this.handleReCaptcha(token)}
                   onExpired={() => this.handleReCaptcha('')}
