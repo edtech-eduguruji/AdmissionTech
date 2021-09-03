@@ -29,6 +29,7 @@ import Success from '../../components/Typography/Success'
 import { ASSETS } from '../../constants/Constants'
 import {
   addErrorMsg,
+  closeDialog,
   downloadPdf,
   errorDialog,
   mandatoryField,
@@ -1019,6 +1020,16 @@ class Form extends React.Component {
                 </RegularButton>
               </Hidden>
             ),
+            isView && (
+              <RegularButton
+                size="sm"
+                color="danger"
+                key="back"
+                onClick={() => closeDialog()}
+              >
+                Back
+              </RegularButton>
+            ),
           ]}
         >
           <Grid container spacing={2} alignItems="center" className="pad10">
@@ -1191,6 +1202,7 @@ class Form extends React.Component {
                       name: 'wrn',
                       value: wrn,
                       disabled: preview,
+                      helperText: 'For Ex: WRN21*********',
                     }}
                     handleChange={this.handleChangeFields}
                   />
@@ -2209,9 +2221,13 @@ class Form extends React.Component {
                     <MenuItem
                       key={key}
                       disabled={
-                        (academicDetails[1].stream === '$s2Commerce' ||
+                        ((academicDetails[1].stream === '$s2Commerce' ||
                           academicDetails[1].stream === '$s3Arts') &&
-                        item.facultyId === 'f1Science'
+                          item.facultyId === 'f1Science') ||
+                        ((academicDetails[1].stream === '$s2Commerce' ||
+                          academicDetails[1].stream === '$s3Arts' ||
+                          academicDetails[1].stream === '$s1Science') &&
+                          item.facultyId === 'f8fobt')
                       }
                       value={item.facultyId}
                     >
@@ -3036,7 +3052,7 @@ class Form extends React.Component {
               <Grid container item xs={12} justifyContent="center">
                 <ReCAPTCHA
                   sitekey="6LdIozEcAAAAAFh_c4g4xLAygUWBo2V9sIrhZyoC"
-                  // sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"   -- test key
+                  // sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
                   onChange={(token) => this.handleReCaptcha(token)}
                   onExpired={() => this.handleReCaptcha('')}
                 />
