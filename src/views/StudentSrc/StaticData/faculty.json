@@ -26,5 +26,9 @@
     {
         "facultyId": "f7fols",
         "faculty": "Faculty of Legal Studies"
+    },
+    {
+        "facultyId": "f8fobt",
+        "faculty": "Faculty of BioTechnology"
     }
 ]
