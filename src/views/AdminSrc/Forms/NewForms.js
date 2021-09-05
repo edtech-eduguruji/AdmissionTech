@@ -16,32 +16,49 @@ import religionData from '../../StudentSrc/StaticData/religion.json'
 import semesterSubjectsData from '../../StudentSrc/StaticData/semesterSubjects.json'
 import statesData from '../../StudentSrc/StaticData/states.json'
 import subCategoryData from '../../StudentSrc/StaticData/subCategory.json'
+import Filters from './Filters'
 
 function NewForms() {
   const [formsData, setFormsData] = useState([])
+  const [limit, setLimit] = useState(10)
+  const [offset, setOffset] = useState(0)
 
   useEffect(() => {
-    handleGetForms(10, 0)
+    handleGetForms()
   }, [])
 
-  const handleGetForms = (limit, offset) => {
+  const handleGetForms = (regNo, fromDate, toDate, status, faculty) => {
     const data = {
       limit: limit,
       offset: offset,
+      regNo: regNo,
+      fromDate: fromDate,
+      toDate: toDate,
+      status: status,
+      faculty: faculty,
     }
     FormApi.getForm(data).then((response) => {
       response.data.map((obj) => {
         Object.keys(obj).map((item) => {
-          if (obj[item] === 'null') {
+          if (
+            obj[item] === 'null' ||
+            obj[item] === null ||
+            obj[item] === 'false'
+          ) {
             obj[item] = ''
           }
         })
-        obj.academicDetails = JSON.parse(obj.academicDetails)
-        obj.documents = JSON.parse(obj.documents)
-        obj.major1 = JSON.parse(obj.major1)
-        obj.major2 = JSON.parse(obj.major2)
+        obj.academicDetails = obj.academicDetails
+          ? JSON.parse(obj.academicDetails)
+          : []
+        obj.documents = obj.documents ? JSON.parse(obj.documents) : []
+        obj.major1 = obj.major1 ? JSON.parse(obj.major1) : []
+        obj.major2 = obj.major2 ? JSON.parse(obj.major2) : ''
         obj.coCurriculumSem1 = 'Food, Nutrition and Hygiene'
         obj.coCurriculumSem2 = 'First Aid and Basic health'
+        obj.totalMeritCount = !obj.totalMeritCount
+          ? 0
+          : parseInt(obj.totalMeritCount)
       })
       setFormsData(response.data)
     })
@@ -250,11 +267,18 @@ function NewForms() {
   }
 
   const handlePagination = (limit, offset) => {
-    handleGetForms(limit, offset)
+    setLimit(limit)
+    setOffset(offset)
+    handleGetForms()
+  }
+
+  const handleUpdate = (regNo, fromDate, toDate, status, faculty) => {
+    handleGetForms(regNo, fromDate, toDate, status, faculty)
   }
 
   return (
     <CardContainer heading="New Registrations Form">
+      <Filters handleUpdate={handleUpdate} />
       <Grid container alignItems="center">
         <Grid item xs={12}>
           <CustomTable
