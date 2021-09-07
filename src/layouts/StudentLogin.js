@@ -106,6 +106,10 @@ class Login extends Component {
                         Here registration fees Rs. 252/- will be submitted
                         online
                       </li>
+                      <li>
+                        Any form related issue kindly email at
+                        admissionagracollege@gmail.com
+                      </li>
                     </ul>
                   </Typography>
                 </CardBody>

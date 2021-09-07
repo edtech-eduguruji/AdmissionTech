@@ -909,6 +909,7 @@ class Form extends React.Component {
   }
 
   checkFaculty = (facultyId) => {
+    //single course selection faculty
     if (
       facultyId == 'f5foc' ||
       facultyId == 'f6fom' ||
@@ -1171,6 +1172,10 @@ class Form extends React.Component {
                     <li>
                       All other uploads in the form can be in
                       image(png/jpg/jpeg) or pdf format
+                    </li>
+                    <li>
+                      Any form related issue kindly email at
+                      admissionagracollege@gmail.com
                     </li>
                   </ul>
                 </Typography>
@@ -2336,10 +2341,12 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Selection of 2 Major Subjects
+                Selection of Major Subjects
               </Typography>
               <Typography variant="caption">
-                You can select any two subjects from the list
+                {this.checkFaculty(faculty) > 0
+                  ? 'You can select an option from the list'
+                  : 'You can select any two subjects from the list'}
               </Typography>
               <Divider />
             </Grid>

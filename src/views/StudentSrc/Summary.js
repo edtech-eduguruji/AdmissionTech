@@ -49,6 +49,10 @@ class Summary extends React.Component {
                   <li>
                     Read all the guidelines carefully from the prospectus.
                   </li>
+                  <li>
+                    Any form related issue kindly email at
+                    admissionagracollege@gmail.com
+                  </li>
                 </ul>
               </Typography>
             </Grid>

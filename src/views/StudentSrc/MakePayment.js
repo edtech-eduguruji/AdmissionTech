@@ -117,6 +117,10 @@ class MakePayment extends React.Component {
                     Once application form is submitted, it cannot be edited or
                     changed
                   </li>
+                  <li>
+                    Any form related issue kindly email at
+                    admissionagracollege@gmail.com
+                  </li>
                 </ul>
               </Typography>
             </Grid>
