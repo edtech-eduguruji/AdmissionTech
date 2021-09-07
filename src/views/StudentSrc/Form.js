@@ -8,7 +8,7 @@ import {
   MenuItem,
   Switch,
   TextField,
-  Typography,
+  Typography
 } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import AddIcon from '@material-ui/icons/Add'
@@ -34,7 +34,7 @@ import {
   errorDialog,
   mandatoryField,
   redirectUrl,
-  validateUser,
+  validateUser
 } from '../../utils/Utils'
 import PaymentInfo from './PaymentInfo'
 import academicDetailsStatic from './StaticData/academic.json'
@@ -316,7 +316,9 @@ class Form extends React.Component {
     const { name, value } = e.target
     const { academicDetails } = this.state
     const list = [...academicDetails]
-    list[index][name] = value
+    if (!value.includes("'")) {
+      list[index][name] = value
+    }
     if (name === 'totalMarks' || name === 'marksObtained') {
       if (
         list[index]['totalMarks'] !== '' &&
