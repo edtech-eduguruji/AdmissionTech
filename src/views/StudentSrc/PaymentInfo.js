@@ -20,6 +20,14 @@ class PaymentInfo extends React.Component {
     }
   }
 
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    this.setState({
+      isPreview: nextProps.paymentDetails ? false : true,
+      paymentDetails: nextProps.paymentDetails,
+      isLoading: nextProps.paymentDetails ? false : true,
+    })
+  }
+
   componentDidMount() {
     if (this.props.paymentDetails) {
       this.setState({ isLoading: false })

@@ -17,10 +17,12 @@ class CustomPagination extends React.Component {
   }
 
   handleChangeFields = (event) => {
-    this.setState({
-      limit: parseInt(event.target.value),
-    })
-    this.props.handleChange(event.target.value, this.state.offset)
+    this.setState(
+      {
+        limit: parseInt(event.target.value),
+      },
+      () => this.props.handleChange(this.state.limit, this.state.offset)
+    )
   }
 
   handleLimit = (value) => () => {
