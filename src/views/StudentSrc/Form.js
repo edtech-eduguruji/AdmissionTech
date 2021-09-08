@@ -114,8 +114,8 @@ class Form extends React.Component {
       subCategory: '',
       categoryCertificate: '',
       subCategoryCertificate: '',
-      academicDetails: academicDetailsStatic.UG,
-      documents: documentsStatic.UG,
+      academicDetails: null,
+      documents: null,
       guardianName: '',
       relationOfApplicant: '',
       nationalCompetition: '',
@@ -186,7 +186,7 @@ class Form extends React.Component {
                 })
                 response.data.academicDetails = response.data.academicDetails
                   ? JSON.parse(this.verifyString(response.data.academicDetails))
-                  : academicDetailsStatic.UG
+                  : academicDetailsStatic['#ug1UG']
                 response.data.documents = response.data.documents
                   ? JSON.parse(response.data.documents)
                   : []
@@ -262,24 +262,11 @@ class Form extends React.Component {
   handleChangeFields = (event) => {
     const name = event.target.name
     if (name === 'courseType') {
-      if (event.target.value === '#ug1UG') {
-        this.setState({
-          academicDetails: academicDetailsStatic.UG,
-          documents: documentsStatic.UG,
-          [event.target.name]: event.target.value,
-        })
-      } else if (event.target.value === '#pg2PG') {
-        this.setState({
-          academicDetails: academicDetailsStatic.PG,
-          documents: documentsStatic.PG,
-          [event.target.name]: event.target.value,
-        })
-      }
-      // else if (event.target.value === 'LLM') {
-      //   this.setState({
-      //     academicDetails: academicDetailsStatic.LLM,
-      //     documents: documentsStatic.LLM,
-      //   })
+      this.setState({
+        academicDetails: academicDetailsStatic[event.target.value],
+        documents: documentsStatic[event.target.value],
+        [event.target.name]: event.target.value,
+      })
     } else if (name === 'major2') {
       this.setState({
         [event.target.name]: JSON.parse(event.target.value),
@@ -320,7 +307,7 @@ class Form extends React.Component {
     const { name, value } = e.target
     const { academicDetails } = this.state
     const list = [...academicDetails]
-    if (value.match('^[A-Za-z0-9()/\\+-., ]*$')) {
+    if (value.match('^[A-Za-z0-9()/\\+-., $#]*$')) {
       list[index][name] = value
       if (name === 'totalMarks' || name === 'marksObtained') {
         if (
@@ -708,7 +695,11 @@ class Form extends React.Component {
             relationOfApplicant
           ) {
             if (houseNo && street && state && city && pincode && postOffice) {
-              if (this.checkJSONfields(academicDetails) <= 0 && courseType) {
+              if (
+                academicDetails &&
+                this.checkJSONfields(academicDetails) <= 0 &&
+                courseType
+              ) {
                 if (faculty && faculty !== '') {
                   let fac = 0
                   if (
@@ -2041,7 +2032,9 @@ class Form extends React.Component {
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">Academic Details</Typography>
             </Grid>
-            {courseType !== '' ? (
+            {courseType !== '' &&
+            academicDetails &&
+            academicDetails.length > 0 ? (
               <Grid item xs={12}>
                 {academicDetails.map((item, i) => (
                   <Box p={1} key={i}>
@@ -2259,22 +2252,24 @@ class Form extends React.Component {
                         )}
                       </Grid>
                       <Grid container item xs={12} justifyContent="flex-end">
-                        {academicDetails.length - 1 === i && !preview && (
-                          <Box pr="10px" pb="5px">
-                            <div className="alignCenter">
-                              <Typography>
-                                Press on <b>"+"</b> button to add more
-                                certifications / courses. &nbsp;&nbsp;
-                              </Typography>
-                              <RegularButton
-                                size="sm"
-                                onClick={this.handleAddClick}
-                              >
-                                <AddIcon />
-                              </RegularButton>
-                            </div>
-                          </Box>
-                        )}
+                        {academicDetails &&
+                          academicDetails.length - 1 === i &&
+                          !preview && (
+                            <Box pr="10px" pb="5px">
+                              <div className="alignCenter">
+                                <Typography>
+                                  Press on <b>"+"</b> button to add more
+                                  certifications / courses. &nbsp;&nbsp;
+                                </Typography>
+                                <RegularButton
+                                  size="sm"
+                                  onClick={this.handleAddClick}
+                                >
+                                  <AddIcon />
+                                </RegularButton>
+                              </div>
+                            </Box>
+                          )}
                       </Grid>
                     </Grid>
                   </Box>
