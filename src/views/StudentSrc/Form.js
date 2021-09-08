@@ -8,7 +8,7 @@ import {
   MenuItem,
   Switch,
   TextField,
-  Typography
+  Typography,
 } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import AddIcon from '@material-ui/icons/Add'
@@ -34,7 +34,7 @@ import {
   errorDialog,
   mandatoryField,
   redirectUrl,
-  validateUser
+  validateUser,
 } from '../../utils/Utils'
 import PaymentInfo from './PaymentInfo'
 import academicDetailsStatic from './StaticData/academic.json'
@@ -185,8 +185,8 @@ class Form extends React.Component {
                   }
                 })
                 response.data.academicDetails = response.data.academicDetails
-                  ? JSON.parse(response.data.academicDetails)
-                  : []
+                  ? JSON.parse(this.verifyString(response.data.academicDetails))
+                  : academicDetailsStatic.UG
                 response.data.documents = response.data.documents
                   ? JSON.parse(response.data.documents)
                   : []
@@ -238,6 +238,10 @@ class Form extends React.Component {
         })
       }
     }
+  }
+
+  verifyString = (text) => {
+    return text.replace(/[\n\r\s\t]+/g, ' ')
   }
 
   handleUpload = (file, index, name) => {
@@ -316,33 +320,33 @@ class Form extends React.Component {
     const { name, value } = e.target
     const { academicDetails } = this.state
     const list = [...academicDetails]
-    if (!value.includes("'")) {
+    if (value.match('^[A-Za-z0-9()/\\+-., ]*$')) {
       list[index][name] = value
-    }
-    if (name === 'totalMarks' || name === 'marksObtained') {
-      if (
-        list[index]['totalMarks'] !== '' &&
-        list[index]['marksObtained'] !== ''
-      ) {
-        let totalMarks = list[index]['totalMarks']
-        let marksObtained = list[index]['marksObtained']
-        let p = parseFloat((marksObtained / totalMarks) * 100).toFixed(2)
-        list[index]['percentage'] = p + '%'
+      if (name === 'totalMarks' || name === 'marksObtained') {
+        if (
+          list[index]['totalMarks'] !== '' &&
+          list[index]['marksObtained'] !== ''
+        ) {
+          let totalMarks = list[index]['totalMarks']
+          let marksObtained = list[index]['marksObtained']
+          let p = parseFloat((marksObtained / totalMarks) * 100).toFixed(2)
+          list[index]['percentage'] = p + '%'
+        }
+      } else if (name === 'stream') {
+        this.setState({
+          faculty: '',
+          major1: [],
+          major2: '',
+          major3: '',
+          major4: '',
+          vocationalSem1: '',
+          vocationalSem2: '',
+        })
       }
-    } else if (name === 'stream') {
       this.setState({
-        faculty: '',
-        major1: [],
-        major2: '',
-        major3: '',
-        major4: '',
-        vocationalSem1: '',
-        vocationalSem2: '',
+        academicDetails: list,
       })
     }
-    this.setState({
-      academicDetails: list,
-    })
   }
 
   handleRemoveClick = (index) => {
@@ -988,7 +992,11 @@ class Form extends React.Component {
 
   filterMajorSubjects = () => {
     const { faculty, major1, major2, academicDetails } = this.state
-    if (academicDetails.length > 0 && academicDetails[1].stream) {
+    if (
+      academicDetails &&
+      academicDetails.length > 0 &&
+      academicDetails[1].stream
+    ) {
       let subjects = majorSubjectsData.filter(
         (item) =>
           item.streamId.includes(academicDetails[1].stream) &&
@@ -2320,7 +2328,8 @@ class Form extends React.Component {
                 variant={preview ? 'standard' : 'outlined'}
                 name="faculty"
               >
-                {academicDetails.length > 0 &&
+                {academicDetails &&
+                  academicDetails.length > 1 &&
                   academicDetails[1].stream !== '' &&
                   facultyData.map((item, key) => (
                     <MenuItem
@@ -2402,7 +2411,9 @@ class Form extends React.Component {
                     value={major2 ? JSON.stringify(major2) : ''}
                     onChange={this.handleChangeFields}
                   >
-                    {major1.length === 2 &&
+                    {academicDetails &&
+                      academicDetails.length > 1 &&
+                      major1.length === 2 &&
                       majorSubjectsData.map((item, key) =>
                         item.subjectId !== '$20Bcom' &&
                         item.subjectId !== '$21Bba' ? (
@@ -2460,7 +2471,10 @@ class Form extends React.Component {
                     value={major3}
                     onChange={this.handleChangeFields}
                   >
-                    {major1.length > 0 && major2
+                    {academicDetails &&
+                    academicDetails.length > 1 &&
+                    major1.length > 0 &&
+                    major2
                       ? semesterSubjectsData.map(
                           (item, key) =>
                             item.semester === 1 && (
@@ -2507,7 +2521,10 @@ class Form extends React.Component {
                     value={major4}
                     onChange={this.handleChangeFields}
                   >
-                    {major1.length > 0 && major2
+                    {academicDetails &&
+                    academicDetails.length > 1 &&
+                    major1.length > 0 &&
+                    major2
                       ? semesterSubjectsData.map(
                           (item, key) =>
                             item.semester === 2 && (
