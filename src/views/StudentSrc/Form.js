@@ -153,9 +153,18 @@ class Form extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.isView) {
-      this.setState({
-        ...this.props.data,
+    const { isView, data } = this.props
+    if (isView) {
+      const dt = {
+        registrationNo: data.registrationNo,
+      }
+      FormApi.fetchPaymentDetails(dt).then((payResponse) => {
+        if (payResponse.data) {
+          this.setState({
+            ...data,
+            paymentDetails: jwtDecode(payResponse.data).data,
+          })
+        }
       })
     } else {
       if (validateUser()) {
@@ -3167,7 +3176,7 @@ class Form extends React.Component {
                 ) : null}
               </div>
             </Grid>
-            {!preview && (
+            {!preview && !isView && (
               <Grid container item xs={12} justifyContent="center">
                 <ReCAPTCHA
                   //prod key
@@ -3179,7 +3188,7 @@ class Form extends React.Component {
                 />
               </Grid>
             )}
-            {!preview && (
+            {!preview && !isView && (
               <Grid container item xs={6} justifyContent="flex-end">
                 <RegularButton
                   color="primary"
@@ -3189,7 +3198,7 @@ class Form extends React.Component {
                 </RegularButton>
               </Grid>
             )}
-            {!preview && (
+            {!preview && !isView && (
               <Grid item xs={6}>
                 <RegularButton
                   color="primary"
@@ -3199,9 +3208,11 @@ class Form extends React.Component {
                 </RegularButton>
               </Grid>
             )}
-            {preview && <PaymentInfo paymentDetails={paymentDetails} />}
+            {preview || isView ? (
+              <PaymentInfo paymentDetails={paymentDetails} />
+            ) : null}
           </Grid>
-          {preview && (
+          {preview || isView ? (
             <Grid container item xs={12} justifyContent="center">
               <Box p={2}>
                 <RegularButton
@@ -3212,7 +3223,7 @@ class Form extends React.Component {
                 </RegularButton>
               </Box>
             </Grid>
-          )}
+          ) : null}
         </CardContainer>
       </div>
     )
