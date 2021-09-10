@@ -1,34 +1,68 @@
 [
     {
         "facultyId": "f1Science",
-        "faculty": "Faculty of Science"
+        "faculty": "Faculty of Science",
+        "year": ["1","2"],
+        "courseType": "#ug1UG"    
     },
     {
         "facultyId": "f2Arts",
-        "faculty": "Faculty of Arts, Humanities and Social Sciences"
+        "faculty": "Faculty of Arts, Humanities and Social Sciences",
+        "year": ["1","2"],
+        "courseType": "#ug1UG"    
     },
     {
         "facultyId": "f3Language",
-        "faculty": "Faculty of Language"
+        "faculty": "Faculty of Language",
+        "year": ["1"],
+        "courseType": "#ug1UG"    
     },
     {
         "facultyId": "f4fineArt",
-        "faculty": "Faculty of Fine Art and Performing Art"
+        "faculty": "Faculty of Fine Art and Performing Art",
+        "year": ["1"],
+        "courseType": "#ug1UG"    
     },
     {
         "facultyId": "f5foc",
-        "faculty": "Faculty of Commerce"
+        "faculty": "Faculty of Commerce",
+        "year": ["1","2"],
+        "courseType": "#ug1UG"    
     },
     {
         "facultyId": "f6fom",
-        "faculty": "Faculty of Management/Computer Application"
+        "faculty": "Faculty of Management/Computer Application",
+        "year": ["1","2"],
+        "courseType": "#ug1UG"    
     },
     {
         "facultyId": "f7fols",
-        "faculty": "Faculty of Legal Studies"
+        "faculty": "Faculty of Legal Studies",
+        "year": ["1","2","3","4","5"],
+        "courseType": "law4LAW"  
     },
     {
         "facultyId": "f8fobt",
-        "faculty": "Faculty of BioTechnology"
+        "faculty": "Faculty of BioTechnology",
+        "year": ["1","2"],
+        "courseType": "#ug1UG"   
+    },
+    {
+        "facultyId": "f9foj",
+        "faculty": "Faculty of Journalism",
+        "year": ["1"],
+        "courseType": "pgd3PGD"   
+    },
+    {
+        "facultyId": "f10foma",
+        "faculty": "Faculty of MA",
+        "year": ["1","2"],
+        "courseType": "#pg2PG"   
+    },
+    {
+        "facultyId": "f11fomsc",
+        "faculty": "Faculty of MSC",
+        "year": ["1","2"],
+        "courseType": "#pg2PG"   
     }
 ]
