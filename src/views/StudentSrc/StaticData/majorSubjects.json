@@ -124,5 +124,23 @@
         "subjectId": "$21Bba",
         "streamId": ["$s2Commerce","$s1.3PCMB","$s1.2PCB","$s1Science","$s3Arts"],
         "subjectName": "BBA"
+    },
+    {
+        "facultyId": "f6fom",
+        "subjectId": "$23Bca",
+        "streamId": ["$s1.3PCMB","$s1Science"],
+        "subjectName": "BCA"
+    },
+    {
+        "facultyId": "f7fols",
+        "subjectId": "$22ballb",
+        "streamId": ["$s2Commerce","$s1.3PCMB","$s1.2PCB","$s1Science","$s3Arts"],
+        "subjectName": "B.A. LLB"
+    },
+    {
+        "facultyId": "f8fobt",
+        "subjectId": "$24bscbt",
+        "streamId": ["$s1.3PCMB","$s1.2PCB"],
+        "subjectName": "BSc BioTech"
     }
 ]

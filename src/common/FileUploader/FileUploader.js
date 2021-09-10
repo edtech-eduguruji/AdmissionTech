@@ -110,33 +110,35 @@ class FileUploader extends Component {
     } else {
       filesData = event.target.files
     }
-    let largeFiles = this.handleCheckSize(filesData)
-    if (filesData.length <= uploadLimit) {
-      if (!largeFiles) {
-        if (multiple) {
-          for (var v = 0; v < filesData.length; v++) {
-            if (this.state.filesCount + 1 <= uploadLimit) {
-              handleChange(filesData[v], this.props.index, this.props.name)
-            } else {
-              addWarningMsg(
-                'Limit reached, You can only select ' + uploadLimit + ' files'
-              )
-              break
+    if (filesData.length > 0) {
+      let largeFiles = this.handleCheckSize(filesData)
+      if (filesData.length <= uploadLimit) {
+        if (!largeFiles) {
+          if (multiple) {
+            for (var v = 0; v < filesData.length; v++) {
+              if (this.state.filesCount + 1 <= uploadLimit) {
+                handleChange(filesData[v], this.props.index, this.props.name)
+              } else {
+                addWarningMsg(
+                  'Limit reached, You can only select ' + uploadLimit + ' files'
+                )
+                break
+              }
             }
+          } else {
+            handleChange(filesData[0], this.props.index, this.props.name)
+          }
+          if (isDragDrop && !event.target.files) {
+            event.dataTransfer.clearData()
+            this.dragCounter = 0
           }
         } else {
-          handleChange(filesData[0], this.props.index, this.props.name)
-        }
-        if (isDragDrop && !event.target.files) {
-          event.dataTransfer.clearData()
-          this.dragCounter = 0
+          addErrorMsg(`${largeFiles.name} must be less than ${maxSize}MB`)
+          largeFiles = null
         }
       } else {
-        addErrorMsg(`${largeFiles.name} must be less than ${maxSize}MB`)
-        largeFiles = null
+        addWarningMsg('You can select files only up to ' + uploadLimit)
       }
-    } else {
-      addWarningMsg('You can select files only up to ' + uploadLimit)
     }
   }
 

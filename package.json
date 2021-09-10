@@ -30,11 +30,11 @@
     "xlsx": "^0.16.6"
   },
   "scripts": {
-    "start": "webpack-dev-server --config ./webpack.config.js --env=development --mode=development",
     "local-dev-start": "webpack-dev-server --config ./webpack.config.js --env=local --mode=development",
-    "test": "webpack-dev-server --config ./webpack.config.js --env=production --mode=development",
-    "development": "webpack --env=development --mode=development",
-    "production": "webpack --env=production --mode=production"
+    "start:dev": "webpack-dev-server --config ./webpack.config.js --env=development --mode=development",
+    "start:prod": "webpack-dev-server --config ./webpack.config.js --env=production --mode=development",
+    "build:development": "webpack --env=development --mode=development",
+    "build:production": "webpack --env=production --mode=production"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

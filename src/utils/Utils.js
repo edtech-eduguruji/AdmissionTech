@@ -388,6 +388,11 @@ export function unauthorizedUser(error) {
   if (arr[arr.length - 1] === '401') {
     addErrorMsg('Invalid Authentication.')
     return true
+  } else if (arr[arr.length - 1] === '406') {
+    addErrorMsg(
+      'Please try to refresh the page. Fill and upload all the required details'
+    )
+    return true
   } else {
     return false
   }

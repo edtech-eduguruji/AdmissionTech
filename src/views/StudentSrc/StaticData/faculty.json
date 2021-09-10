@@ -21,6 +21,14 @@
     },
     {
         "facultyId": "f6fom",
-        "faculty": "Faculty of Management"
+        "faculty": "Faculty of Management/Computer Application"
+    },
+    {
+        "facultyId": "f7fols",
+        "faculty": "Faculty of Legal Studies"
+    },
+    {
+        "facultyId": "f8fobt",
+        "faculty": "Faculty of BioTechnology"
     }
 ]

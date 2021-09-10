@@ -29,6 +29,7 @@ import Success from '../../components/Typography/Success'
 import { ASSETS } from '../../constants/Constants'
 import {
   addErrorMsg,
+  closeDialog,
   downloadPdf,
   errorDialog,
   mandatoryField,
@@ -113,8 +114,8 @@ class Form extends React.Component {
       subCategory: '',
       categoryCertificate: '',
       subCategoryCertificate: '',
-      academicDetails: academicDetailsStatic.UG,
-      documents: documentsStatic.UG,
+      academicDetails: null,
+      documents: null,
       guardianName: '',
       relationOfApplicant: '',
       nationalCompetition: '',
@@ -152,88 +153,104 @@ class Form extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.isPreview) {
-      const data = {
-        registrationNo: LocalStorage.getUser().user_id,
+    const { isView, data } = this.props
+    if (isView) {
+      const dt = {
+        registrationNo: data.registrationNo,
       }
-      FormApi.fetchPaymentDetails(data).then((res) => {
-        if (res.data) {
+      FormApi.fetchPaymentDetails(dt).then((payResponse) => {
+        if (payResponse.data) {
           this.setState({
-            paymentDetails: jwtDecode(res.data).data,
+            ...data,
+            paymentDetails: jwtDecode(payResponse.data).data,
           })
         }
       })
-    }
-    if (this.props.isView) {
-      this.setState({
-        ...this.props.data,
-      })
     } else {
       if (validateUser()) {
-        let data = {
+        const data = {
           registrationNo:
             LocalStorage.getUser() && LocalStorage.getUser().user_id,
         }
         FormApi.getForm(data).then((response) => {
           if (response.data) {
-            if (response.data.submitted === '1' && !this.props.isPreview) {
-              this.props.history.push('/formsubmitted')
-            } else {
-              Object.keys(response.data).map((item) => {
-                if (
-                  response.data[item] === null ||
-                  response.data[item] === 'null' ||
-                  response.data[item] === 'false'
-                ) {
-                  response.data[item] = ''
-                }
-              })
-              response.data.academicDetails = response.data.academicDetails
-                ? JSON.parse(response.data.academicDetails)
-                : []
-              response.data.documents = response.data.documents
-                ? JSON.parse(response.data.documents)
-                : []
-              response.data.major1 = response.data.major1
-                ? JSON.parse(response.data.major1)
-                : []
-              response.data.major2 = response.data.major2
-                ? JSON.parse(response.data.major2)
-                : ''
-              response.data.coCurriculumSem1 = 'Food, Nutrition and Hygiene'
-              response.data.coCurriculumSem2 = 'First Aid and Basic health'
-              this.setState({
-                ...response.data,
-                totalMerit: {
-                  nationalCompetition: response.data.nationalCompetition
-                    ? parseInt(response.data.nationalCompetition.split(',')[1])
-                    : 0,
-                  otherCompetition: response.data.otherCompetition
-                    ? parseInt(response.data.otherCompetition.split(',')[1])
-                    : 0,
-                  freedomFighter: !response.data.freedomFighter ? 0 : 5,
-                  nationalSevaScheme: !response.data.nationalSevaScheme ? 0 : 5,
-                  ncc: 0,
-                  roverRanger: 0,
-                  otherRoverRanger: 0,
-                  // ncc: response.data.ncc
-                  //   ? parseInt(response.data.ncc.split(',')[1])
-                  //   : 0,
-                  // roverRanger: response.data.roverRanger
-                  //   ? parseInt(response.data.roverRanger.split(',')[1])
-                  //   : 0,
-                  // otherRoverRanger: !response.data.nationalSevaScheme ? 0 : 3,
-                  bcom: !response.data.bcom ? 0 : 5,
-                  other: response.data.other
-                    ? parseInt(response.data.other.split(',')[1])
-                    : 0,
-                },
-              })
-            }
+            FormApi.fetchPaymentDetails(data).then((payResponse) => {
+              if (payResponse.data) {
+                this.setState({
+                  paymentDetails: jwtDecode(payResponse.data).data,
+                })
+              }
+
+              if (response.data.submitted === '1' && !this.props.isPreview) {
+                this.props.history.push('/formsubmitted')
+              } else {
+                Object.keys(response.data).map((item) => {
+                  if (
+                    response.data[item] === null ||
+                    response.data[item] === 'null' ||
+                    response.data[item] === 'false'
+                  ) {
+                    response.data[item] = ''
+                  }
+                })
+                response.data.academicDetails = response.data.academicDetails
+                  ? JSON.parse(this.verifyString(response.data.academicDetails))
+                  : academicDetailsStatic['#ug1UG']
+                response.data.documents = response.data.documents
+                  ? JSON.parse(response.data.documents)
+                  : []
+                response.data.major1 = response.data.major1
+                  ? JSON.parse(response.data.major1)
+                  : []
+                response.data.major2 = response.data.major2
+                  ? JSON.parse(response.data.major2)
+                  : ''
+                response.data.coCurriculumSem1 = 'Food, Nutrition and Hygiene'
+                response.data.coCurriculumSem2 = 'First Aid and Basic health'
+                response.data.totalMeritCount = !response.data.totalMeritCount
+                  ? 0
+                  : parseInt(response.data.totalMeritCount)
+                this.setState({
+                  ...response.data,
+                  totalMerit: {
+                    nationalCompetition: !response.data.nationalCompetition
+                      ? 0
+                      : parseInt(
+                          response.data.nationalCompetition.split(',')[1]
+                        ),
+                    otherCompetition: !response.data.otherCompetition
+                      ? 0
+                      : parseInt(response.data.otherCompetition.split(',')[1]),
+                    freedomFighter: !response.data.freedomFighter ? 0 : 5,
+                    nationalSevaScheme: !response.data.nationalSevaScheme
+                      ? 0
+                      : 5,
+                    ncc: 0,
+                    roverRanger: 0,
+                    otherRoverRanger: 0,
+                    // ncc: response.data.ncc
+                    //   ? parseInt(response.data.ncc.split(',')[1])
+                    //   : 0,
+                    // roverRanger: response.data.roverRanger
+                    //   ? parseInt(response.data.roverRanger.split(',')[1])
+                    //   : 0,
+                    // otherRoverRanger: !response.data.nationalSevaScheme ? 0 : 3,
+                    bcom: !response.data.bcom ? 0 : 5,
+                    other: !response.data.other
+                      ? 0
+                      : parseInt(response.data.other.split(',')[1]),
+                  },
+                })
+              }
+            })
           }
         })
       }
     }
+  }
+
+  verifyString = (text) => {
+    return text.replace(/[\n\r\s\t]+/g, ' ')
   }
 
   handleUpload = (file, index, name) => {
@@ -254,24 +271,11 @@ class Form extends React.Component {
   handleChangeFields = (event) => {
     const name = event.target.name
     if (name === 'courseType') {
-      if (event.target.value === '#ug1UG') {
-        this.setState({
-          academicDetails: academicDetailsStatic.UG,
-          documents: documentsStatic.UG,
-          [event.target.name]: event.target.value,
-        })
-      } else if (event.target.value === '#pg2PG') {
-        this.setState({
-          academicDetails: academicDetailsStatic.PG,
-          documents: documentsStatic.PG,
-          [event.target.name]: event.target.value,
-        })
-      }
-      // else if (event.target.value === 'LLM') {
-      //   this.setState({
-      //     academicDetails: academicDetailsStatic.LLM,
-      //     documents: documentsStatic.LLM,
-      //   })
+      this.setState({
+        academicDetails: academicDetailsStatic[event.target.value],
+        documents: documentsStatic[event.target.value],
+        [event.target.name]: event.target.value,
+      })
     } else if (name === 'major2') {
       this.setState({
         [event.target.name]: JSON.parse(event.target.value),
@@ -312,31 +316,33 @@ class Form extends React.Component {
     const { name, value } = e.target
     const { academicDetails } = this.state
     const list = [...academicDetails]
-    list[index][name] = value
-    if (name === 'totalMarks' || name === 'marksObtained') {
-      if (
-        list[index]['totalMarks'] !== '' &&
-        list[index]['marksObtained'] !== ''
-      ) {
-        let totalMarks = list[index]['totalMarks']
-        let marksObtained = list[index]['marksObtained']
-        let p = parseFloat((marksObtained / totalMarks) * 100).toFixed(2)
-        list[index]['percentage'] = p + '%'
+    if (value.match('^[A-Za-z0-9()/\\+-., $#]*$')) {
+      list[index][name] = value
+      if (name === 'totalMarks' || name === 'marksObtained') {
+        if (
+          list[index]['totalMarks'] !== '' &&
+          list[index]['marksObtained'] !== ''
+        ) {
+          let totalMarks = list[index]['totalMarks']
+          let marksObtained = list[index]['marksObtained']
+          let p = parseFloat((marksObtained / totalMarks) * 100).toFixed(2)
+          list[index]['percentage'] = p + '%'
+        }
+      } else if (name === 'stream') {
+        this.setState({
+          faculty: '',
+          major1: [],
+          major2: '',
+          major3: '',
+          major4: '',
+          vocationalSem1: '',
+          vocationalSem2: '',
+        })
       }
-    } else if (name === 'stream') {
       this.setState({
-        faculty: '',
-        major1: [],
-        major2: '',
-        major3: '',
-        major4: '',
-        vocationalSem1: '',
-        vocationalSem2: '',
+        academicDetails: list,
       })
     }
-    this.setState({
-      academicDetails: list,
-    })
   }
 
   handleRemoveClick = (index) => {
@@ -382,50 +388,82 @@ class Form extends React.Component {
   }
 
   handleCalculateMeritCheck = (event) => {
-    const { totalMeritCount } = this.state
+    const name = event.target.name
+    const checked = event.target.checked
     let { totalMerit } = this.state
-    if (!event.target.checked) {
-      totalMerit[event.target.name] = 0
+    if (!checked) {
+      totalMerit[name] = 0
+    } else {
+      totalMerit[name] = parseInt(event.target.value)
     }
     let total = 0
-    total = !event.target.checked
-      ? Object.values(totalMerit).reduce(
-          (currentVal, nextVal) => currentVal + nextVal
-        )
-      : parseInt(event.target.value) + totalMeritCount <= 17
-      ? parseInt(event.target.value) + totalMeritCount
-      : 17
-    if (event.target.name === 'otherRoverRanger') {
+    total = Object.values(totalMerit).reduce(
+      (currentVal, nextVal) => currentVal + nextVal
+    )
+    if (name === 'otherRoverRanger') {
       if (totalMerit.roverRanger !== 0) {
         total = total - totalMerit.roverRanger
         totalMerit.roverRanger = 0
       }
       this.setState({
         roverRanger: '',
-        [event.target.name]: event.target.checked,
+        [name]: checked,
+        totalMerit,
+        totalMeritCount: total > 17 ? 17 : total,
+      })
+    } else if (name === 'nationalSevaScheme' && !checked) {
+      this.setState({
+        nssDocument: null,
+        [name]: checked,
         totalMerit,
         totalMeritCount: total > 17 ? 17 : total,
       })
     } else {
       this.setState({
         totalMeritCount: total > 17 ? 17 : total,
-        [event.target.name]: event.target.checked,
+        [name]: checked,
         totalMerit,
       })
     }
   }
 
   handleCalculateMerit = (event) => {
+    const name = event.target.name
+    const value = event.target.value
     var { totalMerit } = this.state
-    var total = 0
-    totalMerit[event.target.name] = parseInt(event.target.value.split(',')[1])
-    Object.keys(totalMerit).map((item) => {
-      total = totalMerit[item] + total
-    })
-    this.setState({
-      totalMeritCount: total <= 17 ? total : 17,
-      [event.target.name]: event.target.value,
-    })
+    let total = 0
+    totalMerit[name] = parseInt(value.split(',')[1])
+    total = Object.values(totalMerit).reduce(
+      (currentVal, nextVal) => currentVal + nextVal
+    )
+    if (name === 'other' && value === 'none,0') {
+      this.setState({
+        totalMerit,
+        totalMeritCount: total <= 17 ? total : 17,
+        [name]: value,
+        uploadExtraMark: null,
+      })
+    } else if (name === 'ncc' && value === 'none,0') {
+      this.setState({
+        totalMerit,
+        totalMeritCount: total <= 17 ? total : 17,
+        [name]: value,
+        nccCertificate: null,
+      })
+    } else if (name === 'nationalCompetition' && value === 'none,0') {
+      this.setState({
+        totalMerit,
+        totalMeritCount: total <= 17 ? total : 17,
+        [name]: value,
+        nationalCertificate: null,
+      })
+    } else {
+      this.setState({
+        totalMerit,
+        totalMeritCount: total <= 17 ? total : 17,
+        [name]: value,
+      })
+    }
   }
 
   handleFillCorrespondenceAddress = () => {
@@ -509,7 +547,7 @@ class Form extends React.Component {
       signature,
       uploadExtraMark,
     } = this.state
-    var count = 0
+
     const data = new FormData()
     data.append(
       'registrationNo',
@@ -587,94 +625,215 @@ class Form extends React.Component {
     data.append('signature', signature)
     data.append('submit', btnValue)
     data.append('uploadExtraMark', uploadExtraMark)
+    let tryToSubmit = 0
     if (btnValue === 0) {
       if (dob === '') {
-        count++
         addErrorMsg('For saving the draft date of birth is mandatory.')
+        return
       } else if (!token) {
-        count++
         addErrorMsg("Please verify you're not a robot")
+        return
       }
+      tryToSubmit = 1
     } else {
       debugger
       if (
-        !photo ||
-        !wrn ||
-        !form ||
-        !nameTitle ||
-        !name ||
-        !dob ||
-        !gender ||
-        !religion ||
-        !caste ||
-        !category ||
-        !personalMobile ||
-        !parentMobile ||
-        !aadharNo ||
-        !email
+        photo &&
+        nameTitle &&
+        name &&
+        dob &&
+        gender &&
+        religion &&
+        caste &&
+        personalMobile &&
+        parentMobile &&
+        aadharNo &&
+        email &&
+        mediumOfInstitution
       ) {
-        count++
+        if (
+          wrn &&
+          (form ||
+            form != undefined ||
+            form != null ||
+            form != 'null' ||
+            form != 'undefined' ||
+            data.get('form'))
+        ) {
+          let cat = 0
+          let subCat = 0
+          if (!category || category == '') {
+            addErrorMsg('Please select Category')
+            return
+          } else {
+            if (category != '#c1General') {
+              if (categoryCertificate) {
+                cat = 1
+              } else {
+                addErrorMsg('Upload Category Certificate')
+                return
+              }
+            } else {
+              cat = 1
+            }
+          }
+
+          if (!subCategory || subCategory == '') {
+            addErrorMsg('Please select Sub-Category')
+            return
+          } else {
+            if (subCategory != 'none') {
+              if (subCategoryCertificate) {
+                subCat = 1
+              } else {
+                addErrorMsg('Upload Sub-Category Certificate')
+                return
+              }
+            } else {
+              subCat = 1
+            }
+          }
+
+          if (
+            cat == 1 &&
+            subCat == 1 &&
+            fatherName &&
+            motherName &&
+            parentsOccupation &&
+            guardianName &&
+            relationOfApplicant
+          ) {
+            if (houseNo && street && state && city && pincode && postOffice) {
+              if (
+                academicDetails &&
+                this.checkJSONfields(academicDetails) <= 0 &&
+                courseType
+              ) {
+                if (faculty && faculty !== '') {
+                  let fac = 0
+                  if (
+                    //for other than bcom,bba and legal
+                    this.checkFaculty(faculty) === 0 &&
+                    major1.length >= 2 &&
+                    major2 &&
+                    (major3 || major4) &&
+                    vocationalSem1 &&
+                    vocationalSem2
+                  ) {
+                    fac = 1
+                  } else if (
+                    this.checkFaculty(faculty) > 0 &&
+                    major1.length >= 1
+                  ) {
+                    fac = 1
+                  } else {
+                    addErrorMsg(
+                      "Fill the empty fields in 'Faculty and Courses Details' Section"
+                    )
+                    return
+                  }
+
+                  if (fac == 1 && this.checkJSONfields(documents) <= 0) {
+                    let naCCount = 0,
+                      nccCount = 0,
+                      nSSCount = 0,
+                      otherCount = 0
+                    if (
+                      (!nationalCompetition ||
+                        nationalCompetition == 'none,0') &&
+                      !nationalCertificate
+                    ) {
+                      naCCount = 1
+                    } else if (
+                      nationalCompetition !== 'none,0' &&
+                      nationalCertificate
+                    ) {
+                      naCCount = 1
+                    } else {
+                      addErrorMsg(
+                        'Upload "Participation in Zone / National Competition" Certificate'
+                      )
+                      return
+                    }
+
+                    if ((!ncc || ncc == 'none,0') && !nccCertificate) {
+                      nccCount = 1
+                    } else if (ncc !== 'none,0' && nccCertificate) {
+                      nccCount = 1
+                    } else {
+                      addErrorMsg('Upload "NCC/Cadet" Certificate')
+                      return
+                    }
+
+                    if (!nationalSevaScheme) {
+                      nSSCount = 1
+                    } else if (nationalSevaScheme && nssDocument) {
+                      nSSCount = 1
+                    } else {
+                      addErrorMsg('Upload "NSS" Document')
+                      return
+                    }
+
+                    if ((!other || other == 'none,0') && !uploadExtraMark) {
+                      otherCount = 1
+                    } else if (other !== 'none,0' && uploadExtraMark) {
+                      otherCount = 1
+                    } else {
+                      addErrorMsg(
+                        'Upload "Other Details / Extra Marks" Certificate'
+                      )
+                      return
+                    }
+
+                    if (
+                      naCCount == 1 &&
+                      nccCount == 1 &&
+                      nSSCount == 1 &&
+                      otherCount == 1 &&
+                      signature
+                    ) {
+                      if (token) {
+                        tryToSubmit = 1
+                      } else {
+                        addErrorMsg("Please verify you're not a robot")
+                      }
+                    } else {
+                      addErrorMsg('Upload Signature')
+                    }
+                  } else {
+                    addErrorMsg(
+                      "Fill the empty fields in 'Upload Documents' Section"
+                    )
+                  }
+                } else {
+                  addErrorMsg(
+                    "Fill the empty fields in 'Faculty and Courses Details' Section"
+                  )
+                }
+              } else {
+                addErrorMsg(
+                  "Fill the empty fields in 'Academic Details' Section"
+                )
+              }
+            } else {
+              addErrorMsg(
+                "Fill the empty fields in 'Permanent Address' Section"
+              )
+            }
+          } else {
+            addErrorMsg(
+              "Fill the empty fields in 'Parent & Guardian Details' Section"
+            )
+          }
+        } else {
+          addErrorMsg('Please enter wrn number and upload wrn certificate')
+        }
+      } else {
         addErrorMsg("Fill the empty fields in 'Basic Details' Section")
-      } else if (category !== '#c1General' && !categoryCertificate) {
-        count++
-        addErrorMsg('Upload Category Certificate')
-      } else if (
-        !fatherName ||
-        !motherName ||
-        !parentsOccupation ||
-        !guardianName ||
-        !relationOfApplicant
-      ) {
-        count++
-        addErrorMsg(
-          "Fill the empty fields in 'Parent & Guardian Details' Section"
-        )
-      } else if (
-        !houseNo ||
-        !street ||
-        !state ||
-        !city ||
-        (!pincode && !postOffice)
-      ) {
-        count++
-        addErrorMsg("Fill the empty fields in 'Permanent Address' Section")
-      } else if (this.checkJSONfields(academicDetails) !== 0 || !courseType) {
-        count++
-        addErrorMsg("Fill the empty fields in 'Academic Details' Section")
-      } else if (!mediumOfInstitution || !faculty || major1.length === 0) {
-        count++
-        addErrorMsg(
-          "Fill the empty fields in 'Faculty and Courses Details' Section"
-        )
-      } else if (this.checkFaculty(faculty) && major1.length === 0) {
-        count++
-        addErrorMsg(
-          "Fill the empty fields in 'Faculty and Courses Details' Section"
-        )
-      } else if (
-        (!this.checkFaculty(faculty) &&
-          (major1.length !== 2 ||
-            !major2 ||
-            (!major3 && !major4) ||
-            !vocationalSem1)) ||
-        !vocationalSem2
-      ) {
-        count++
-        addErrorMsg(
-          "Fill the empty fields in 'Faculty and Courses Details' Section"
-        )
-      } else if (this.checkJSONfields(documents) !== 0) {
-        count++
-        addErrorMsg("Fill the empty fields in 'Upload Documents' Section")
-      } else if (!signature) {
-        count++
-        addErrorMsg('Upload Signature')
-      } else if (!token) {
-        count++
-        addErrorMsg("Please verify you're not a robot")
       }
     }
-    if (count === 0) {
+
+    if (tryToSubmit === 1) {
       FormApi.submitForm(data).then((response) => {
         if (response.data) {
           if (btnValue === 1) {
@@ -696,20 +855,27 @@ class Form extends React.Component {
     }
   }
 
+  // 0: not null, >1: null
   checkJSONfields = (data) => {
     let isNull = 0
-    if (data.length > 0) {
+    if (data && data.length > 0) {
       data.map((item) => {
-        Object.values(item).map((value) => {
-          if (value === null || value === '') {
-            isNull++
+        for (let k in item) {
+          if (
+            typeof item[k] == 'string' &&
+            (item[k] == undefined ||
+              item[k] == 'undefined' ||
+              item[k] == 'null' ||
+              item[k] == null ||
+              item[k] == '')
+          ) {
+            isNull = isNull + 1
+            break
           }
-        })
+        }
       })
-      return isNull
-    } else {
-      return 1
     }
+    return isNull
   }
 
   handleDownloadForm = () => {
@@ -717,6 +883,7 @@ class Form extends React.Component {
   }
 
   handleMultiDropDownData = (event, value) => {
+    const { faculty } = this.state
     if (this.state.major1.length > value.length || value.length === 0) {
       this.setState({
         major1: value,
@@ -727,10 +894,18 @@ class Form extends React.Component {
         vocationalSem2: '',
       })
     } else {
-      if (value.length <= 2) {
-        this.setState({ major1: value })
+      if (this.checkFaculty(faculty) > 0) {
+        if (value.length <= 1) {
+          this.setState({ major1: value })
+        } else {
+          addErrorMsg('You can select only 1 subjects.')
+        }
       } else {
-        addErrorMsg('You can select only 2 subjects.')
+        if (value.length <= 2) {
+          this.setState({ major1: value })
+        } else {
+          addErrorMsg('You can select only 2 subjects.')
+        }
       }
     }
   }
@@ -740,14 +915,16 @@ class Form extends React.Component {
   }
 
   checkFaculty = (facultyId) => {
-    if (facultyId === '') {
-      return false
+    //single course selection faculty
+    if (
+      facultyId == 'f5foc' ||
+      facultyId == 'f6fom' ||
+      facultyId == 'f7fols' ||
+      facultyId == 'f8fobt'
+    ) {
+      return 1
     } else {
-      if (facultyId !== 'f5foc' && facultyId !== 'f6fom') {
-        return false
-      } else {
-        return true
-      }
+      return 0
     }
   }
 
@@ -815,7 +992,11 @@ class Form extends React.Component {
 
   filterMajorSubjects = () => {
     const { faculty, major1, major2, academicDetails } = this.state
-    if (academicDetails.length > 0 && academicDetails[1].stream) {
+    if (
+      academicDetails &&
+      academicDetails.length > 0 &&
+      academicDetails[1].stream
+    ) {
       let subjects = majorSubjectsData.filter(
         (item) =>
           item.streamId.includes(academicDetails[1].stream) &&
@@ -948,6 +1129,16 @@ class Form extends React.Component {
                 </RegularButton>
               </Hidden>
             ),
+            isView && (
+              <RegularButton
+                size="sm"
+                color="danger"
+                key="back"
+                onClick={() => closeDialog()}
+              >
+                Back
+              </RegularButton>
+            ),
           ]}
         >
           <Grid container spacing={2} alignItems="center" className="pad10">
@@ -991,6 +1182,10 @@ class Form extends React.Component {
                     <li>
                       All other uploads in the form can be in
                       image(png/jpg/jpeg) or pdf format
+                    </li>
+                    <li>
+                      Any form related issue kindly email at
+                      admissionagracollege@gmail.com
                     </li>
                   </ul>
                 </Typography>
@@ -1102,8 +1297,10 @@ class Form extends React.Component {
               <Grid container alignItems="center">
                 <Grid item xs={12}>
                   <Typography>
-                    Enter university web registration no and upload
-                    certification (in PDF)
+                    Enter (WRN Number) university web registration no and upload
+                    certification (in PDF or Image)
+                    <br />
+                    (*Mandatory to upload)
                   </Typography>
                   <CustomInput
                     isMandatory={true}
@@ -1118,6 +1315,7 @@ class Form extends React.Component {
                       name: 'wrn',
                       value: wrn,
                       disabled: preview,
+                      helperText: 'For Ex: WRN21*********',
                     }}
                     handleChange={this.handleChangeFields}
                   />
@@ -1843,7 +2041,9 @@ class Form extends React.Component {
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">Academic Details</Typography>
             </Grid>
-            {courseType !== '' ? (
+            {courseType !== '' &&
+            academicDetails &&
+            academicDetails.length > 0 ? (
               <Grid item xs={12}>
                 {academicDetails.map((item, i) => (
                   <Box p={1} key={i}>
@@ -2061,22 +2261,24 @@ class Form extends React.Component {
                         )}
                       </Grid>
                       <Grid container item xs={12} justifyContent="flex-end">
-                        {academicDetails.length - 1 === i && !preview && (
-                          <Box pr="10px" pb="5px">
-                            <div className="alignCenter">
-                              <Typography>
-                                Press on <b>"+"</b> button to add more
-                                certifications / courses. &nbsp;&nbsp;
-                              </Typography>
-                              <RegularButton
-                                size="sm"
-                                onClick={this.handleAddClick}
-                              >
-                                <AddIcon />
-                              </RegularButton>
-                            </div>
-                          </Box>
-                        )}
+                        {academicDetails &&
+                          academicDetails.length - 1 === i &&
+                          !preview && (
+                            <Box pr="10px" pb="5px">
+                              <div className="alignCenter">
+                                <Typography>
+                                  Press on <b>"+"</b> button to add more
+                                  certifications / courses. &nbsp;&nbsp;
+                                </Typography>
+                                <RegularButton
+                                  size="sm"
+                                  onClick={this.handleAddClick}
+                                >
+                                  <AddIcon />
+                                </RegularButton>
+                              </div>
+                            </Box>
+                          )}
                       </Grid>
                     </Grid>
                   </Box>
@@ -2102,6 +2304,10 @@ class Form extends React.Component {
               <Typography variant="caption">
                 You can choose "Faculty of Science" only if you are from science
                 stream in 12th
+                <br />
+                NOTE: (Statistics as major subject will be available only in
+                combination with Math, Physics, Chemistry and English as other
+                major subjects.)
               </Typography>
               <Divider />
             </Grid>
@@ -2126,15 +2332,20 @@ class Form extends React.Component {
                 variant={preview ? 'standard' : 'outlined'}
                 name="faculty"
               >
-                {academicDetails.length > 0 &&
+                {academicDetails &&
+                  academicDetails.length > 1 &&
                   academicDetails[1].stream !== '' &&
                   facultyData.map((item, key) => (
                     <MenuItem
                       key={key}
                       disabled={
-                        (academicDetails[1].stream === '$s2Commerce' ||
+                        ((academicDetails[1].stream === '$s2Commerce' ||
                           academicDetails[1].stream === '$s3Arts') &&
-                        item.facultyId === 'f1Science'
+                          item.facultyId === 'f1Science') ||
+                        ((academicDetails[1].stream === '$s2Commerce' ||
+                          academicDetails[1].stream === '$s3Arts' ||
+                          academicDetails[1].stream === '$s1Science') &&
+                          item.facultyId === 'f8fobt')
                       }
                       value={item.facultyId}
                     >
@@ -2145,10 +2356,12 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={12}>
               <Typography variant="subtitle1" gutterBottom>
-                Selection of 2 Major Subjects
+                Selection of Major Subjects
               </Typography>
               <Typography variant="caption">
-                You can select any two subjects from the list
+                {this.checkFaculty(faculty) > 0
+                  ? 'You can select an option from the list'
+                  : 'You can select any two subjects from the list'}
               </Typography>
               <Divider />
             </Grid>
@@ -2171,7 +2384,7 @@ class Form extends React.Component {
                 )}
               />
             </Grid>
-            {!this.checkFaculty(faculty) && (
+            {this.checkFaculty(faculty) == 0 && (
               <Grid container spacing={2} item xs={12}>
                 <Grid item xs={12}>
                   <Typography variant="subtitle1" component="div" gutterBottom>
@@ -2202,7 +2415,9 @@ class Form extends React.Component {
                     value={major2 ? JSON.stringify(major2) : ''}
                     onChange={this.handleChangeFields}
                   >
-                    {major1.length === 2 &&
+                    {academicDetails &&
+                      academicDetails.length > 1 &&
+                      major1.length === 2 &&
                       majorSubjectsData.map((item, key) =>
                         item.subjectId !== '$20Bcom' &&
                         item.subjectId !== '$21Bba' ? (
@@ -2260,7 +2475,10 @@ class Form extends React.Component {
                     value={major3}
                     onChange={this.handleChangeFields}
                   >
-                    {major1.length > 0 && major2
+                    {academicDetails &&
+                    academicDetails.length > 1 &&
+                    major1.length > 0 &&
+                    major2
                       ? semesterSubjectsData.map(
                           (item, key) =>
                             item.semester === 1 && (
@@ -2307,7 +2525,10 @@ class Form extends React.Component {
                     value={major4}
                     onChange={this.handleChangeFields}
                   >
-                    {major1.length > 0 && major2
+                    {academicDetails &&
+                    academicDetails.length > 1 &&
+                    major1.length > 0 &&
+                    major2
                       ? semesterSubjectsData.map(
                           (item, key) =>
                             item.semester === 2 && (
@@ -2551,7 +2772,7 @@ class Form extends React.Component {
                   </Typography>
                 </Grid>
               ) : (
-                <Grid container spacing={2}>
+                <Grid container spacing={2} alignItems="center">
                   <Grid item md={6} xs={12}>
                     <TextField
                       InputLabelProps={{
@@ -2580,19 +2801,21 @@ class Form extends React.Component {
                       <MenuItem value="Participant,2">Participant</MenuItem>
                     </TextField>
                   </Grid>
-                  {!preview && (
-                    <Grid item md={2} xs={6}>
-                      <FileUploader
-                        buttonLabel="Upload Document"
-                        accept="image/jpg,image/jpeg,image/png,application/pdf"
-                        maxSize={5}
-                        handleChange={this.handleUpload}
-                        id={'nationalCompetition'}
-                        name="nationalCertificate"
-                      />
-                    </Grid>
-                  )}
-                  <Grid item md={4} xs={6}>
+                  {nationalCompetition &&
+                    nationalCompetition !== 'none,0' &&
+                    !preview && (
+                      <Grid item md={3} xs={6}>
+                        <FileUploader
+                          buttonLabel="Upload Document"
+                          accept="image/jpg,image/jpeg,image/png,application/pdf"
+                          maxSize={5}
+                          handleChange={this.handleUpload}
+                          id={'nationalCompetition'}
+                          name="nationalCertificate"
+                        />
+                      </Grid>
+                    )}
+                  <Grid item md={3} xs={6}>
                     {nationalCertificate !== '' &&
                     nationalCertificate !== null ? (
                       <Success>Uploaded.</Success>
@@ -2629,7 +2852,7 @@ class Form extends React.Component {
                     </Grid>
                   )}
                   {courseType === '#pg2PG' && !preview && (
-                    <Grid item md={2} xs={6}>
+                    <Grid item md={3} xs={6}>
                       <FileUploader
                         buttonLabel="Upload Document"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -2641,7 +2864,7 @@ class Form extends React.Component {
                     </Grid>
                   )}
                   {courseType === '#pg2PG' && (
-                    <Grid item md={4} xs={6}>
+                    <Grid item md={3} xs={6}>
                       {otherCertificate !== '' && otherCertificate !== null ? (
                         <Success>Uploaded.</Success>
                       ) : null}
@@ -2677,8 +2900,8 @@ class Form extends React.Component {
                       </MenuItem>
                     </TextField>
                   </Grid>
-                  {!preview && (
-                    <Grid item md={2} xs={6}>
+                  {ncc && ncc !== 'none,0' && !preview && (
+                    <Grid item md={3} xs={6}>
                       <FileUploader
                         buttonLabel="Upload Document"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -2689,7 +2912,7 @@ class Form extends React.Component {
                       />
                     </Grid>
                   )}
-                  <Grid item md={4} xs={6}>
+                  <Grid item md={3} xs={6}>
                     {nccCertificate !== '' && nccCertificate !== null ? (
                       <Success>Uploaded.</Success>
                     ) : null}
@@ -2891,14 +3114,16 @@ class Form extends React.Component {
                   प्रवेश में
                 </MenuItem>
               </TextField>
-              <FileUploader
-                buttonLabel="Upload Certificate for Extra Merit Marks"
-                accept="image/jpg,image/jpeg,image/png,application/pdf"
-                maxSize={1}
-                handleChange={this.handleUpload}
-                id="uploadExtraMark"
-                name="uploadExtraMark"
-              />
+              {other && other !== 'none,0' && (
+                <FileUploader
+                  buttonLabel="Upload Certificate for Extra Merit Marks"
+                  accept="image/jpg,image/jpeg,image/png,application/pdf"
+                  maxSize={1}
+                  handleChange={this.handleUpload}
+                  id="uploadExtraMark"
+                  name="uploadExtraMark"
+                />
+              )}
               <Grid item md={4} xs={6}>
                 {uploadExtraMark !== '' && uploadExtraMark !== null ? (
                   <Success>Uploaded.</Success>
@@ -2951,16 +3176,19 @@ class Form extends React.Component {
                 ) : null}
               </div>
             </Grid>
-            {!preview && (
+            {!preview && !isView && (
               <Grid container item xs={12} justifyContent="center">
                 <ReCAPTCHA
-                  sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                  //prod key
+                  sitekey="6LdIozEcAAAAAFh_c4g4xLAygUWBo2V9sIrhZyoC"
+                  // -- test key
+                  // sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
                   onChange={(token) => this.handleReCaptcha(token)}
                   onExpired={() => this.handleReCaptcha('')}
                 />
               </Grid>
             )}
-            {!preview && (
+            {!preview && !isView && (
               <Grid container item xs={6} justifyContent="flex-end">
                 <RegularButton
                   color="primary"
@@ -2970,7 +3198,7 @@ class Form extends React.Component {
                 </RegularButton>
               </Grid>
             )}
-            {!preview && (
+            {!preview && !isView && (
               <Grid item xs={6}>
                 <RegularButton
                   color="primary"
@@ -2980,9 +3208,11 @@ class Form extends React.Component {
                 </RegularButton>
               </Grid>
             )}
-            {preview && <PaymentInfo paymentDetails={paymentDetails} />}
+            {preview || isView ? (
+              <PaymentInfo paymentDetails={paymentDetails} />
+            ) : null}
           </Grid>
-          {preview && (
+          {preview || isView ? (
             <Grid container item xs={12} justifyContent="center">
               <Box p={2}>
                 <RegularButton
@@ -2993,7 +3223,7 @@ class Form extends React.Component {
                 </RegularButton>
               </Box>
             </Grid>
-          )}
+          ) : null}
         </CardContainer>
       </div>
     )

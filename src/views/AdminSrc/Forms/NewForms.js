@@ -16,34 +16,50 @@ import religionData from '../../StudentSrc/StaticData/religion.json'
 import semesterSubjectsData from '../../StudentSrc/StaticData/semesterSubjects.json'
 import statesData from '../../StudentSrc/StaticData/states.json'
 import subCategoryData from '../../StudentSrc/StaticData/subCategory.json'
+import Filters from './Filters'
 
 function NewForms() {
-  const [formsData, setFormsData] = useState([])
+  const [fields, setFields] = useState({ formsData: [], limit: 10, offset: 0 })
+  const { formsData, limit, offset } = fields
 
   useEffect(() => {
-    handleGetForms(10, 0)
-  }, [])
+    handleGetForms()
+  }, [limit, offset])
 
-  const handleGetForms = (limit, offset) => {
+  const handleGetForms = (regNo, fromDate, toDate, status, faculty) => {
     const data = {
       limit: limit,
       offset: offset,
+      regNo: regNo,
+      fromDate: fromDate,
+      toDate: toDate,
+      status: status,
+      faculty: faculty,
     }
     FormApi.getForm(data).then((response) => {
       response.data.map((obj) => {
         Object.keys(obj).map((item) => {
-          if (obj[item] === 'null') {
+          if (
+            obj[item] === 'null' ||
+            obj[item] === null ||
+            obj[item] === 'false'
+          ) {
             obj[item] = ''
           }
         })
-        obj.academicDetails = JSON.parse(obj.academicDetails)
-        obj.documents = JSON.parse(obj.documents)
-        obj.major1 = JSON.parse(obj.major1)
-        obj.major2 = JSON.parse(obj.major2)
+        obj.academicDetails = obj.academicDetails
+          ? JSON.parse(obj.academicDetails)
+          : []
+        obj.documents = obj.documents ? JSON.parse(obj.documents) : []
+        obj.major1 = obj.major1 ? JSON.parse(obj.major1) : []
+        obj.major2 = obj.major2 ? JSON.parse(obj.major2) : ''
         obj.coCurriculumSem1 = 'Food, Nutrition and Hygiene'
         obj.coCurriculumSem2 = 'First Aid and Basic health'
+        obj.totalMeritCount = !obj.totalMeritCount
+          ? 0
+          : parseInt(obj.totalMeritCount)
       })
-      setFormsData(response.data)
+      setFields({ ...fields, formsData: response.data })
     })
   }
 
@@ -54,7 +70,9 @@ function NewForms() {
         item.gender.toUpperCase(),
         item.dob,
         item.personalMobile,
-        facultyData.find((itm) => itm.facultyId === item.faculty).faculty,
+        item.faculty
+          ? facultyData.find((itm) => itm.facultyId === item.faculty).faculty
+          : null,
         <RegularButton
           size="md"
           color="primary"
@@ -73,62 +91,88 @@ function NewForms() {
     let filteredData = data.map((item) => {
       let subitem = { ...item }
       subitem.vaccinated = subitem.vaccinated === '1' ? 'YES' : 'NO'
-      subitem.major3 = semesterSubjectsData.find(
-        (val) => val.paperId === subitem.major3
-      ).subjectName
-      subitem.courseType = courseTypeData.find(
-        (val) => val.courseTypeId === subitem.courseType
-      ).courseType
-      subitem.faculty = facultyData.find(
-        (val) => val.facultyId === subitem.faculty
-      ).faculty
-      subitem.cCity = citiesData.find((val) => val.id === subitem.cCity).name
-      subitem.cState = statesData.find(
-        (val) => val.code === subitem.cState
-      ).name
-      subitem.city = citiesData.find((val) => val.id === subitem.city).name
-      subitem.state = statesData.find((val) => val.code === subitem.state).name
-      subitem.religion = religionData.find(
-        (val) => val.religionId === subitem.religion
-      ).religion
-      subitem.category = categoryData.find(
-        (val) => val.categoryId === subitem.category
-      ).category
-      subitem.subCategory
-        ? (subitem.subCategory = subCategoryData.find(
-            (val) => val.subCategoryId === subitem.subCategory
-          ).subCategory)
-        : null
-      subitem.academicDetails.map((itm, i) => {
-        Object.keys(itm).map((key) => {
-          // if (key !== 'isDelete') {
-          //   let keyName = key + ' (' + parseInt(i + 1) + ')'
-          //   if (key === 'stream') {
-          //     subitem[keyName] = streamData.find(
-          //       (val) => val.streamId === itm.stream
-          //     ).stream
-          //   } else {
-          //     subitem[keyName] = itm[key]
-          //   }
-          // }
-          if (key === 'percentage') {
-            let keyName =
-              i === 0 ? 'High School' : i === 1 ? 'Intermediate' : 'Graduation'
-            subitem[keyName + '(Percentage)'] = itm[key]
-          }
+      subitem.major3 &&
+        (subitem.major3 = semesterSubjectsData.find(
+          (val) => val.paperId === subitem.major3
+        ).subjectName)
+      subitem.courseType &&
+        (subitem.courseType = courseTypeData.find(
+          (val) => val.courseTypeId === subitem.courseType
+        ).courseType)
+      subitem.faculty &&
+        (subitem.faculty = facultyData.find(
+          (val) => val.facultyId === subitem.faculty
+        ).faculty)
+      subitem.cCity &&
+        (subitem.cCity = citiesData.find(
+          (val) => val.id === subitem.cCity
+        ).name)
+      subitem.cState &&
+        (subitem.cState = statesData.find(
+          (val) => val.code === subitem.cState
+        ).name)
+      subitem.city &&
+        (subitem.city = citiesData.find((val) => val.id === subitem.city).name)
+      subitem.city &&
+        (subitem.state = statesData.find(
+          (val) => val.code === subitem.state
+        ).name)
+      subitem.city &&
+        (subitem.religion = religionData.find(
+          (val) => val.religionId === subitem.religion
+        ).religion)
+      subitem.category &&
+        (subitem.category = categoryData.find(
+          (val) => val.categoryId === subitem.category
+        ).category)
+      subitem.subCategory &&
+        (subitem.subCategory = subCategoryData.find(
+          (val) => val.subCategoryId === subitem.subCategory
+        ).subCategory)
+      subitem.academicDetails &&
+        subitem.academicDetails.length > 0 &&
+        subitem.academicDetails.map((itm, i) => {
+          Object.keys(itm).map((key) => {
+            // if (key !== 'isDelete') {
+            //   let keyName = key + ' (' + parseInt(i + 1) + ')'
+            //   if (key === 'stream') {
+            //     subitem[keyName] = streamData.find(
+            //       (val) => val.streamId === itm.stream
+            //     ).stream
+            //   } else {
+            //     subitem[keyName] = itm[key]
+            //   }
+            // }
+            let p
+            if (key === 'percentage') {
+              if (itm[key]) {
+                p = itm[key]
+              } else {
+                p = null
+              }
+              let keyName =
+                i === 0
+                  ? 'High School'
+                  : i === 1
+                  ? 'Intermediate'
+                  : 'Graduation'
+              subitem[keyName + '(Percentage)'] = p
+            }
+          })
         })
-      })
-      subitem.major1.length === 1
-        ? (subitem.major1 = subitem.major1[0].subjectName)
-        : (subitem.major1 =
-            subitem.major1[0].subjectName +
-            ', ' +
-            subitem.major1[1].subjectName)
-      subitem.major2 ? (subitem.major2 = subitem.major2.subjectName) : null
-      subitem.nationalCompetition
-        ? (subitem.nationalCompetition =
-            subitem.nationalCompetition.split(',')[0])
-        : null
+      subitem.major1 &&
+        subitem.major1.length > 0 &&
+        (subitem.major1.length === 1
+          ? (subitem.major1 = subitem.major1[0].subjectName)
+          : (subitem.major1 =
+              subitem.major1[0].subjectName +
+              ', ' +
+              subitem.major1[1].subjectName))
+      subitem.major2 && (subitem.major2 = subitem.major2.subjectName)
+      subitem.nationalCompetition &&
+        (subitem.nationalCompetition =
+          subitem.nationalCompetition.split(',')[0])
+
       // subitem.ncc ? (subitem.ncc = subitem.ncc.split(',')[0]) : null
       // subitem.other ? (subitem.other = subitem.other.split(',')[0]) : null
       // subitem.nationalSevaScheme === 'true'
@@ -250,11 +294,16 @@ function NewForms() {
   }
 
   const handlePagination = (limit, offset) => {
-    handleGetForms(limit, offset)
+    setFields({ ...fields, limit, offset })
+  }
+
+  const handleUpdate = (regNo, fromDate, toDate, status, faculty) => {
+    handleGetForms(regNo, fromDate, toDate, status, faculty)
   }
 
   return (
     <CardContainer heading="New Registrations Form">
+      <Filters handleUpdate={handleUpdate} />
       <Grid container alignItems="center">
         <Grid item xs={12}>
           <CustomTable
