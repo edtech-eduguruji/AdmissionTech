@@ -1,0 +1,22 @@
+[
+    {
+        "year": "1",
+        "courseType": ["#ug1UG","#pg2PG","pgd3PGD","law4LAW"]
+    },
+    {
+        "year": "2",
+        "courseType": ["#ug1UG","#pg2PG","law4LAW"]
+    },
+    {
+        "year": "3",
+        "courseType": ["law4LAW"]
+    },
+    {
+        "year": "4",
+        "courseType": ["law4LAW"]
+    },
+    {
+        "year": "5",
+        "courseType": ["law4LAW"]
+    }
+]

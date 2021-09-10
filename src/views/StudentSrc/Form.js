@@ -40,6 +40,7 @@ import {
 import PaymentInfo from './PaymentInfo'
 import academicDetailsStatic from './StaticData/academic.json'
 import academicData from './StaticData/academicData.json'
+import yearsStatic from './StaticData/admissionYears.json'
 import categoryData from './StaticData/category.json'
 import citiesData from './StaticData/cities.json'
 import courseTypeData from './StaticData/courseType.json'
@@ -118,6 +119,7 @@ class Form extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      admissionYear: '',
       faculty: '',
       courseType: '',
       course: '',
@@ -235,7 +237,7 @@ class Form extends React.Component {
                 })
                 response.data.academicDetails = response.data.academicDetails
                   ? JSON.parse(this.verifyString(response.data.academicDetails))
-                  : academicDetailsStatic['#ug1UG']
+                  : []
                 response.data.documents = response.data.documents
                   ? JSON.parse(response.data.documents)
                   : []
@@ -265,16 +267,13 @@ class Form extends React.Component {
                     nationalSevaScheme: !response.data.nationalSevaScheme
                       ? 0
                       : 5,
-                    ncc: 0,
-                    roverRanger: 0,
-                    otherRoverRanger: 0,
-                    // ncc: response.data.ncc
-                    //   ? parseInt(response.data.ncc.split(',')[1])
-                    //   : 0,
-                    // roverRanger: response.data.roverRanger
-                    //   ? parseInt(response.data.roverRanger.split(',')[1])
-                    //   : 0,
-                    // otherRoverRanger: !response.data.nationalSevaScheme ? 0 : 3,
+                    ncc: response.data.ncc
+                      ? parseInt(response.data.ncc.split(',')[1])
+                      : 0,
+                    roverRanger: response.data.roverRanger
+                      ? parseInt(response.data.roverRanger.split(',')[1])
+                      : 0,
+                    otherRoverRanger: !response.data.otherRoverRanger ? 0 : 3,
                     bcom: !response.data.bcom ? 0 : 5,
                     other: !response.data.other
                       ? 0
@@ -312,9 +311,70 @@ class Form extends React.Component {
     const name = event.target.name
     if (name === 'courseType') {
       this.setState({
-        academicDetails: academicDetailsStatic[event.target.value],
-        documents: documentsStatic[event.target.value],
         [event.target.name]: event.target.value,
+        admissionYear: '',
+        academicDetails: [],
+        documents: [],
+        faculty: '',
+        major1: [],
+        major2: '',
+        major3: '',
+        major4: '',
+        vocationalSem1: '',
+        vocationalSem2: '',
+        coCurriculumSem1: '',
+        coCurriculumSem2: '',
+        nationalCompetition: '',
+        nationalCertificate: '',
+        otherCompetition: '',
+        otherCertificate: '',
+        ncc: '',
+        nccCertificate: '',
+        freedomFighter: false,
+        nationalSevaScheme: false,
+        nssDocument: '',
+        roverRanger: '',
+        otherRoverRanger: false,
+        rrDocument: '',
+        bcom: false,
+        other: '',
+        totalMerit: meritCalculateData,
+        totalMeritCount: 0,
+      })
+    } else if (name === 'admissionYear') {
+      this.setState({
+        [event.target.name]: event.target.value,
+        academicDetails:
+          academicDetailsStatic[
+            this.state.courseType + '-' + event.target.value
+          ],
+        documents:
+          documentsStatic[this.state.courseType + '-' + event.target.value],
+        faculty: '',
+        major1: [],
+        major2: '',
+        major3: '',
+        major4: '',
+        vocationalSem1: '',
+        vocationalSem2: '',
+        coCurriculumSem1: '',
+        coCurriculumSem2: '',
+        nationalCompetition: '',
+        nationalCertificate: '',
+        otherCompetition: '',
+        otherCertificate: '',
+        ncc: '',
+        nccCertificate: '',
+        freedomFighter: false,
+        nationalSevaScheme: false,
+        nssDocument: '',
+        roverRanger: '',
+        otherRoverRanger: false,
+        rrDocument: '',
+        bcom: false,
+        other: '',
+        totalMerit: meritCalculateData,
+        totalMeritCount: 0,
       })
     } else if (name === 'major2') {
       this.setState({
@@ -520,6 +580,7 @@ class Form extends React.Component {
 
   handleSubmitForm = (btnValue) => () => {
     const {
+      admissionYear,
       token,
       major1,
       major2,
@@ -595,6 +656,7 @@ class Form extends React.Component {
         ? LocalStorage.getUser().user_id
         : ''
     )
+    data.append('admissionYear', admissionYear)
     data.append('faculty', faculty)
     data.append('courseType', courseType)
     data.append('mediumOfInstitution', mediumOfInstitution)
@@ -747,7 +809,8 @@ class Form extends React.Component {
               if (
                 academicDetails &&
                 this.checkJSONfields(academicDetails) <= 0 &&
-                courseType
+                courseType &&
+                admissionYear
               ) {
                 if (faculty && faculty !== '') {
                   let fac = 0
@@ -923,8 +986,17 @@ class Form extends React.Component {
   }
 
   handleMultiDropDownData = (event, value) => {
-    const { faculty } = this.state
-    if (this.state.major1.length > value.length || value.length === 0) {
+    let { major1, faculty, academicDetails, documents } = this.state
+    if (major1.length > value.length || value.length === 0) {
+      if (major1[0].subjectName === 'LLM' && value.length === 0) {
+        academicDetails.splice(2, 1)
+        academicDetails.splice(2, 1)
+        documents.splice(2, 1)
+        documents.splice(2, 1)
+      } else if (major1[0].subjectName === 'LLB' && value.length === 0) {
+        academicDetails.splice(2, 1)
+        documents.splice(2, 1)
+      }
       this.setState({
         major1: value,
         major2: '',
@@ -932,11 +1004,30 @@ class Form extends React.Component {
         major4: '',
         vocationalSem1: '',
         vocationalSem2: '',
+        academicDetails,
+        documents,
       })
     } else {
       if (this.checkFaculty(faculty) > 0) {
         if (value.length <= 1) {
-          this.setState({ major1: value })
+          if (value[0].subjectName === 'LLM') {
+            academicDetails.splice(
+              2,
+              0,
+              academicDetailsStatic.GraduationDegree,
+              academicDetailsStatic.LLB
+            )
+            documents.splice(
+              2,
+              0,
+              documentsStatic.GraduationDegree,
+              documentsStatic.LLB
+            )
+          } else if (value[0].subjectName === 'LLB') {
+            academicDetails.splice(2, 0, academicDetailsStatic.GraduationDegree)
+            documents.splice(2, 0, documentsStatic.GraduationDegree)
+          }
+          this.setState({ major1: value, academicDetails, documents })
         } else {
           addErrorMsg('You can select only 1 subjects.')
         }
@@ -960,7 +1051,10 @@ class Form extends React.Component {
       facultyId == 'f5foc' ||
       facultyId == 'f6fom' ||
       facultyId == 'f7fols' ||
-      facultyId == 'f8fobt'
+      facultyId == 'f8fobt' ||
+      facultyId == 'f9foj' ||
+      facultyId == 'f10foma' ||
+      facultyId == 'f11fomsc'
     ) {
       return 1
     } else {
@@ -1031,7 +1125,8 @@ class Form extends React.Component {
   }
 
   filterMajorSubjects = () => {
-    const { faculty, major1, major2, academicDetails } = this.state
+    const { faculty, major1, major2, academicDetails, admissionYear } =
+      this.state
     if (
       academicDetails &&
       academicDetails.length > 0 &&
@@ -1040,6 +1135,7 @@ class Form extends React.Component {
       let subjects = majorSubjectsData.filter(
         (item) =>
           item.streamId.includes(academicDetails[1].stream) &&
+          item.year.includes(admissionYear) &&
           item.facultyId === faculty
       )
       major1.map((item) => {
@@ -1079,6 +1175,7 @@ class Form extends React.Component {
   render() {
     const { classes } = this.props
     const {
+      admissionYear,
       faculty,
       courseType,
       photo,
@@ -1268,6 +1365,38 @@ class Form extends React.Component {
               </TextField>
             </Grid>
             <Grid item xs={12} md={6}>
+              <TextField
+                InputLabelProps={{
+                  classes: {
+                    root: classes.labelRoot,
+                  },
+                }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
+                disabled={preview}
+                select
+                fullWidth
+                variant={preview ? 'standard' : 'outlined'}
+                name="admissionYear"
+                label={mandatoryField('Admission Year')}
+                value={admissionYear}
+                onChange={this.handleChangeFields}
+              >
+                {courseType &&
+                  yearsStatic.map(
+                    (item, i) =>
+                      item.courseType.includes(courseType) && (
+                        <MenuItem key={i} value={item.year}>
+                          {item.year}
+                        </MenuItem>
+                      )
+                  )}
+              </TextField>
+            </Grid>
+            <Grid item xs={12}>
               <TextField
                 InputLabelProps={{
                   classes: {
@@ -2081,7 +2210,8 @@ class Form extends React.Component {
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">Academic Details</Typography>
             </Grid>
-            {courseType !== '' &&
+            {courseType &&
+            admissionYear &&
             academicDetails &&
             academicDetails.length > 0 ? (
               <Grid item xs={12}>
@@ -2101,7 +2231,7 @@ class Form extends React.Component {
                           inputProps={{
                             name: 'nameOfExam',
                             value: item.nameOfExam,
-                            disabled: i < 2,
+                            disabled: item.isDelete === 0,
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
@@ -2231,7 +2361,25 @@ class Form extends React.Component {
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                       </Grid>
-                      <Grid item md={1} xs={12}>
+                      <Grid
+                        item
+                        md={
+                          item.stream ||
+                          item.stream === '' ||
+                          item.stream === null
+                            ? 1
+                            : item.isDelete === 0
+                            ? 3
+                            : 2
+                        }
+                        xs={
+                          item.stream ||
+                          item.stream === '' ||
+                          item.stream === null
+                            ? 6
+                            : 12
+                        }
+                      >
                         <CustomInput
                           isMandatory={true}
                           minLength={Validation['subjects']['minLength']}
@@ -2252,7 +2400,7 @@ class Form extends React.Component {
                       {item.stream ||
                       item.stream === '' ||
                       item.stream === null ? (
-                        <Grid item md={1} xs={8}>
+                        <Grid item md={2} xs={6}>
                           <TextField
                             InputLabelProps={{
                               classes: {
@@ -2327,7 +2475,8 @@ class Form extends React.Component {
             ) : (
               <Grid container item xs={12} justifyContent="center">
                 <Typography variant="subtitle1">
-                  Select <b>"course type"</b> to view this content.
+                  Select <b>"course type"</b> and <b>"admission year"</b> to
+                  view this content.
                 </Typography>
               </Grid>
             )}
@@ -2375,23 +2524,27 @@ class Form extends React.Component {
                 {academicDetails &&
                   academicDetails.length > 1 &&
                   academicDetails[1].stream !== '' &&
-                  facultyData.map((item, key) => (
-                    <MenuItem
-                      key={key}
-                      disabled={
-                        ((academicDetails[1].stream === '$s2Commerce' ||
-                          academicDetails[1].stream === '$s3Arts') &&
-                          item.facultyId === 'f1Science') ||
-                        ((academicDetails[1].stream === '$s2Commerce' ||
-                          academicDetails[1].stream === '$s3Arts' ||
-                          academicDetails[1].stream === '$s1Science') &&
-                          item.facultyId === 'f8fobt')
-                      }
-                      value={item.facultyId}
-                    >
-                      {item.faculty}
-                    </MenuItem>
-                  ))}
+                  facultyData.map(
+                    (item, key) =>
+                      item.year.includes(admissionYear) &&
+                      item.courseType === courseType && (
+                        <MenuItem
+                          key={key}
+                          disabled={
+                            ((academicDetails[1].stream === '$s2Commerce' ||
+                              academicDetails[1].stream === '$s3Arts') &&
+                              item.facultyId === 'f1Science') ||
+                            ((academicDetails[1].stream === '$s2Commerce' ||
+                              academicDetails[1].stream === '$s3Arts' ||
+                              academicDetails[1].stream === '$s1Science') &&
+                              item.facultyId === 'f8fobt')
+                          }
+                          value={item.facultyId}
+                        >
+                          {item.faculty}
+                        </MenuItem>
+                      )
+                  )}
               </TextField>
             </Grid>
             <Grid item xs={12}>
@@ -2424,7 +2577,9 @@ class Form extends React.Component {
                 )}
               />
             </Grid>
-            {this.checkFaculty(faculty) == 0 && (
+            {this.checkFaculty(faculty) == 0 &&
+            admissionYear === '1' &&
+            courseType === '#ug1UG' ? (
               <Grid container spacing={2} item xs={12}>
                 <Grid item xs={12}>
                   <Typography variant="subtitle1" component="div" gutterBottom>
@@ -2695,13 +2850,13 @@ class Form extends React.Component {
                   />
                 </Grid>
               </Grid>
-            )}
+            ) : null}
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">
                 Upload Documents <b>(allowed jpg,png,jpeg or pdf only.)</b>
               </Typography>
             </Grid>
-            {courseType !== '' ? (
+            {courseType && admissionYear ? (
               <Grid item xs={12}>
                 {documents.map((item, i) => (
                   <Box p={1} key={i}>
@@ -2795,23 +2950,22 @@ class Form extends React.Component {
             ) : (
               <Grid container item xs={12} justifyContent="center">
                 <Typography variant="subtitle1">
-                  Select course type to view this content.
+                  Select <b>"course type"</b> and <b>"admission year"</b> to
+                  view this content.
                 </Typography>
               </Grid>
             )}
-            <Grid item xs={12} className="headBg">
-              <Typography variant="subtitle1">
-                Other Details <b>(For More Details Read the Prospectus)</b>
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              {courseType === '' ? (
-                <Grid container item xs={12} justifyContent="center">
+            {admissionYear === '1' &&
+              (courseType === '#ug1UG' || courseType === '#pg2PG') && (
+                <Grid item xs={12} className="headBg">
                   <Typography variant="subtitle1">
-                    Select course type to view this content.
+                    Other Details <b>(For More Details Read the Prospectus)</b>
                   </Typography>
                 </Grid>
-              ) : (
+              )}
+            {admissionYear === '1' &&
+            (courseType === '#ug1UG' || courseType === '#pg2PG') ? (
+              <Grid item xs={12}>
                 <Grid container spacing={2} alignItems="center">
                   <Grid item md={6} xs={12}>
                     <TextField
@@ -2891,18 +3045,20 @@ class Form extends React.Component {
                       </TextField>
                     </Grid>
                   )}
-                  {courseType === '#pg2PG' && !preview && (
-                    <Grid item md={3} xs={6}>
-                      <FileUploader
-                        buttonLabel="Upload Document"
-                        accept="image/jpg,image/jpeg,image/png,application/pdf"
-                        maxSize={5}
-                        handleChange={this.handleUpload}
-                        id={'otherCompetition'}
-                        name="otherCertificate"
-                      />
-                    </Grid>
-                  )}
+                  {otherCompetition &&
+                    otherCompetition !== 'none,0' &&
+                    !preview && (
+                      <Grid item md={3} xs={6}>
+                        <FileUploader
+                          buttonLabel="Upload Document"
+                          accept="image/jpg,image/jpeg,image/png,application/pdf"
+                          maxSize={5}
+                          handleChange={this.handleUpload}
+                          id={'otherCompetition'}
+                          name="otherCertificate"
+                        />
+                      </Grid>
+                    )}
                   {courseType === '#pg2PG' && (
                     <Grid item md={3} xs={6}>
                       {otherCertificate !== '' && otherCertificate !== null ? (
@@ -3055,9 +3211,11 @@ class Form extends React.Component {
                       </TextField>
                     </Grid>
                   )}
-                  {courseType === '#pg2PG' && (
-                    <Grid item md={2} xs={6}>
-                      {!otherRoverRanger && !preview && (
+                  {!otherRoverRanger &&
+                    roverRanger &&
+                    roverRanger !== 'none,0' &&
+                    !preview && (
+                      <Grid item md={2} xs={6}>
                         <FileUploader
                           buttonLabel="Upload Document"
                           accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -3066,9 +3224,8 @@ class Form extends React.Component {
                           id={'roverRanger'}
                           name="rrDocument"
                         />
-                      )}
-                    </Grid>
-                  )}
+                      </Grid>
+                    )}
                   {courseType === '#pg2PG' && (
                     <Grid item md={4} xs={6}>
                       {rrDocument !== '' && rrDocument !== null ? (
@@ -3134,87 +3291,88 @@ class Form extends React.Component {
                     </Grid>
                   )}
                 </Grid>
-              )}
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                InputLabelProps={{
-                  classes: {
-                    root: classes.labelRoot,
-                  },
-                }}
-                InputProps={{
-                  classes: {
-                    disabled: classes.disabled,
-                  },
-                }}
-                disabled={preview}
-                select
-                fullWidth
-                variant={preview ? 'standard' : 'outlined'}
-                name="other"
-                label="Other Details / Marks"
-                value={other}
-                onChange={this.handleCalculateMerit}
-              >
-                <MenuItem value="none,0">None</MenuItem>
-                <MenuItem
-                  value="डॉ. भीमराव आंबेडकर विश्वविद्यालय और सम्बद्ध महाविद्यालयों में
+                <Grid item xs={12}>
+                  <TextField
+                    InputLabelProps={{
+                      classes: {
+                        root: classes.labelRoot,
+                      },
+                    }}
+                    InputProps={{
+                      classes: {
+                        disabled: classes.disabled,
+                      },
+                    }}
+                    disabled={preview}
+                    select
+                    fullWidth
+                    variant={preview ? 'standard' : 'outlined'}
+                    name="other"
+                    label="Other Details / Marks"
+                    value={other}
+                    onChange={this.handleCalculateMerit}
+                  >
+                    <MenuItem value="none,0">None</MenuItem>
+                    <MenuItem
+                      value="डॉ. भीमराव आंबेडकर विश्वविद्यालय और सम्बद्ध महाविद्यालयों में
                 सेवारत एवं स्ववित पोषित संस्थान के विश्वविद्यालय द्वारा अनुमोदित
                 अनु बन्धित प्रवक्ता तथा अवकाश प्राप्त केवल स्थायी
                 अध्यापको एवं कर्मचारियों के पति/पत्नी/पुत्री तथा कृषि संकाय में
                 स्थायी परियोजना के स्थायी परियोजनाओं के स्थायी कर्मचारियों के
                 पति/पत्नी/पुत्री/पुत्र।,17"
-                >
-                  डॉ. भीमराव आंबेडकर विश्वविद्यालय और सम्बद्ध महाविद्यालयों में
-                  सेवारत एवं स्ववित पोषित संस्थान के विश्वविद्यालय द्वारा
-                  अनुमोदित अनु बन्धित प्रवक्ता तथा अवकाश प्राप्त <br /> केवल
-                  स्थायी अध्यापको एवं कर्मचारियों के पति/पत्नी/पुत्री तथा कृषि
-                  संकाय में स्थायी परियोजना के स्थायी परियोजनाओं के स्थायी
-                  कर्मचारियों के पति/पत्नी/पुत्री/पुत्र।
-                </MenuItem>
-                <MenuItem
-                  value="भारतीय सेना में सेवारत अथवा अवकाश प्राप्त अधिकारियों या अन्य
+                    >
+                      डॉ. भीमराव आंबेडकर विश्वविद्यालय और सम्बद्ध महाविद्यालयों
+                      में सेवारत एवं स्ववित पोषित संस्थान के विश्वविद्यालय
+                      द्वारा अनुमोदित अनु बन्धित प्रवक्ता तथा अवकाश प्राप्त{' '}
+                      <br /> केवल स्थायी अध्यापको एवं कर्मचारियों के
+                      पति/पत्नी/पुत्री तथा कृषि संकाय में स्थायी परियोजना के
+                      स्थायी परियोजनाओं के स्थायी कर्मचारियों के
+                      पति/पत्नी/पुत्री/पुत्र।
+                    </MenuItem>
+                    <MenuItem
+                      value="भारतीय सेना में सेवारत अथवा अवकाश प्राप्त अधिकारियों या अन्य
                 रैंक के केवल पति/पत्नी/पुत्री/पुत्र (अविवाहित),10"
-                >
-                  भारतीय सेना में सेवारत अथवा अवकाश प्राप्त अधिकारियों या अन्य
-                  रैंक के केवल पति/पत्नी/पुत्री/पुत्र (अविवाहित)
-                </MenuItem>
-                <MenuItem
-                  value="भारतीय सेना पैरा/मिलट्री फोर्स/अर्ध सैनिक बल (पुलिस/पीएसी) में
+                    >
+                      भारतीय सेना में सेवारत अथवा अवकाश प्राप्त अधिकारियों या
+                      अन्य रैंक के केवल पति/पत्नी/पुत्री/पुत्र (अविवाहित)
+                    </MenuItem>
+                    <MenuItem
+                      value="भारतीय सेना पैरा/मिलट्री फोर्स/अर्ध सैनिक बल (पुलिस/पीएसी) में
                 कार्य करते हुये विजय के शहीदों के पुत्र/पुत्री/विधवाओं को प्रवेश
                 में,17"
-                >
-                  भारतीय सेना पैरा/मिलट्री फोर्स/अर्ध सैनिक बल (पुलिस/पीएसी) में
-                  कार्य करते हुये विजय के शहीदों के पुत्र/पुत्री/विधवाओं को
-                  प्रवेश में
-                </MenuItem>
-              </TextField>
-              {other && other !== 'none,0' && (
-                <FileUploader
-                  buttonLabel="Upload Certificate for Extra Merit Marks"
-                  accept="image/jpg,image/jpeg,image/png,application/pdf"
-                  maxSize={1}
-                  handleChange={this.handleUpload}
-                  id="uploadExtraMark"
-                  name="uploadExtraMark"
-                />
-              )}
-              <Grid item md={4} xs={6}>
-                {uploadExtraMark !== '' && uploadExtraMark !== null ? (
-                  <Success>Uploaded.</Success>
-                ) : null}
+                    >
+                      भारतीय सेना पैरा/मिलट्री फोर्स/अर्ध सैनिक बल (पुलिस/पीएसी)
+                      में कार्य करते हुये विजय के शहीदों के पुत्र/पुत्री/विधवाओं
+                      को प्रवेश में
+                    </MenuItem>
+                  </TextField>
+                  {other && other !== 'none,0' && (
+                    <FileUploader
+                      buttonLabel="Upload Certificate for Extra Merit Marks"
+                      accept="image/jpg,image/jpeg,image/png,application/pdf"
+                      maxSize={1}
+                      handleChange={this.handleUpload}
+                      id="uploadExtraMark"
+                      name="uploadExtraMark"
+                    />
+                  )}
+                  <Grid item md={4} xs={6}>
+                    {uploadExtraMark !== '' && uploadExtraMark !== null ? (
+                      <Success>Uploaded.</Success>
+                    ) : null}
+                  </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography>
+                    Extra Marks: <b>{totalMeritCount}</b>
+                  </Typography>
+                  <br />
+                  <Typography variant="caption">
+                    <b>Note:-</b> Allowed maximum 17 marks.
+                  </Typography>
+                </Grid>
               </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography>
-                Extra Marks: <b>{totalMeritCount}</b>
-              </Typography>
-              <br />
-              <Typography variant="caption">
-                <b>Note:-</b> Allowed maximum 17 marks.
-              </Typography>
-            </Grid>
+            ) : null}
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">Declaration</Typography>
             </Grid>
