@@ -2,5 +2,17 @@
     {
         "courseType": "Under Graduate",
         "courseTypeId": "#ug1UG"
+    },
+    {
+        "courseType": "Post Graduate",
+        "courseTypeId": "#pg2PG"
+    },
+    {
+        "courseType": "PG Diploma",
+        "courseTypeId": "pgd3PGD"
+    },
+    {
+        "courseType": "Law",
+        "courseTypeId": "law4LAW"
     }
 ]
