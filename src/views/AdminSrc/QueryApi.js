@@ -1,5 +1,4 @@
 import { Grid } from '@material-ui/core'
-import config from 'myconfig'
 import React from 'react'
 import { withRouter } from 'react-router-dom'
 import FormApi from '../../apis/FormApi'
@@ -18,27 +17,22 @@ class QueryApi extends React.Component {
   componentDidMount() {}
 
   handleSubmit = () => {
-    const str = `0122|${config.MERCHANTID}|${this.state.tId}|${createdDateTime(
-      new Date().getTime(),
-      1,
-      'yyyymmddhhmmss'
-    )}`
+    // const str = `0122|${config.MERCHANTID}|${this.state.tId}|${createdDateTime(
+    //   new Date().getTime(),
+    //   1,
+    //   'yyyymmddhhmmss'
+    // )}`
     const f = new FormData()
-    f.append('str', str)
-    FormApi.createCheckSum(f).then((res) => {
-      if (res.status === 200 && res.data) {
-        const checksumVal = `${str}|${res.data}`
-        console.log('checksumVal', checksumVal)
-        f.append('msg', checksumVal)
-        FormApi.queryPayment(f)
-          .then((res) => {
-            console.log(res)
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      }
-    })
+    f.append('requestType', '0122')
+    f.append('transactionId', this.state.tId)
+    f.append('time', createdDateTime(new Date().getTime(), 1, 'yyyymmddhhmmss'))
+    FormApi.queryPayment(f)
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
   handleChange = (event) => {
@@ -46,7 +40,7 @@ class QueryApi extends React.Component {
   }
 
   render() {
-    const { checksumVal, tId } = this.state
+    const { tId } = this.state
     return (
       <div className="childContainer">
         <CardContainer heading="Payment">
