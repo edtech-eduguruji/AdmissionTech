@@ -110,6 +110,11 @@ class Login extends Component {
                         Any form related issue kindly email at
                         admissionagracollege@gmail.com
                       </li>
+                      <li>
+                        You can apply for these courses
+                        BSc,BA,BCOM,BBA,BBA,BCA,Bsc(BioTech),B.A.LLB for 1st
+                        year
+                      </li>
                     </ul>
                   </Typography>
                 </CardBody>
