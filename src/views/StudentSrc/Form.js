@@ -372,12 +372,27 @@ class Form extends React.Component {
     })
   }
 
-  handleInputChange = (e, index) => {
-    const { name, value } = e.target
+  handleInputChange = (e, index, val) => {
+    const { name, value, checked } = e.target
     const { academicDetails } = this.state
     const list = [...academicDetails]
-    if (value.match('^[A-Za-z0-9()/\\+-., $#]*$')) {
-      list[index][name] = value
+    if (val || value.match('^[A-Za-z0-9()/\\+-., $#]*$')) {
+      if (val) {
+        this.handleMultiDropDownData(e, val)
+      } else if (name === 'promoted') {
+        list[index][name] = checked
+        if (checked) {
+          list[index]['totalMarks'] = 0
+          list[index]['marksObtained'] = 0
+          list[index]['percentage'] = '_'
+        } else {
+          list[index]['totalMarks'] = ''
+          list[index]['marksObtained'] = ''
+          list[index]['percentage'] = ''
+        }
+      } else {
+        list[index][name] = value
+      }
       if (name === 'totalMarks' || name === 'marksObtained') {
         if (
           list[index]['totalMarks'] !== '' &&
@@ -389,6 +404,12 @@ class Form extends React.Component {
           list[index]['percentage'] = p + '%'
         }
       } else if (name === 'stream') {
+        list.map((item, i) => {
+          if (Object.keys(item).find((key) => key === 'faculty')) {
+            item.faculty = ''
+            item.major1 = []
+          }
+        })
         this.setState({
           faculty: '',
           major1: [],
@@ -398,10 +419,28 @@ class Form extends React.Component {
           vocationalSem1: '',
           vocationalSem2: '',
         })
+      } else if (name === 'faculty') {
+        list.map((item) => {
+          if (Object.keys(item).find((key) => key === 'faculty')) {
+            item.faculty = value
+            item.major1 = []
+          }
+        })
+        this.setState({
+          faculty: value,
+          major1: [],
+          major2: '',
+          major3: '',
+          major4: '',
+          vocationalSem1: '',
+          vocationalSem2: '',
+        })
       }
-      this.setState({
-        academicDetails: list,
-      })
+      if (!val) {
+        this.setState({
+          academicDetails: list,
+        })
+      }
     }
   }
 
@@ -715,7 +754,8 @@ class Form extends React.Component {
       ) {
         if (
           wrn &&
-          (form ||
+          (admissionYear !== '1' ||
+            form ||
             form != undefined ||
             form != null ||
             form != 'null' ||
@@ -957,6 +997,13 @@ class Form extends React.Component {
         academicDetails.splice(2, 1)
         documents.splice(2, 1)
       }
+      academicDetails.map((item) => {
+        if (
+          Object.keys(item).find((key) => key === 'major1' || key === 'faculty')
+        ) {
+          item.major1 = value
+        }
+      })
       this.setState({
         major1: value,
         major2: '',
@@ -987,13 +1034,48 @@ class Form extends React.Component {
             academicDetails.splice(2, 0, academicDetailsStatic.GraduationDegree)
             documents.splice(2, 0, documentsStatic.GraduationDegree)
           }
+          academicDetails.map((item) => {
+            if (
+              Object.keys(item).find(
+                (key) => key === 'major1' || key === 'faculty'
+              )
+            ) {
+              item.major1 = value
+            }
+          })
           this.setState({ major1: value, academicDetails, documents })
         } else {
           addErrorMsg('You can select only 1 subjects.')
         }
+      } else if (this.checkFaculty(faculty) === -1) {
+        if (value.length <= 3) {
+          let combination = ['s43HindiLit', 's44SanskritLit', 's45EnglishLit']
+          value.map((item) => {
+            if (combination.includes(item.subjectId)) {
+              combination.splice(combination.indexOf(item.subjectId), 1)
+            }
+          })
+          if (combination.length === 0) {
+            addErrorMsg('This Combination is Not Allowed')
+          } else {
+            academicDetails.map((item) => {
+              if (Object.keys(item).find((key) => key === 'major1')) {
+                item.major1 = value
+              }
+            })
+            this.setState({ major1: value, academicDetails })
+          }
+        } else {
+          addErrorMsg('You can select only 3 subjects.')
+        }
       } else {
         if (value.length <= 2) {
-          this.setState({ major1: value })
+          academicDetails.map((item) => {
+            if (Object.keys(item).find((key) => key === 'major1')) {
+              item.major1 = value
+            }
+          })
+          this.setState({ major1: value, academicDetails })
         } else {
           addErrorMsg('You can select only 2 subjects.')
         }
@@ -1006,19 +1088,25 @@ class Form extends React.Component {
   }
 
   checkFaculty = (facultyId) => {
-    //single course selection faculty
+    // Faculty wise course selection
     if (
       facultyId == 'f5foc' ||
       facultyId == 'f6fom' ||
       facultyId == 'f7fols' ||
       facultyId == 'f8fobt' ||
       facultyId == 'f9foj' ||
-      facultyId == 'f10foma' ||
-      facultyId == 'f11fomsc'
+      facultyId == 'f12MA' ||
+      facultyId == 'f13MSC'
     ) {
-      return 1
+      return 1 // For Single Selection
+    } else if (
+      facultyId == 'f1ScienceBio' ||
+      facultyId == 'f1ScienceMaths' ||
+      facultyId == 'f12BA'
+    ) {
+      return -1 // For 3 Selections
     } else {
-      return 0
+      return 0 // For 2 Selections
     }
   }
 
@@ -1349,7 +1437,7 @@ class Form extends React.Component {
                   yearsStatic.map(
                     (item, i) =>
                       item.courseType.includes(courseType) && (
-                        <MenuItem key={i} value={item.year}>
+                        <MenuItem key={i} value={item.yearId}>
                           {item.year}
                         </MenuItem>
                       )
@@ -1425,18 +1513,26 @@ class Form extends React.Component {
             <Grid item md={6} xs={12}>
               <Grid container alignItems="center">
                 <Grid item xs={12}>
-                  <Typography>
-                    Enter (WRN Number) university web registration no and upload
-                    certification (in PDF or Image)
-                    <br />
-                    (*Mandatory to upload)
-                  </Typography>
+                  {!admissionYear || admissionYear === '1' ? (
+                    <Typography>
+                      Enter (WRN Number) university web registration no and
+                      upload certification (in PDF or Image)
+                      <br />
+                      (*Mandatory to upload)
+                    </Typography>
+                  ) : (
+                    <Typography>(*University Exam Roll No.)</Typography>
+                  )}
                   <CustomInput
                     isMandatory={true}
                     minLength={Validation['wrn']['minLength']}
                     maxLength={Validation['wrn']['maxLength']}
                     smallLabel
-                    labelText={mandatoryField('Web Registration No.')}
+                    labelText={mandatoryField(
+                      !admissionYear || admissionYear === '1'
+                        ? 'Web Registration No.'
+                        : 'Roll No.'
+                    )}
                     formControlProps={{
                       fullWidth: true,
                     }}
@@ -1444,14 +1540,17 @@ class Form extends React.Component {
                       name: 'wrn',
                       value: wrn,
                       disabled: preview,
-                      helperText: 'For Ex: WRN21*********',
+                      helperText:
+                        !admissionYear || admissionYear === '1'
+                          ? 'For Ex: WRN21*********'
+                          : '',
                     }}
                     handleChange={this.handleChangeFields}
                   />
                 </Grid>
                 <Grid container item xs={12} justifyContent="center">
                   <div className="alignCenter">
-                    {!preview && (
+                    {!preview && admissionYear === '1' && (
                       <FileUploader
                         buttonLabel="Upload Form"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -2196,40 +2295,114 @@ class Form extends React.Component {
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                       </Grid>
-                      <Grid item md={2} xs={12}>
-                        <CustomInput
-                          isMandatory={true}
-                          minLength={Validation['board']['minLength']}
-                          maxLength={Validation['board']['maxLength']}
-                          smallLabel
-                          labelText={mandatoryField('Name of Board')}
-                          formControlProps={{
-                            fullWidth: true,
-                          }}
-                          inputProps={{
-                            name: 'board',
-                            value: item.board,
-                            disabled: preview,
-                          }}
-                          handleChange={(e) => this.handleInputChange(e, i)}
-                        />
-                        <CustomInput
-                          isMandatory={true}
-                          minLength={Validation['institution']['minLength']}
-                          maxLength={Validation['institution']['maxLength']}
-                          smallLabel
-                          labelText={mandatoryField('Name of Institution')}
-                          formControlProps={{
-                            fullWidth: true,
-                          }}
-                          inputProps={{
-                            name: 'institution',
-                            value: item.institution,
-                            disabled: preview,
-                          }}
-                          handleChange={(e) => this.handleInputChange(e, i)}
-                        />
-                      </Grid>
+                      {Object.keys(item).find((key) => key === 'faculty') ? (
+                        <Grid item md={3} xs={12}>
+                          <TextField
+                            disabled={preview}
+                            InputLabelProps={{
+                              classes: {
+                                root: classes.labelRoot,
+                              },
+                            }}
+                            InputProps={{
+                              classes: {
+                                disabled: classes.disabled,
+                              },
+                            }}
+                            fullWidth
+                            select
+                            label={mandatoryField('Select Faculty')}
+                            value={item.faculty}
+                            onChange={(e) => this.handleInputChange(e, i)}
+                            variant={preview ? 'standard' : 'outlined'}
+                            name="faculty"
+                          >
+                            {academicDetails[1].stream !== '' &&
+                              facultyData.map(
+                                (itm, key) =>
+                                  itm.year.includes(admissionYear) &&
+                                  itm.courseType === courseType && (
+                                    <MenuItem
+                                      key={key}
+                                      disabled={
+                                        ((academicDetails[1].stream ===
+                                          '$s2Commerce' ||
+                                          academicDetails[1].stream ===
+                                            '$s3Arts') &&
+                                          itm.facultyId === 'f1Science') ||
+                                        ((academicDetails[1].stream ===
+                                          '$s2Commerce' ||
+                                          academicDetails[1].stream ===
+                                            '$s3Arts' ||
+                                          academicDetails[1].stream ===
+                                            '$s1Science') &&
+                                          itm.facultyId === 'f8fobt')
+                                      }
+                                      value={itm.facultyId}
+                                    >
+                                      {itm.faculty}
+                                    </MenuItem>
+                                  )
+                              )}
+                          </TextField>
+                          <Box pt="5px">
+                            <Autocomplete
+                              disabled={preview}
+                              value={item.major1}
+                              onChange={(e, value) =>
+                                this.handleInputChange(e, i, value)
+                              }
+                              multiple
+                              name="major1"
+                              options={this.filterMajorSubjects(item.major1)}
+                              getOptionLabel={(option) => option.subjectName}
+                              filterSelectedOptions
+                              renderInput={(params) => (
+                                <TextField
+                                  label={mandatoryField('Select Subject')}
+                                  {...params}
+                                  variant="outlined"
+                                />
+                              )}
+                            />
+                          </Box>
+                        </Grid>
+                      ) : (
+                        <Grid item md={2} xs={12}>
+                          <CustomInput
+                            isMandatory={true}
+                            minLength={Validation['board']['minLength']}
+                            maxLength={Validation['board']['maxLength']}
+                            smallLabel
+                            labelText={mandatoryField('Name of Board')}
+                            formControlProps={{
+                              fullWidth: true,
+                            }}
+                            inputProps={{
+                              name: 'board',
+                              value: item.board,
+                              disabled: preview,
+                            }}
+                            handleChange={(e) => this.handleInputChange(e, i)}
+                          />
+                          <CustomInput
+                            isMandatory={true}
+                            minLength={Validation['institution']['minLength']}
+                            maxLength={Validation['institution']['maxLength']}
+                            smallLabel
+                            labelText={mandatoryField('Name of Institution')}
+                            formControlProps={{
+                              fullWidth: true,
+                            }}
+                            inputProps={{
+                              name: 'institution',
+                              value: item.institution,
+                              disabled: preview,
+                            }}
+                            handleChange={(e) => this.handleInputChange(e, i)}
+                          />
+                        </Grid>
+                      )}
                       <Grid item md={1} xs={6}>
                         <CustomInput
                           isMandatory={true}
@@ -2281,7 +2454,7 @@ class Form extends React.Component {
                             name: 'totalMarks',
                             value: item.totalMarks,
                             type: 'number',
-                            disabled: preview,
+                            disabled: preview || item.promoted,
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
@@ -2298,7 +2471,7 @@ class Form extends React.Component {
                             name: 'marksObtained',
                             value: item.marksObtained,
                             type: 'number',
-                            disabled: preview,
+                            disabled: preview || item.promoted,
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
@@ -2324,42 +2497,54 @@ class Form extends React.Component {
                       <Grid
                         item
                         md={
-                          item.stream ||
-                          item.stream === '' ||
-                          item.stream === null
+                          Object.keys(item).find(
+                            (key) => key === 'stream' || key === 'faculty'
+                          )
                             ? 1
                             : item.isDelete === 0
                             ? 3
                             : 2
                         }
                         xs={
-                          item.stream ||
-                          item.stream === '' ||
-                          item.stream === null
+                          Object.keys(item).find((key) => key === 'stream')
                             ? 6
                             : 12
                         }
                       >
-                        <CustomInput
-                          isMandatory={true}
-                          minLength={Validation['subjects']['minLength']}
-                          maxLength={Validation['subjects']['maxLength']}
-                          smallLabel
-                          labelText={mandatoryField('Subjects')}
-                          formControlProps={{
-                            fullWidth: true,
-                          }}
-                          inputProps={{
-                            name: 'subjects',
-                            value: item.subjects,
-                            disabled: preview,
-                          }}
-                          handleChange={(e) => this.handleInputChange(e, i)}
-                        />
+                        {Object.keys(item).find((key) => key === 'promoted') ? (
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                value="5"
+                                checked={item.promoted}
+                                onChange={(e) => this.handleInputChange(e, i)}
+                                name="promoted"
+                                color="primary"
+                                disabled={preview}
+                              />
+                            }
+                            label="Promoted?"
+                          />
+                        ) : (
+                          <CustomInput
+                            isMandatory={true}
+                            minLength={Validation['subjects']['minLength']}
+                            maxLength={Validation['subjects']['maxLength']}
+                            smallLabel
+                            labelText={mandatoryField('Subjects')}
+                            formControlProps={{
+                              fullWidth: true,
+                            }}
+                            inputProps={{
+                              name: 'subjects',
+                              value: item.subjects,
+                              disabled: preview,
+                            }}
+                            handleChange={(e) => this.handleInputChange(e, i)}
+                          />
+                        )}
                       </Grid>
-                      {item.stream ||
-                      item.stream === '' ||
-                      item.stream === null ? (
+                      {Object.keys(item).find((key) => key === 'stream') ? (
                         <Grid item md={2} xs={6}>
                           <TextField
                             InputLabelProps={{
@@ -2462,7 +2647,7 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                disabled={preview}
+                disabled={preview || admissionYear !== '1'}
                 InputLabelProps={{
                   classes: {
                     root: classes.labelRoot,
@@ -2520,7 +2705,7 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={12}>
               <Autocomplete
-                disabled={preview}
+                disabled={preview || admissionYear !== '1'}
                 value={major1}
                 onChange={this.handleMultiDropDownData}
                 multiple
