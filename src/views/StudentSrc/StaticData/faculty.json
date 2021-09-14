@@ -2,13 +2,13 @@
     {
         "facultyId": "f1Science",
         "faculty": "Faculty of Science",
-        "year": ["1","2"],
+        "year": ["1"],
         "courseType": "#ug1UG"    
     },
     {
         "facultyId": "f2Arts",
         "faculty": "Faculty of Arts, Humanities and Social Sciences",
-        "year": ["1","2"],
+        "year": ["1"],
         "courseType": "#ug1UG"    
     },
     {
@@ -26,13 +26,13 @@
     {
         "facultyId": "f5foc",
         "faculty": "Faculty of Commerce",
-        "year": ["1","2"],
+        "year": ["1"],
         "courseType": "#ug1UG"    
     },
     {
         "facultyId": "f6fom",
         "faculty": "Faculty of Management/Computer Application",
-        "year": ["1","2"],
+        "year": ["1"],
         "courseType": "#ug1UG"    
     },
     {
@@ -44,7 +44,7 @@
     {
         "facultyId": "f8fobt",
         "faculty": "Faculty of BioTechnology",
-        "year": ["1","2"],
+        "year": ["1"],
         "courseType": "#ug1UG"   
     },
     {
@@ -54,15 +54,51 @@
         "courseType": "pgd3PGD"   
     },
     {
-        "facultyId": "f10foma",
-        "faculty": "Faculty of MA",
+        "facultyId": "f12MA",
+        "faculty": "MA",
         "year": ["1","2"],
-        "courseType": "#pg2PG"   
+        "courseType": "#pg2PG"    
     },
     {
-        "facultyId": "f11fomsc",
-        "faculty": "Faculty of MSC",
+        "facultyId": "f1ScienceBio",
+        "faculty": "B.Sc. (Bio)",
+        "year": ["2","3"],
+        "courseType": "#ug1UG"    
+    },
+    {
+        "facultyId": "f1ScienceMaths",
+        "faculty": "B.Sc. (Maths)",
+        "year": ["2","3"],
+        "courseType": "#ug1UG"    
+    },
+    {
+        "facultyId": "f12BA",
+        "faculty": "BA",
+        "year": ["2","3"],
+        "courseType": "#ug1UG"    
+    },
+    {
+        "facultyId": "f13MSC",
+        "faculty": "MSc",
         "year": ["1","2"],
-        "courseType": "#pg2PG"   
+        "courseType": "#pg2PG"    
+    },
+    {
+        "facultyId": "f14BCOM",
+        "faculty": "B.Com",
+        "year": ["2","3"],
+        "courseType": "#ug1UG"    
+    },
+    {
+        "facultyId": "f15BBA",
+        "faculty": "BBA",
+        "year": ["2","3"],
+        "courseType": "#ug1UG"    
+    },
+    {
+        "facultyId": "f16BCA",
+        "faculty": "BCA",
+        "year": ["2","3"],
+        "courseType": "#ug1UG"    
     }
 ]
