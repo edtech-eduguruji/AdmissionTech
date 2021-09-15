@@ -298,7 +298,9 @@ class Form extends React.Component {
         rrDocument: '',
         bcom: false,
         other: '',
-        totalMerit: meritCalculateData,
+        totalMerit: {
+          ...meritCalculateData,
+        },
         totalMeritCount: 0,
       })
     } else if (name === 'admissionYear') {
@@ -333,7 +335,9 @@ class Form extends React.Component {
         rrDocument: '',
         bcom: false,
         other: '',
-        totalMerit: meritCalculateData,
+        totalMerit: {
+          ...meritCalculateData,
+        },
         totalMeritCount: 0,
       })
     } else if (name === 'major2') {
@@ -531,6 +535,7 @@ class Form extends React.Component {
     const value = event.target.value
     var { totalMerit } = this.state
     let total = 0
+    console.log(totalMerit)
     totalMerit[name] = parseInt(value.split(',')[1])
     total = Object.values(totalMerit).reduce(
       (currentVal, nextVal) => currentVal + nextVal
@@ -1013,6 +1018,24 @@ class Form extends React.Component {
         vocationalSem2: '',
         academicDetails,
         documents,
+        nationalCompetition: '',
+        nationalCertificate: '',
+        otherCompetition: '',
+        otherCertificate: '',
+        ncc: '',
+        nccCertificate: '',
+        freedomFighter: false,
+        nationalSevaScheme: false,
+        nssDocument: '',
+        roverRanger: '',
+        otherRoverRanger: false,
+        rrDocument: '',
+        bcom: false,
+        other: '',
+        totalMerit: {
+          ...meritCalculateData,
+        },
+        totalMeritCount: 0,
       })
     } else {
       if (this.checkFaculty(faculty) > 0) {
@@ -1043,7 +1066,29 @@ class Form extends React.Component {
               item.major1 = value
             }
           })
-          this.setState({ major1: value, academicDetails, documents })
+          this.setState({
+            major1: value,
+            academicDetails,
+            documents,
+            nationalCompetition: '',
+            nationalCertificate: '',
+            otherCompetition: '',
+            otherCertificate: '',
+            ncc: '',
+            nccCertificate: '',
+            freedomFighter: false,
+            nationalSevaScheme: false,
+            nssDocument: '',
+            roverRanger: '',
+            otherRoverRanger: false,
+            rrDocument: '',
+            bcom: false,
+            other: '',
+            totalMerit: {
+              ...meritCalculateData,
+            },
+            totalMeritCount: 0,
+          })
         } else {
           addErrorMsg('You can select only 1 subjects.')
         }
@@ -1063,7 +1108,28 @@ class Form extends React.Component {
                 item.major1 = value
               }
             })
-            this.setState({ major1: value, academicDetails })
+            this.setState({
+              major1: value,
+              academicDetails,
+              nationalCompetition: '',
+              nationalCertificate: '',
+              otherCompetition: '',
+              otherCertificate: '',
+              ncc: '',
+              nccCertificate: '',
+              freedomFighter: false,
+              nationalSevaScheme: false,
+              nssDocument: '',
+              roverRanger: '',
+              otherRoverRanger: false,
+              rrDocument: '',
+              bcom: false,
+              other: '',
+              totalMerit: {
+                ...meritCalculateData,
+              },
+              totalMeritCount: 0,
+            })
           }
         } else {
           addErrorMsg('You can select only 3 subjects.')
@@ -1075,7 +1141,28 @@ class Form extends React.Component {
               item.major1 = value
             }
           })
-          this.setState({ major1: value, academicDetails })
+          this.setState({
+            major1: value,
+            academicDetails,
+            nationalCompetition: '',
+            nationalCertificate: '',
+            otherCompetition: '',
+            otherCertificate: '',
+            ncc: '',
+            nccCertificate: '',
+            freedomFighter: false,
+            nationalSevaScheme: false,
+            nssDocument: '',
+            roverRanger: '',
+            otherRoverRanger: false,
+            rrDocument: '',
+            bcom: false,
+            other: '',
+            totalMerit: {
+              ...meritCalculateData,
+            },
+            totalMeritCount: 0,
+          })
         } else {
           addErrorMsg('You can select only 2 subjects.')
         }
@@ -3101,7 +3188,10 @@ class Form extends React.Component {
               </Grid>
             )}
             {admissionYear === '1' &&
-              (courseType === '#ug1UG' || courseType === '#pg2PG') && (
+              major1.length > 0 &&
+              (courseType === '#ug1UG' ||
+                courseType === '#pg2PG' ||
+                courseType === 'law4LAW') && (
                 <Grid item xs={12} className="headBg">
                   <Typography variant="subtitle1">
                     Other Details <b>(For More Details Read the Prospectus)</b>
@@ -3109,8 +3199,24 @@ class Form extends React.Component {
                 </Grid>
               )}
             {admissionYear === '1' &&
-            (courseType === '#ug1UG' || courseType === '#pg2PG') ? (
+            major1.length > 0 &&
+            (courseType === '#ug1UG' ||
+              courseType === '#pg2PG' ||
+              courseType === 'law4LAW') ? (
               <Grid item xs={12}>
+                {courseType === '#pg2PG' ||
+                major1[0].subjectName === 'LLM' ||
+                major1[0].subjectName === 'LLB' ? (
+                  <Typography>
+                    विश्वविद्यालय की टीम के सदस्य के रुप में अन्तर्विश्वविद्यालय
+                    प्रतियोगिता में भाग लेने के लिए
+                  </Typography>
+                ) : (
+                  <Typography>
+                    उत्तर क्षेत्रीय स्तर की टीम सदस्य के रुप में राज्यस्तरीय
+                    राष्ट्रीय प्रतियोगिता में भाग लेने के लिए{' '}
+                  </Typography>
+                )}
                 <Grid container spacing={2} alignItems="center">
                   <Grid item md={6} xs={12}>
                     <TextField
@@ -3129,7 +3235,7 @@ class Form extends React.Component {
                       fullWidth
                       variant={preview ? 'standard' : 'outlined'}
                       name="nationalCompetition"
-                      label="Participation in Zone / State Level National Competition"
+                      label="Select"
                       value={nationalCompetition}
                       onChange={this.handleCalculateMerit}
                     >
@@ -3155,13 +3261,16 @@ class Form extends React.Component {
                       </Grid>
                     )}
                   <Grid item md={3} xs={6}>
-                    {nationalCertificate !== '' &&
-                    nationalCertificate !== null ? (
-                      <Success>Uploaded.</Success>
-                    ) : null}
+                    {nationalCertificate && <Success>Uploaded.</Success>}
                   </Grid>
-                  {courseType === '#pg2PG' && (
+                  {courseType === '#pg2PG' ||
+                  major1[0].subjectName === 'LLM' ||
+                  major1[0].subjectName === 'LLB' ? (
                     <Grid item md={6} xs={12}>
+                      <Typography>
+                        विश्वविद्यालय की टीम के सदस्य के रुप में राष्ट्रीय
+                        प्रतियोगिता में भाग लेने
+                      </Typography>
                       <TextField
                         InputLabelProps={{
                           classes: {
@@ -3178,7 +3287,7 @@ class Form extends React.Component {
                         fullWidth
                         variant={preview ? 'standard' : 'outlined'}
                         name="otherCompetition"
-                        label="Participation in Competition from University"
+                        label="Select"
                         value={otherCompetition}
                         onChange={this.handleCalculateMerit}
                       >
@@ -3189,7 +3298,7 @@ class Form extends React.Component {
                         <MenuItem value="participant,3">Participant</MenuItem>
                       </TextField>
                     </Grid>
-                  )}
+                  ) : null}
                   {otherCompetition &&
                     otherCompetition !== 'none,0' &&
                     !preview && (
@@ -3204,13 +3313,9 @@ class Form extends React.Component {
                         />
                       </Grid>
                     )}
-                  {courseType === '#pg2PG' && (
-                    <Grid item md={3} xs={6}>
-                      {otherCertificate !== '' && otherCertificate !== null ? (
-                        <Success>Uploaded.</Success>
-                      ) : null}
-                    </Grid>
-                  )}
+                  <Grid item md={3} xs={6}>
+                    {otherCertificate && <Success>Uploaded.</Success>}
+                  </Grid>
                   <Grid item md={6} xs={12}>
                     <TextField
                       InputLabelProps={{
@@ -3254,11 +3359,10 @@ class Form extends React.Component {
                     </Grid>
                   )}
                   <Grid item md={3} xs={6}>
-                    {nccCertificate !== '' && nccCertificate !== null ? (
-                      <Success>Uploaded.</Success>
-                    ) : null}
+                    {nccCertificate && <Success>Uploaded.</Success>}
                   </Grid>
-                  {courseType === '#ug1UG' && (
+                  {courseType === '#ug1UG' ||
+                  major1[0].subjectName === 'B.A. LLB' ? (
                     <Grid item xs={12}>
                       <FormControlLabel
                         control={
@@ -3274,7 +3378,7 @@ class Form extends React.Component {
                         label="Freedom Fighter ?"
                       />
                     </Grid>
-                  )}
+                  ) : null}
                   <Grid item md={4} xs={12}>
                     <FormControlLabel
                       control={
@@ -3303,11 +3407,11 @@ class Form extends React.Component {
                     )}
                   </Grid>
                   <Grid item md={5} xs={6}>
-                    {nssDocument !== '' && nssDocument !== null ? (
-                      <Success>Uploaded.</Success>
-                    ) : null}
+                    {nssDocument && <Success>Uploaded.</Success>}
                   </Grid>
-                  {courseType === '#pg2PG' && (
+                  {(courseType === '#pg2PG' ||
+                    major1[0].subjectName === 'LLM' ||
+                    major1[0].subjectName === 'LLB') && (
                     <Grid item md={6} xs={12}>
                       <TextField
                         InputLabelProps={{
@@ -3353,19 +3457,19 @@ class Form extends React.Component {
                         />
                       </Grid>
                     )}
-                  {courseType === '#pg2PG' && (
-                    <Grid item md={4} xs={6}>
-                      {rrDocument !== '' && rrDocument !== null ? (
-                        <Success>Uploaded.</Success>
-                      ) : null}
-                    </Grid>
-                  )}
-                  {courseType === '#pg2PG' && (
+                  <Grid item md={4} xs={6}>
+                    {rrDocument && <Success>Uploaded.</Success>}
+                  </Grid>
+                  {courseType === '#pg2PG' ||
+                  major1[0].subjectName === 'LLM' ||
+                  major1[0].subjectName === 'LLB' ? (
                     <Grid container item xs={12} justifyContent="center">
                       <Typography>OR</Typography>
                     </Grid>
-                  )}
-                  {courseType === '#pg2PG' && (
+                  ) : null}
+                  {courseType === '#pg2PG' ||
+                  major1[0].subjectName === 'LLM' ||
+                  major1[0].subjectName === 'LLB' ? (
                     <Grid item xs={12}>
                       <FormControlLabel
                         control={
@@ -3381,8 +3485,9 @@ class Form extends React.Component {
                         label="Team Members of Rover Rangers to Participate in Rally from Other University"
                       />
                     </Grid>
-                  )}
-                  {courseType === '#ug1UG' && (
+                  ) : null}
+                  {courseType === '#ug1UG' ||
+                  major1[0].subjectName === 'B.A. LLB' ? (
                     <Grid item xs={12}>
                       <FormControlLabel
                         control={
@@ -3398,7 +3503,7 @@ class Form extends React.Component {
                         label="Inter 10+2 with Commerce ?"
                       />
                     </Grid>
-                  )}
+                  ) : null}
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
