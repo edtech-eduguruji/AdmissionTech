@@ -1,5 +1,5 @@
 {
-    "#ug1UG": 
+    "#ug1UG-1": 
     [
         {
             "nameOfExam": "High School/10th",
@@ -27,10 +27,102 @@
             "isDelete": 0
         }
     ],
-    "#pg2PG": 
+    "#ug1UG-2": 
     [
         {
-            "nameOfExam": "Hight School/10th",
+            "nameOfExam": "High School/10th",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "Intermediate/10+2",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "stream": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "(UG) 1st Year MS",
+            "year": "",
+            "rollNo": "",
+            "faculty": "",
+            "major1": [],
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "promoted": false,
+            "isDelete": 0
+        }
+    ],
+    "#ug1UG-3": 
+    [
+        {
+            "nameOfExam": "High School/10th",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "Intermediate/10+2",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "stream": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "(UG) 1st Year MS",
+            "year": "",
+            "rollNo": "",
+            "faculty": "",
+            "major1": [],
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "promoted": false,
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "(UG) 2nd Year MS",
+            "year": "",
+            "rollNo": "",
+            "faculty": "",
+            "major1": [],
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "promoted": false,
+            "isDelete": 0
+        }
+    ],
+    "#pg2PG-1": 
+    [
+        {
+            "nameOfExam": "High School/10th",
             "year": "",
             "rollNo": "",
             "board": "",
@@ -67,66 +159,10 @@
             "isDelete": 0
         }
     ],
-    "diploma001": 
+    "#pg2PG-2": 
     [
         {
-            "nameOfExam": "Hight School/10th",
-            "year": "",
-            "rollNo": "",
-            "board": "",
-            "institution": "",
-            "totalMarks": "",
-            "marksObtained": "",
-            "percentage": "",
-            "subjects": "",
-            "isDelete": 0
-        },
-        {
-            "nameOfExam": "Intermediate/10+2",
-            "year": "",
-            "rollNo": "",
-            "board": "",
-            "institution": "",
-            "totalMarks": "",
-            "marksObtained": "",
-            "percentage": "",
-            "subjects": "",
-            "stream": "",
-            "isDelete": 0
-        }
-    ],
-    "law001": 
-    [
-        {
-            "nameOfExam": "Hight School/10th",
-            "year": "",
-            "rollNo": "",
-            "board": "",
-            "institution": "",
-            "totalMarks": "",
-            "marksObtained": "",
-            "percentage": "",
-            "subjects": "",
-            "isDelete": 0
-        },
-        {
-            "nameOfExam": "Intermediate/10+2",
-            "year": "",
-            "rollNo": "",
-            "board": "",
-            "institution": "",
-            "totalMarks": "",
-            "marksObtained": "",
-            "percentage": "",
-            "subjects": "",
-            "stream": "",
-            "isDelete": 0
-        }
-    ],
-    "LLM": 
-    [
-        {
-            "nameOfExam": "Hight School/10th",
+            "nameOfExam": "High School/10th",
             "year": "",
             "rollNo": "",
             "board": "",
@@ -163,7 +199,47 @@
             "isDelete": 0
         },
         {
-            "nameOfExam": "Post-Graduation Degree",
+            "nameOfExam": "(PG) 1st Year MS",
+            "year": "",
+            "rollNo": "",
+            "faculty": "",
+            "major1": [],
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "promoted": false,
+            "isDelete": 0
+        }
+    ],
+    "pgd3PGD-1": 
+    [
+        {
+            "nameOfExam": "High School/10th",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "Intermediate/10+2",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "stream": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "Graduation Degree",
             "year": "",
             "rollNo": "",
             "board": "",
@@ -174,5 +250,291 @@
             "subjects": "",
             "isDelete": 0
         }
-    ]
+    ],
+    "law4LAW-1": 
+    [
+        {
+            "nameOfExam": "High School/10th",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "Intermediate/10+2",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "stream": "",
+            "isDelete": 0
+        }
+    ],
+    "law4LAW-2": 
+    [
+        {
+            "nameOfExam": "High School/10th",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "Intermediate/10+2",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "stream": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "1st Year Details",
+            "year": "",
+            "rollNo": "",
+            "faculty": "",
+            "major1": [],
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "promoted": false,
+            "isDelete": 0
+        }
+    ],
+    "law4LAW-3": 
+    [
+        {
+            "nameOfExam": "High School/10th",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "Intermediate/10+2",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "stream": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "1st Year Details",
+            "year": "",
+            "rollNo": "",
+            "faculty": "",
+            "major1": [],
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "promoted": false,
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "2nd Year Details",
+            "year": "",
+            "rollNo": "",
+            "faculty": "",
+            "major1": [],
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "promoted": false,
+            "isDelete": 0
+        }
+    ],
+    "law4LAW-4": 
+    [
+        {
+            "nameOfExam": "High School/10th",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "Intermediate/10+2",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "stream": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "1st Year Details",
+            "year": "",
+            "rollNo": "",
+            "faculty": "",
+            "major1": [],
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "promoted": false,
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "2nd Year Details",
+            "year": "",
+            "rollNo": "",
+            "faculty": "",
+            "major1": [],
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "promoted": false,
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "3rd Year Details",
+            "year": "",
+            "rollNo": "",
+            "faculty": "",
+            "major1": [],
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "promoted": false,
+            "isDelete": 0
+        }
+    ],
+    "law4LAW-5": 
+    [
+        {
+            "nameOfExam": "High School/10th",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "Intermediate/10+2",
+            "year": "",
+            "rollNo": "",
+            "board": "",
+            "institution": "",
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "subjects": "",
+            "stream": "",
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "1st Year Details",
+            "year": "",
+            "rollNo": "",
+            "faculty": "",
+            "major1": [],
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "promoted": false,
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "2nd Year Details",
+            "year": "",
+            "rollNo": "",
+            "faculty": "",
+            "major1": [],
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "promoted": false,
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "3rd Year Details",
+            "year": "",
+            "rollNo": "",
+            "faculty": "",
+            "major1": [],
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "promoted": false,
+            "isDelete": 0
+        },
+        {
+            "nameOfExam": "4th Year Details",
+            "year": "",
+            "rollNo": "",
+            "faculty": "",
+            "major1": [],
+            "totalMarks": "",
+            "marksObtained": "",
+            "percentage": "",
+            "promoted": false,
+            "isDelete": 0
+        }
+    ],
+    "GraduationDegree": 
+    {
+        "nameOfExam": "Graduation Degree",
+        "year": "",
+        "rollNo": "",
+        "board": "",
+        "institution": "",
+        "totalMarks": "",
+        "marksObtained": "",
+        "percentage": "",
+        "subjects": "",
+        "isDelete": 0
+    },
+    "LLB": 
+    {
+        "nameOfExam": "LLB Degree",
+        "year": "",
+        "rollNo": "",
+        "board": "",
+        "institution": "",
+        "totalMarks": "",
+        "marksObtained": "",
+        "percentage": "",
+        "subjects": "",
+        "isDelete": 0
+    }
 }

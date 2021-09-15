@@ -18,5 +18,25 @@
     {
         "documentTypeId": "#dt5Others",
         "documentType": "Others"
+    },
+    {
+        "documentTypeId": "#dt6LLB",
+        "documentType": "LLB Degree"
+    },
+    {
+        "documentTypeId": "PG1MS",
+        "documentType": "1st Year Marksheet"
+    },
+    {
+        "documentTypeId": "PG2MS",
+        "documentType": "2nd Year Marksheet"
+    },
+    {
+        "documentTypeId": "PG3MS",
+        "documentType": "3rd Year Marksheet"
+    },
+    {
+        "documentTypeId": "PG4MS",
+        "documentType": "4th Year Marksheet"
     }
 ]

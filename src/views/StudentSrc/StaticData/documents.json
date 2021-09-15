@@ -1,5 +1,5 @@
 {
-    "#ug1UG": 
+    "#ug1UG-1": 
     [
         {
             "documentType": "#dt1HSM",
@@ -12,7 +12,48 @@
             "isDelete": 0
         }
     ],
-    "#pg2PG": 
+    "#ug1UG-2": 
+    [
+        {
+            "documentType": "#dt1HSM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "#dt2IM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "PG1MS",
+            "document": "",
+            "isDelete": 0
+        }
+    ],
+    "#ug1UG-3": 
+    [
+        {
+            "documentType": "#dt1HSM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "#dt2IM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "PG1MS",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "PG2MS",
+            "document": "",
+            "isDelete": 0
+        }
+    ],
+    "#pg2PG-1": 
     [
         {
             "documentType": "#dt1HSM",
@@ -30,7 +71,7 @@
             "isDelete": 0
         }
     ],
-    "LLM": 
+    "#pg2PG-2": 
     [
         {
             "documentType": "#dt1HSM",
@@ -48,9 +89,154 @@
             "isDelete": 0
         },
         {
-            "documentType": "#dt4PGD",
+            "documentType": "PG1MS",
             "document": "",
             "isDelete": 0
         }
-    ]
+    ],
+    "pgd3PGD-1": 
+    [
+        {
+            "documentType": "#dt1HSM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "#dt2IM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "#dt3GD",
+            "document": "",
+            "isDelete": 0
+        }
+    ],
+    "law4LAW-1": 
+    [
+        {
+            "documentType": "#dt1HSM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "#dt2IM",
+            "document": "",
+            "isDelete": 0
+        }
+    ],
+    "law4LAW-2": 
+    [
+        {
+            "documentType": "#dt1HSM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "#dt2IM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "PG1MS",
+            "document": "",
+            "isDelete": 0
+        }
+    ],
+    "law4LAW-3": 
+    [
+        {
+            "documentType": "#dt1HSM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "#dt2IM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "PG1MS",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "PG2MS",
+            "document": "",
+            "isDelete": 0
+        }
+    ],
+    "law4LAW-4": 
+    [
+        {
+            "documentType": "#dt1HSM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "#dt2IM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "PG1MS",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "PG2MS",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "PG3MS",
+            "document": "",
+            "isDelete": 0
+        }
+    ],
+    "law4LAW-5": 
+    [
+        {
+            "documentType": "#dt1HSM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "#dt2IM",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "PG1MS",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "PG2MS",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "PG3MS",
+            "document": "",
+            "isDelete": 0
+        },
+        {
+            "documentType": "PG4MS",
+            "document": "",
+            "isDelete": 0
+        }
+    ],
+    "GraduationDegree":
+    {
+        "documentType": "#dt3GD",
+        "document": "",
+        "isDelete": 0
+    },
+    "LLB":
+    {
+        "documentType": "#dt6LLB",
+        "document": "",
+        "isDelete": 0
+    }
 }
