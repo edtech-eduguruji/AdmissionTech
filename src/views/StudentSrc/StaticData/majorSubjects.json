@@ -193,7 +193,7 @@
         "subjectId": "$24bscbt",
         "streamId": ["$s1.3PCMB","$s1.2PCB"],
         "subjectName": "BSc BioTech",
-        "year": ["1","2"]
+        "year": ["1"]
     },
     {
         "facultyId": "f9foj",
@@ -366,8 +366,15 @@
     {
         "facultyId": "f12BA",
         "subjectId": "s55Music",
-        "streamId": ["$s1.3PCMB","$s1.2PCB"],
+        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
         "subjectName": "Music",
+        "year": ["2","3"]
+    },
+    {
+        "facultyId": "f12BA",
+        "subjectId": "s55BAPhyEdu",
+        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
+        "subjectName": "Physical Education",
         "year": ["2","3"]
     },
     {
@@ -572,6 +579,13 @@
         "subjectId": "s74BCAsem6",
         "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
         "subjectName": "Semester 6",
+        "year": ["2","3"]
+    },
+    {
+        "facultyId": "f17BioTech",
+        "subjectId": "s75BscBioTech",
+        "streamId": ["$s1.3PCMB","$s1.2PCB"],
+        "subjectName": "Bsc BioTech",
         "year": ["2","3"]
     }
 ]
