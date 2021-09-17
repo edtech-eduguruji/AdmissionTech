@@ -6103,5 +6103,15 @@
       "id":"1221",
        "name":"Dispur",
        "state":"AS"
+    },
+    {
+        "id": "1222",
+        "name": "Etah",
+        "state": "UP"
+    },
+    {
+        "id": "1223",
+        "name": "Dholpur",
+        "state": "RJ"
     }
 ]
