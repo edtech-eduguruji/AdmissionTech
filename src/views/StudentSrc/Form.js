@@ -889,64 +889,178 @@ class Form extends React.Component {
                   }
 
                   if (fac == 1 && this.checkJSONfields(documents) <= 0) {
+                    // ug 1, pg 1, law- llm 1, llb 1
                     let naCCount = 0,
                       nccCount = 0,
                       nSSCount = 0,
-                      otherCount = 0
+                      otherCount = 0,
+                      otherCertCount = 0,
+                      rangeRoverCount = 0,
+                      validation = 0
                     if (
-                      (!nationalCompetition ||
-                        nationalCompetition == 'none,0') &&
-                      !nationalCertificate
+                      (courseType == '#ug1UG' && admissionYear == '1') ||
+                      (courseType == 'law4LAW' &&
+                        admissionYear == '1' &&
+                        major1.length >= 1 &&
+                        major1[0].subjectId == '$22ballb')
                     ) {
-                      naCCount = 1
+                      validation = 1
+                      if (
+                        (!nationalCompetition ||
+                          nationalCompetition == 'none,0') &&
+                        !nationalCertificate
+                      ) {
+                        naCCount = 1
+                      } else if (
+                        nationalCompetition !== 'none,0' &&
+                        nationalCertificate
+                      ) {
+                        naCCount = 1
+                      } else {
+                        addErrorMsg(
+                          'Upload "Participation in Zone / National Competition" Certificate'
+                        )
+                        return
+                      }
+
+                      if ((!ncc || ncc == 'none,0') && !nccCertificate) {
+                        nccCount = 1
+                      } else if (ncc !== 'none,0' && nccCertificate) {
+                        nccCount = 1
+                      } else {
+                        addErrorMsg('Upload "NCC/Cadet" Certificate')
+                        return
+                      }
+
+                      if (!nationalSevaScheme) {
+                        nSSCount = 1
+                      } else if (nationalSevaScheme && nssDocument) {
+                        nSSCount = 1
+                      } else {
+                        addErrorMsg('Upload "NSS" Document')
+                        return
+                      }
+
+                      if ((!other || other == 'none,0') && !uploadExtraMark) {
+                        otherCount = 1
+                      } else if (other !== 'none,0' && uploadExtraMark) {
+                        otherCount = 1
+                      } else {
+                        addErrorMsg(
+                          'Upload "Other Details / Extra Marks" Certificate'
+                        )
+                        return
+                      }
+
+                      if (
+                        naCCount == 1 &&
+                        nccCount == 1 &&
+                        nSSCount == 1 &&
+                        otherCount == 1
+                      ) {
+                      } else {
+                        return
+                      }
                     } else if (
-                      nationalCompetition !== 'none,0' &&
-                      nationalCertificate
+                      (courseType == '#pg2PG' && admissionYear == '1') ||
+                      (courseType == 'law4LAW' && admissionYear == '1')
                     ) {
-                      naCCount = 1
-                    } else {
-                      addErrorMsg(
-                        'Upload "Participation in Zone / National Competition" Certificate'
-                      )
-                      return
+                      validation = 1
+                      if (
+                        (!nationalCompetition ||
+                          nationalCompetition == 'none,0') &&
+                        !nationalCertificate
+                      ) {
+                        naCCount = 1
+                      } else if (
+                        nationalCompetition !== 'none,0' &&
+                        nationalCertificate
+                      ) {
+                        naCCount = 1
+                      } else {
+                        addErrorMsg(
+                          'Upload "Participation in Zone / National Competition" Certificate'
+                        )
+                        return
+                      }
+
+                      if (
+                        (!otherCompetition || otherCompetition == 'none,0') &&
+                        !otherCertificate
+                      ) {
+                        otherCertCount = 1
+                      } else if (
+                        otherCompetition !== 'none,0' &&
+                        otherCertificate
+                      ) {
+                        otherCertCount = 1
+                      } else {
+                        addErrorMsg(
+                          'Upload "Participation in Zone / National Competition" Certificate'
+                        )
+                        return
+                      }
+
+                      if (
+                        (!roverRanger || roverRanger == 'none,0') &&
+                        !rrDocument
+                      ) {
+                        rangeRoverCount = 1
+                      } else if (roverRanger !== 'none,0' && rrDocument) {
+                        rangeRoverCount = 1
+                      } else if (otherRoverRanger) {
+                        rangeRoverCount = 1
+                      } else {
+                        addErrorMsg(
+                          'Please upload certificate or checkbox for range rover'
+                        )
+                        return
+                      }
+
+                      if ((!ncc || ncc == 'none,0') && !nccCertificate) {
+                        nccCount = 1
+                      } else if (ncc !== 'none,0' && nccCertificate) {
+                        nccCount = 1
+                      } else {
+                        addErrorMsg('Upload "NCC/Cadet" Certificate')
+                        return
+                      }
+
+                      if (!nationalSevaScheme) {
+                        nSSCount = 1
+                      } else if (nationalSevaScheme && nssDocument) {
+                        nSSCount = 1
+                      } else {
+                        addErrorMsg('Upload "NSS" Document')
+                        return
+                      }
+
+                      if ((!other || other == 'none,0') && !uploadExtraMark) {
+                        otherCount = 1
+                      } else if (other !== 'none,0' && uploadExtraMark) {
+                        otherCount = 1
+                      } else {
+                        addErrorMsg(
+                          'Upload "Other Details / Extra Marks" Certificate'
+                        )
+                        return
+                      }
+
+                      if (
+                        naCCount == 1 &&
+                        otherCertCount == 1 &&
+                        rangeRoverCount == 1 &&
+                        naCCount == 1 &&
+                        nccCount == 1 &&
+                        nSSCount == 1 &&
+                        otherCount == 1
+                      ) {
+                      } else {
+                        return
+                      }
                     }
 
-                    if ((!ncc || ncc == 'none,0') && !nccCertificate) {
-                      nccCount = 1
-                    } else if (ncc !== 'none,0' && nccCertificate) {
-                      nccCount = 1
-                    } else {
-                      addErrorMsg('Upload "NCC/Cadet" Certificate')
-                      return
-                    }
-
-                    if (!nationalSevaScheme) {
-                      nSSCount = 1
-                    } else if (nationalSevaScheme && nssDocument) {
-                      nSSCount = 1
-                    } else {
-                      addErrorMsg('Upload "NSS" Document')
-                      return
-                    }
-
-                    if ((!other || other == 'none,0') && !uploadExtraMark) {
-                      otherCount = 1
-                    } else if (other !== 'none,0' && uploadExtraMark) {
-                      otherCount = 1
-                    } else {
-                      addErrorMsg(
-                        'Upload "Other Details / Extra Marks" Certificate'
-                      )
-                      return
-                    }
-
-                    if (
-                      naCCount == 1 &&
-                      nccCount == 1 &&
-                      nSSCount == 1 &&
-                      otherCount == 1 &&
-                      signature
-                    ) {
+                    if (signature) {
                       if (token) {
                         tryToSubmit = 1
                       } else {
