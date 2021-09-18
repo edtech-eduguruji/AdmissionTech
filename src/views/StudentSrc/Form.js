@@ -32,6 +32,7 @@ import { ASSETS } from '../../constants/Constants'
 import {
   addErrorMsg,
   closeDialog,
+  deleteBox,
   downloadPdf,
   errorDialog,
   mandatoryField,
@@ -331,6 +332,7 @@ class Form extends React.Component {
         otherCompetition: '',
         otherCertificate: '',
         ncc: '',
+        uploadExtraMark: null,
         nccCertificate: '',
         freedomFighter: false,
         nationalSevaScheme: false,
@@ -368,6 +370,7 @@ class Form extends React.Component {
         otherCompetition: '',
         otherCertificate: '',
         ncc: '',
+        uploadExtraMark: null,
         nccCertificate: '',
         freedomFighter: false,
         nationalSevaScheme: false,
@@ -996,7 +999,7 @@ class Form extends React.Component {
                         otherCertCount = 1
                       } else {
                         addErrorMsg(
-                          'Upload "Participation in Zone / National Competition" Certificate'
+                          'Upload "Participation in Zone / National Competition" from Other University'
                         )
                         return
                       }
@@ -1114,7 +1117,10 @@ class Form extends React.Component {
             if (payment !== null) {
               // Take "parameterId" and "amount" from  'payment' variable.
               // And Proceed for Payment Process.
-              window.alert(JSON.stringify(payment))
+              deleteBox(
+                `You have to pay the fees of Rs. ${payment.amount} for your applying course`,
+                this.handleCourseFees
+              )
             }
           } else {
             const user = jwtDecode(response.data).data
@@ -1129,6 +1135,10 @@ class Form extends React.Component {
         }
       })
     }
+  }
+
+  handleCourseFees = () => {
+    console.log('Sab Bhadiya')
   }
 
   // 0: not null, >1: null
@@ -1191,6 +1201,7 @@ class Form extends React.Component {
         otherCompetition: '',
         otherCertificate: '',
         ncc: '',
+        uploadExtraMark: null,
         nccCertificate: '',
         freedomFighter: false,
         nationalSevaScheme: false,
@@ -1243,6 +1254,7 @@ class Form extends React.Component {
             otherCompetition: '',
             otherCertificate: '',
             ncc: '',
+            uploadExtraMark: null,
             nccCertificate: '',
             freedomFighter: false,
             nationalSevaScheme: false,
@@ -1284,6 +1296,7 @@ class Form extends React.Component {
               otherCompetition: '',
               otherCertificate: '',
               ncc: '',
+              uploadExtraMark: null,
               nccCertificate: '',
               freedomFighter: false,
               nationalSevaScheme: false,
@@ -1317,6 +1330,7 @@ class Form extends React.Component {
             otherCompetition: '',
             otherCertificate: '',
             ncc: '',
+            uploadExtraMark: null,
             nccCertificate: '',
             freedomFighter: false,
             nationalSevaScheme: false,
@@ -3425,7 +3439,7 @@ class Form extends React.Component {
                   </Typography>
                 )}
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item md={6} xs={12}>
+                  <Grid item xs={12}>
                     <TextField
                       InputLabelProps={{
                         classes: {
@@ -3442,7 +3456,7 @@ class Form extends React.Component {
                       fullWidth
                       variant={preview ? 'standard' : 'outlined'}
                       name="nationalCompetition"
-                      label="Select"
+                      label="Participation in Zone / National Competition"
                       value={nationalCompetition}
                       onChange={this.handleCalculateMerit}
                     >
@@ -3453,10 +3467,11 @@ class Form extends React.Component {
                       <MenuItem value="Participant,2">Participant</MenuItem>
                     </TextField>
                   </Grid>
+
                   {nationalCompetition &&
                     nationalCompetition !== 'none,0' &&
                     !preview && (
-                      <Grid item md={3} xs={6}>
+                      <Grid item xs={6}>
                         <FileUploader
                           buttonLabel="Upload Document"
                           accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -3467,13 +3482,16 @@ class Form extends React.Component {
                         />
                       </Grid>
                     )}
-                  <Grid item md={3} xs={6}>
-                    {nationalCertificate && <Success>Uploaded.</Success>}
-                  </Grid>
+
+                  {nationalCertificate && (
+                    <Grid item xs={6}>
+                      <Success>Uploaded.</Success>
+                    </Grid>
+                  )}
                   {courseType === '#pg2PG' ||
                   major1[0].subjectName === 'LLM' ||
                   major1[0].subjectName === 'LLB' ? (
-                    <Grid item md={6} xs={12}>
+                    <Grid item xs={12}>
                       <Typography>
                         विश्वविद्यालय की टीम के सदस्य के रुप में राष्ट्रीय
                         प्रतियोगिता में भाग लेने
@@ -3494,7 +3512,7 @@ class Form extends React.Component {
                         fullWidth
                         variant={preview ? 'standard' : 'outlined'}
                         name="otherCompetition"
-                        label="Select"
+                        label="Participation in Zone / National Competition from Other University"
                         value={otherCompetition}
                         onChange={this.handleCalculateMerit}
                       >
@@ -3506,24 +3524,27 @@ class Form extends React.Component {
                       </TextField>
                     </Grid>
                   ) : null}
-                  {otherCompetition &&
-                    otherCompetition !== 'none,0' &&
-                    !preview && (
-                      <Grid item md={3} xs={6}>
-                        <FileUploader
-                          buttonLabel="Upload Document"
-                          accept="image/jpg,image/jpeg,image/png,application/pdf"
-                          maxSize={5}
-                          handleChange={this.handleUpload}
-                          id={'otherCompetition'}
-                          name="otherCertificate"
-                        />
-                      </Grid>
-                    )}
-                  <Grid item md={3} xs={6}>
-                    {otherCertificate && <Success>Uploaded.</Success>}
-                  </Grid>
-                  <Grid item md={6} xs={12}>
+
+                  {otherCompetition && (
+                    <Grid item xs={6}>
+                      <FileUploader
+                        buttonLabel="Upload Document"
+                        accept="image/jpg,image/jpeg,image/png,application/pdf"
+                        maxSize={5}
+                        handleChange={this.handleUpload}
+                        id={'otherCompetition'}
+                        name="otherCertificate"
+                      />
+                    </Grid>
+                  )}
+
+                  {otherCertificate && (
+                    <Grid item xs={6}>
+                      <Success>Uploaded.</Success>
+                    </Grid>
+                  )}
+
+                  <Grid item xs={12}>
                     <TextField
                       InputLabelProps={{
                         classes: {
@@ -3554,7 +3575,7 @@ class Form extends React.Component {
                     </TextField>
                   </Grid>
                   {ncc && ncc !== 'none,0' && !preview && (
-                    <Grid item md={3} xs={6}>
+                    <Grid item xs={6}>
                       <FileUploader
                         buttonLabel="Upload Document"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -3565,9 +3586,11 @@ class Form extends React.Component {
                       />
                     </Grid>
                   )}
-                  <Grid item md={3} xs={6}>
-                    {nccCertificate && <Success>Uploaded.</Success>}
-                  </Grid>
+                  {nccCertificate && (
+                    <Grid item xs={6}>
+                      <Success>Uploaded.</Success>
+                    </Grid>
+                  )}
                   {courseType === '#ug1UG' ||
                   major1[0].subjectName === 'B.A. LLB' ? (
                     <Grid item xs={12}>
@@ -3671,7 +3694,7 @@ class Form extends React.Component {
                     roverRanger &&
                     roverRanger !== 'none,0' &&
                     !preview && (
-                      <Grid item md={2} xs={6}>
+                      <Grid item md={3} xs={6}>
                         <FileUploader
                           buttonLabel="Upload Document"
                           accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -3682,8 +3705,10 @@ class Form extends React.Component {
                         />
                       </Grid>
                     )}
-                  <Grid item md={4} xs={6}>
-                    {rrDocument && <Success>Uploaded.</Success>}
+                  <Grid item md={3} xs={6}>
+                    {rrDocument && !otherRoverRanger && (
+                      <Success>Uploaded.</Success>
+                    )}
                   </Grid>
                   {courseType === '#pg2PG' ||
                   major1[0].subjectName === 'LLM' ||
