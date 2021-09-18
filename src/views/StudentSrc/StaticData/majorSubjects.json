@@ -211,6 +211,13 @@
     },
     {
         "facultyId": "f1ScienceBio",
+        "subjectId": "s42BscBioPE",
+        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science"],
+        "subjectName": "Physical Education",
+        "year": ["2","3"]
+    },
+    {
+        "facultyId": "f1ScienceBio",
         "subjectId": "s42BscBioBotany",
         "streamId": ["$s1.3PCMB","$s1.2PCB"],
         "subjectName": "Botany",
@@ -277,6 +284,27 @@
         "subjectId": "s42BscMMS",
         "streamId": ["$s1.3PCMB","$s1Science"],
         "subjectName": "Military Science",
+        "year": ["2","3"]
+    },
+    {
+        "facultyId": "f12BA",
+        "subjectId": "s43HindiLang",
+        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
+        "subjectName": "Hindi Language",
+        "year": ["2","3"]
+    },
+    {
+        "facultyId": "f12BA",
+        "subjectId": "s44SanskritLang",
+        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
+        "subjectName": "Sanskrit Language",
+        "year": ["2","3"]
+    },
+    {
+        "facultyId": "f12BA",
+        "subjectId": "s45GenEng",
+        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
+        "subjectName": "General English",
         "year": ["2","3"]
     },
     {
