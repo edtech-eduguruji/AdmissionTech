@@ -16,6 +16,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import GetAppIcon from '@material-ui/icons/GetApp'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import jwtDecode from 'jwt-decode'
+import config from 'myconfig'
 import React from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { withRouter } from 'react-router-dom'
@@ -944,7 +945,7 @@ class Form extends React.Component {
 
     if (tryToSubmit === 1) {
       let payment = this.handleCalculateFees()
-      if (payment === 0) {
+      if (payment === null) {
         FormApi.submitForm(data).then((response) => {
           if (response.data) {
             if (btnValue === 1) {
@@ -966,6 +967,7 @@ class Form extends React.Component {
       } else {
         // Take "parameterId" and "amount" from  'payment' variable.
         // And Proceed for Payment Process.
+        window.alert(JSON.stringify(payment))
       }
     }
   }
@@ -1345,7 +1347,7 @@ class Form extends React.Component {
         }
       }
     } else {
-      return 0
+      return null
     }
   }
 
@@ -3671,10 +3673,7 @@ class Form extends React.Component {
             {!preview && !isView && (
               <Grid container item xs={12} justifyContent="center">
                 <ReCAPTCHA
-                  //prod key
-                  sitekey="6LdIozEcAAAAAFh_c4g4xLAygUWBo2V9sIrhZyoC"
-                  // -- test key
-                  // sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                  sitekey={config.CAPTCHA}
                   onChange={(token) => this.handleReCaptcha(token)}
                   onExpired={() => this.handleReCaptcha('')}
                 />
