@@ -836,6 +836,11 @@ class Form extends React.Component {
                     major1.length >= 1
                   ) {
                     fac = 1
+                  } else if (
+                    this.checkFaculty(faculty) < 0 &&
+                    major1.length >= 3
+                  ) {
+                    fac = 1
                   } else {
                     addErrorMsg(
                       "Fill the empty fields in 'Faculty and Courses Details' Section"
@@ -917,7 +922,7 @@ class Form extends React.Component {
                   }
                 } else {
                   addErrorMsg(
-                    "Fill the empty fields in 'Faculty and Courses Details' Section"
+                    "Choose the faculty in 'Faculty and Courses Details' Section"
                   )
                 }
               } else {
@@ -944,31 +949,31 @@ class Form extends React.Component {
     }
 
     if (tryToSubmit === 1) {
-      let payment = this.handleCalculateFees()
-      if (payment === null) {
-        FormApi.submitForm(data).then((response) => {
-          if (response.data) {
-            if (btnValue === 1) {
-              errorDialog('Your application is submitted successfully', 'Form')
-              LocalStorage.setUser(response.data)
-              redirectUrl('sFormSubmit', 1)
-            } else {
-              const user = jwtDecode(response.data).data
-              errorDialog(
-                'Your application is saved. Your registration no. is : ' +
-                  user.user_id,
-                'Form'
-              )
-              LocalStorage.removeUser()
-              redirectUrl('/login')
+      FormApi.submitForm(data).then((response) => {
+        if (response.data) {
+          if (btnValue === 1) {
+            errorDialog('Your application is submitted successfully', 'Form')
+            LocalStorage.setUser(response.data)
+            redirectUrl('sFormSubmit', 1)
+
+            let payment = this.handleCalculateFees()
+            if (payment !== null) {
+              // Take "parameterId" and "amount" from  'payment' variable.
+              // And Proceed for Payment Process.
+              window.alert(JSON.stringify(payment))
             }
+          } else {
+            const user = jwtDecode(response.data).data
+            errorDialog(
+              'Your application is saved. Your registration no. is : ' +
+                user.user_id,
+              'Form'
+            )
+            LocalStorage.removeUser()
+            redirectUrl('/login')
           }
-        })
-      } else {
-        // Take "parameterId" and "amount" from  'payment' variable.
-        // And Proceed for Payment Process.
-        window.alert(JSON.stringify(payment))
-      }
+        }
+      })
     }
   }
 
@@ -2832,7 +2837,9 @@ class Form extends React.Component {
               <Typography variant="caption">
                 {this.checkFaculty(faculty) > 0
                   ? 'You can select an option from the list'
-                  : 'You can select any two subjects from the list'}
+                  : this.checkFaculty(faculty) == 0
+                  ? 'You can select any two subjects from the list'
+                  : ''}
               </Typography>
               <Divider />
             </Grid>
