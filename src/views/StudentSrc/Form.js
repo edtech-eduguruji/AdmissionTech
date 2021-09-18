@@ -32,6 +32,7 @@ import { ASSETS } from '../../constants/Constants'
 import {
   addErrorMsg,
   closeDialog,
+  deleteBox,
   downloadPdf,
   errorDialog,
   mandatoryField,
@@ -1116,7 +1117,10 @@ class Form extends React.Component {
             if (payment !== null) {
               // Take "parameterId" and "amount" from  'payment' variable.
               // And Proceed for Payment Process.
-              window.alert(JSON.stringify(payment))
+              deleteBox(
+                `You have to pay the fees of Rs. ${payment.amount} for your applying course`,
+                this.handleCourseFees
+              )
             }
           } else {
             const user = jwtDecode(response.data).data
@@ -1131,6 +1135,10 @@ class Form extends React.Component {
         }
       })
     }
+  }
+
+  handleCourseFees = () => {
+    console.log('Sab Bhadiya')
   }
 
   // 0: not null, >1: null
