@@ -529,84 +529,14 @@
         "facultyId": "f15BBA",
         "subjectId": "s73BBAsem1",
         "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
-        "subjectName": "Semester 1",
-        "year": ["2","3"]
-    },
-    {
-        "facultyId": "f15BBA",
-        "subjectId": "s73BBAsem2",
-        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
-        "subjectName": "Semester 2",
-        "year": ["2","3"]
-    },
-    {
-        "facultyId": "f15BBA",
-        "subjectId": "s73BBAsem3",
-        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
-        "subjectName": "Semester 3",
-        "year": ["2","3"]
-    },
-    {
-        "facultyId": "f15BBA",
-        "subjectId": "s73BBAsem4",
-        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
-        "subjectName": "Semester 4",
-        "year": ["2","3"]
-    },
-    {
-        "facultyId": "f15BBA",
-        "subjectId": "s73BBAsem5",
-        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
-        "subjectName": "Semester 5",
-        "year": ["2","3"]
-    },
-    {
-        "facultyId": "f15BBA",
-        "subjectId": "s73BBAsem6",
-        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
-        "subjectName": "Semester 6",
+        "subjectName": "BBA",
         "year": ["2","3"]
     },
     {
         "facultyId": "f16BCA",
         "subjectId": "s74BCAsem1",
         "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
-        "subjectName": "Semester 1",
-        "year": ["2","3"]
-    },
-    {
-        "facultyId": "f16BCA",
-        "subjectId": "s74BCAsem2",
-        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
-        "subjectName": "Semester 2",
-        "year": ["2","3"]
-    },
-    {
-        "facultyId": "f16BCA",
-        "subjectId": "s74BCAsem3",
-        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
-        "subjectName": "Semester 3",
-        "year": ["2","3"]
-    },
-    {
-        "facultyId": "f16BCA",
-        "subjectId": "s74BCAsem4",
-        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
-        "subjectName": "Semester 4",
-        "year": ["2","3"]
-    },
-    {
-        "facultyId": "f16BCA",
-        "subjectId": "s74BCAsem5",
-        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
-        "subjectName": "Semester 5",
-        "year": ["2","3"]
-    },
-    {
-        "facultyId": "f16BCA",
-        "subjectId": "s74BCAsem6",
-        "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
-        "subjectName": "Semester 6",
+        "subjectName": "BCA",
         "year": ["2","3"]
     },
     {
