@@ -2,7 +2,6 @@ import { Divider, Grid, Typography } from '@material-ui/core'
 import config from 'myconfig'
 import React from 'react'
 import { withRouter } from 'react-router-dom'
-import uuid from 'react-uuid'
 import FormApi from '../../apis/FormApi'
 import CardContainer from '../../common/CardContainer'
 import LocalStorage from '../../common/LocalStorage'
@@ -17,25 +16,31 @@ class MakePayment extends React.Component {
     }
   }
 
-  componentDidMount() {
+  handleMakePayment = () => {
     if (validateUser()) {
       const userId = LocalStorage.getUser().user_id
-      const na = 'NA'
-      const str = `${
-        config.MERCHANTID
-      }|${uuid()}|${na}|252.00|${na}|${na}|${na}|INR|NA|R|${
-        config.SECURITYID
-      }|${na}|${na}|F|F1SCIENCE|${userId}|${na}|${na}|${na}|${na}|${na}|${
-        config.RESPONSEURL
-      }`
+      // const na = 'NA'
+      // const str = `${
+      //   config.MERCHANTID
+      // }|${uuid()}|${na}|252.00|${na}|${na}|${na}|INR|NA|R|${
+      //   config.SECURITYID
+      // }|${na}|${na}|F|F1SCIENCE|${userId}|${na}|${na}|${na}|${na}|${na}|${
+      //   config.RESPONSEURL
+      // }`
       const f = new FormData()
-      f.append('str', str)
+      // f.append('str', str)
+      f.append('userId', userId)
+      f.append('account', 'F1SCIENCE')
+      f.append('amount', '252.00')
+      f.append('responseUrl', config.RESPONSEURL)
       FormApi.createCheckSum(f)
         .then((res) => {
           if (res.status === 200 && res.data) {
-            const checksumVal = `${str}|${res.data}`
+            const checksumVal = res.data
             console.log('checksumVal', checksumVal)
-            this.setState({ checksumVal })
+            this.setState({ checksumVal }, () => {
+              document.getElementById('paymentform').submit()
+            })
           } else {
             errorDialog('Please try after sometime.')
           }
@@ -137,19 +142,21 @@ class MakePayment extends React.Component {
             </Grid>
             <Grid container item xs={12} justifyContent="center">
               <form
+                id="paymentform"
                 method="post"
                 action={config.PAYMENTAPI}
                 encType="application/x-www-form-urlencoded"
               >
                 <input hidden name="msg" value={checksumVal} />
-                <RegularButton
-                  type="submit"
-                  color="primary"
-                  disabled={checksumVal ? false : true}
-                >
-                  Make Payment
-                </RegularButton>
               </form>
+              <RegularButton
+                type="submit"
+                color="primary"
+                onClick={this.handleMakePayment}
+                disabled={checksumVal ? true : false}
+              >
+                Make Payment
+              </RegularButton>
             </Grid>
           </Grid>
         </CardContainer>
