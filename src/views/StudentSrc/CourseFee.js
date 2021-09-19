@@ -118,12 +118,14 @@ class CourseFee extends React.Component {
               direction="column"
               alignContent="center"
             >
-              <Typography variant="h6">Course Fee</Typography>
+              <Typography variant="h6" gutterBottom>
+                Course Fee
+              </Typography>
               <Divider />
+              <br />
               <Typography component="span" variant="body1">
-                <ul>
-                  <li>You have to pay the course fees of Rs. {courseFee} </li>
-                </ul>
+                Now you have to pay the course fees of Rs. {courseFee} to
+                complete your registration.
               </Typography>
             </Grid>
             <Grid container item xs={12} justifyContent="center">
