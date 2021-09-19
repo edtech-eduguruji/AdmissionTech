@@ -232,13 +232,6 @@
     },
     {
         "facultyId": "f1ScienceMaths",
-        "subjectId": "s42BscMMaths",
-        "streamId": ["$s1.3PCMB","$s1Science"],
-        "subjectName": "Mathematics",
-        "year": ["2","3"]
-    },
-    {
-        "facultyId": "f1ScienceMaths",
         "subjectId": "s42BscMPhysics",
         "streamId": ["$s1.3PCMB","$s1Science"],
         "subjectName": "Physics",
