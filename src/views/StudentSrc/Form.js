@@ -1372,7 +1372,11 @@ class Form extends React.Component {
       facultyId == 'f8fobt' ||
       facultyId == 'f9foj' ||
       facultyId == 'f12MA' ||
-      facultyId == 'f13MSC'
+      facultyId == 'f13MSC' ||
+      facultyId == 'f14BCOM' ||
+      facultyId == 'f17BioTech' ||
+      facultyId == 'f15BBA' ||
+      facultyId == 'f16BCA'
     ) {
       return 1 // For Single Selection
     } else if (
