@@ -33,6 +33,8 @@ class MakePayment extends React.Component {
       f.append('account', 'F1SCIENCE')
       f.append('amount', '252.00')
       f.append('responseUrl', config.RESPONSEURL)
+      f.append('courseFee', '0')
+
       FormApi.createCheckSum(f)
         .then((res) => {
           if (res.status === 200 && res.data) {

@@ -42,7 +42,16 @@ function withRouteLayout(
         } else {
           return <Redirect to="/student/summary"></Redirect>
         }
-      } else if (user.payment == '1' && user.submitted === '1') {
+      } else if (
+        (user.payment == '1' &&
+          user.submitted === '1' &&
+          user.admissionYear === '1' &&
+          user.courseFee == '0') ||
+        (user.payment == '1' &&
+          user.submitted === '1' &&
+          user.admissionYear !== '1' &&
+          user.courseFee == '1')
+      ) {
         if (
           currentRoute.layout + currentRoute.path ==
           '/student/formsubmitted'
@@ -57,6 +66,24 @@ function withRouteLayout(
           )
         } else {
           return <Redirect to="/student/formsubmitted"></Redirect>
+        }
+      } else if (
+        user.payment == '1' &&
+        user.submitted === '1' &&
+        user.admissionYear !== '1' &&
+        user.courseFee == '0'
+      ) {
+        if (currentRoute.layout + currentRoute.path == '/student/coursefee') {
+          return (
+            <WrappedComponent
+              currentRoute={currentRoute}
+              currentRole={currentRole}
+              config={config}
+              routes={routes}
+            />
+          )
+        } else {
+          return <Redirect to="/student/coursefee"></Redirect>
         }
       } else {
         return (

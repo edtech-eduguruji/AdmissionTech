@@ -35,6 +35,7 @@ import {
   deleteBox,
   downloadPdf,
   errorDialog,
+  handleCalculateFees,
   mandatoryField,
   redirectUrl,
   validateUser,
@@ -49,7 +50,6 @@ import courseTypeData from './StaticData/courseType.json'
 import documentsStatic from './StaticData/documents.json'
 import documentTypeData from './StaticData/documentType.json'
 import facultyData from './StaticData/faculty.json'
-import feesStatic from './StaticData/fees.json'
 import majorSubjectsData from './StaticData/majorSubjects.json'
 import meritCalculateData from './StaticData/meritCalculate.json'
 import religionData from './StaticData/religion.json'
@@ -1109,18 +1109,24 @@ class Form extends React.Component {
       FormApi.submitForm(data).then((response) => {
         if (response.data) {
           if (btnValue === 1) {
-            errorDialog('Your application is submitted successfully', 'Form')
             LocalStorage.setUser(response.data)
-            redirectUrl('sFormSubmit', 1)
-
-            let payment = this.handleCalculateFees()
+            let payment = handleCalculateFees(
+              admissionYear,
+              faculty,
+              gender,
+              major1
+            )
             if (payment !== null) {
               // Take "parameterId" and "amount" from  'payment' variable.
               // And Proceed for Payment Process.
               deleteBox(
-                `You have to pay the fees of Rs. ${payment.amount} for your applying course`,
+                `Your application is submitted successfully. 
+                You have to pay the fees of Rs. ${payment.amount} for your applied course`,
                 this.handleCourseFees
               )
+            } else {
+              errorDialog('Your application is submitted successfully', 'Form')
+              redirectUrl('sFormSubmit', 1)
             }
           } else {
             const user = jwtDecode(response.data).data
@@ -1139,6 +1145,7 @@ class Form extends React.Component {
 
   handleCourseFees = () => {
     console.log('Sab Bhadiya')
+    redirectUrl('sCourseFee', 1)
   }
 
   // 0: not null, >1: null
@@ -1486,41 +1493,6 @@ class Form extends React.Component {
       }
     } else {
       return []
-    }
-  }
-
-  handleCalculateFees = () => {
-    const { admissionYear, faculty, gender, major1 } = this.state
-    // return 0 - Means Applied for 1st Year
-    // Type 0  (Default Case With No Any Constraint)
-    // Type 1  (Same faculty For All Years)
-    // Type 2  (Same faculty with Gender Constraint)
-    // Type 3  (Gender and Practical Constraint)
-    if (admissionYear !== '1') {
-      let fees = feesStatic[faculty]
-      if (fees.type === 0) {
-        return { parameterId: fees.parameterId, amount: fees.fee }
-      } else if (fees.type === 1) {
-        return { parameterId: fees.parameterId, amount: fees[gender] }
-      } else if (fees.type === 2) {
-        return {
-          parameterId: fees.parameterId,
-          amount: fees[major1[0].subjectId][gender],
-        }
-      } else if (fees.type === 3) {
-        let count = 0
-        major1.map((item) => {
-          if (fees.practicalSubjects.includes(item.subjectId)) {
-            count++
-          }
-        })
-        return {
-          parameterId: fees.parameterId,
-          amount: fees.fee[count][gender],
-        }
-      }
-    } else {
-      return null
     }
   }
 
