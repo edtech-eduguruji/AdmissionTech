@@ -1,0 +1,27 @@
+[
+    {
+        "yearId": "1",
+        "year": "1st Year (New Admission)",
+        "courseType": ["#ug1UG","#pg2PG","pgd3PGD","law4LAW"]
+    },
+    {
+        "yearId": "2",
+        "year": "2nd Year",
+        "courseType": ["#ug1UG","#pg2PG","law4LAW"]
+    },
+    {
+        "yearId": "3",
+        "year": "3rd Year",
+        "courseType": ["law4LAW","#ug1UG"]
+    },
+    {
+        "yearId": "4",
+        "year": "4th Year",
+        "courseType": ["law4LAW"]
+    },
+    {
+        "yearId": "5",
+        "year": "5th Year",
+        "courseType": ["law4LAW"]
+    }
+]

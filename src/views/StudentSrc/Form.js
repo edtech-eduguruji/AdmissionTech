@@ -17,6 +17,7 @@ import GetAppIcon from '@material-ui/icons/GetApp'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import classNames from 'classnames'
 import jwtDecode from 'jwt-decode'
+import config from 'myconfig'
 import React from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { withRouter } from 'react-router-dom'
@@ -31,8 +32,10 @@ import { ASSETS } from '../../constants/Constants'
 import {
   addErrorMsg,
   closeDialog,
+  deleteBox,
   downloadPdf,
   errorDialog,
+  handleCalculateFees,
   mandatoryField,
   redirectUrl,
   validateUser,
@@ -40,6 +43,7 @@ import {
 import PaymentInfo from './PaymentInfo'
 import academicDetailsStatic from './StaticData/academic.json'
 import academicData from './StaticData/academicData.json'
+import yearsStatic from './StaticData/admissionYears.json'
 import categoryData from './StaticData/category.json'
 import citiesData from './StaticData/cities.json'
 import courseTypeData from './StaticData/courseType.json'
@@ -118,6 +122,7 @@ class Form extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      admissionYear: '',
       faculty: '',
       courseType: '',
       course: '',
@@ -235,7 +240,7 @@ class Form extends React.Component {
                 })
                 response.data.academicDetails = response.data.academicDetails
                   ? JSON.parse(this.verifyString(response.data.academicDetails))
-                  : academicDetailsStatic['#ug1UG']
+                  : []
                 response.data.documents = response.data.documents
                   ? JSON.parse(response.data.documents)
                   : []
@@ -265,16 +270,13 @@ class Form extends React.Component {
                     nationalSevaScheme: !response.data.nationalSevaScheme
                       ? 0
                       : 5,
-                    ncc: 0,
-                    roverRanger: 0,
-                    otherRoverRanger: 0,
-                    // ncc: response.data.ncc
-                    //   ? parseInt(response.data.ncc.split(',')[1])
-                    //   : 0,
-                    // roverRanger: response.data.roverRanger
-                    //   ? parseInt(response.data.roverRanger.split(',')[1])
-                    //   : 0,
-                    // otherRoverRanger: !response.data.nationalSevaScheme ? 0 : 3,
+                    ncc: response.data.ncc
+                      ? parseInt(response.data.ncc.split(',')[1])
+                      : 0,
+                    roverRanger: response.data.roverRanger
+                      ? parseInt(response.data.roverRanger.split(',')[1])
+                      : 0,
+                    otherRoverRanger: !response.data.otherRoverRanger ? 0 : 3,
                     bcom: !response.data.bcom ? 0 : 5,
                     other: !response.data.other
                       ? 0
@@ -312,9 +314,76 @@ class Form extends React.Component {
     const name = event.target.name
     if (name === 'courseType') {
       this.setState({
-        academicDetails: academicDetailsStatic[event.target.value],
-        documents: documentsStatic[event.target.value],
         [event.target.name]: event.target.value,
+        admissionYear: '',
+        academicDetails: [],
+        documents: [],
+        faculty: '',
+        major1: [],
+        major2: '',
+        major3: '',
+        major4: '',
+        vocationalSem1: '',
+        vocationalSem2: '',
+        coCurriculumSem1: '',
+        coCurriculumSem2: '',
+        nationalCompetition: '',
+        nationalCertificate: '',
+        otherCompetition: '',
+        otherCertificate: '',
+        ncc: '',
+        uploadExtraMark: null,
+        nccCertificate: '',
+        freedomFighter: false,
+        nationalSevaScheme: false,
+        nssDocument: '',
+        roverRanger: '',
+        otherRoverRanger: false,
+        rrDocument: '',
+        bcom: false,
+        other: '',
+        totalMerit: {
+          ...meritCalculateData,
+        },
+        totalMeritCount: 0,
+      })
+    } else if (name === 'admissionYear') {
+      this.setState({
+        [event.target.name]: event.target.value,
+        academicDetails:
+          academicDetailsStatic[
+            this.state.courseType + '-' + event.target.value
+          ],
+        documents:
+          documentsStatic[this.state.courseType + '-' + event.target.value],
+        faculty: '',
+        major1: [],
+        major2: '',
+        major3: '',
+        major4: '',
+        vocationalSem1: '',
+        vocationalSem2: '',
+        coCurriculumSem1: '',
+        coCurriculumSem2: '',
+        nationalCompetition: '',
+        nationalCertificate: '',
+        otherCompetition: '',
+        otherCertificate: '',
+        ncc: '',
+        uploadExtraMark: null,
+        nccCertificate: '',
+        freedomFighter: false,
+        nationalSevaScheme: false,
+        nssDocument: '',
+        roverRanger: '',
+        otherRoverRanger: false,
+        rrDocument: '',
+        bcom: false,
+        other: '',
+        totalMerit: {
+          ...meritCalculateData,
+        },
+        totalMeritCount: 0,
       })
     } else if (name === 'major2') {
       this.setState({
@@ -352,12 +421,27 @@ class Form extends React.Component {
     })
   }
 
-  handleInputChange = (e, index) => {
-    const { name, value } = e.target
+  handleInputChange = (e, index, val) => {
+    const { name, value, checked } = e.target
     const { academicDetails } = this.state
     const list = [...academicDetails]
-    if (value.match('^[A-Za-z0-9()/\\+-., $#]*$')) {
-      list[index][name] = value
+    if (val || value.match('^[A-Za-z0-9()/\\+-., $#]*$')) {
+      if (val) {
+        this.handleMultiDropDownData(e, val)
+      } else if (name === 'promoted') {
+        list[index][name] = checked
+        if (checked) {
+          list[index]['totalMarks'] = 0
+          list[index]['marksObtained'] = 0
+          list[index]['percentage'] = '_'
+        } else {
+          list[index]['totalMarks'] = ''
+          list[index]['marksObtained'] = ''
+          list[index]['percentage'] = ''
+        }
+      } else {
+        list[index][name] = value
+      }
       if (name === 'totalMarks' || name === 'marksObtained') {
         if (
           list[index]['totalMarks'] !== '' &&
@@ -369,6 +453,12 @@ class Form extends React.Component {
           list[index]['percentage'] = p + '%'
         }
       } else if (name === 'stream') {
+        list.map((item, i) => {
+          if (Object.keys(item).find((key) => key === 'faculty')) {
+            item.faculty = ''
+            item.major1 = []
+          }
+        })
         this.setState({
           faculty: '',
           major1: [],
@@ -378,10 +468,28 @@ class Form extends React.Component {
           vocationalSem1: '',
           vocationalSem2: '',
         })
+      } else if (name === 'faculty') {
+        list.map((item) => {
+          if (Object.keys(item).find((key) => key === 'faculty')) {
+            item.faculty = value
+            item.major1 = []
+          }
+        })
+        this.setState({
+          faculty: value,
+          major1: [],
+          major2: '',
+          major3: '',
+          major4: '',
+          vocationalSem1: '',
+          vocationalSem2: '',
+        })
       }
-      this.setState({
-        academicDetails: list,
-      })
+      if (!val) {
+        this.setState({
+          academicDetails: list,
+        })
+      }
     }
   }
 
@@ -472,6 +580,7 @@ class Form extends React.Component {
     const value = event.target.value
     var { totalMerit } = this.state
     let total = 0
+    console.log(totalMerit)
     totalMerit[name] = parseInt(value.split(',')[1])
     total = Object.values(totalMerit).reduce(
       (currentVal, nextVal) => currentVal + nextVal
@@ -520,6 +629,7 @@ class Form extends React.Component {
 
   handleSubmitForm = (btnValue) => () => {
     const {
+      admissionYear,
       token,
       major1,
       major2,
@@ -595,6 +705,7 @@ class Form extends React.Component {
         ? LocalStorage.getUser().user_id
         : ''
     )
+    data.append('admissionYear', admissionYear)
     data.append('faculty', faculty)
     data.append('courseType', courseType)
     data.append('mediumOfInstitution', mediumOfInstitution)
@@ -693,7 +804,8 @@ class Form extends React.Component {
       ) {
         if (
           wrn &&
-          (form ||
+          (admissionYear !== '1' ||
+            form ||
             form != undefined ||
             form != null ||
             form != 'null' ||
@@ -747,7 +859,8 @@ class Form extends React.Component {
               if (
                 academicDetails &&
                 this.checkJSONfields(academicDetails) <= 0 &&
-                courseType
+                courseType &&
+                admissionYear
               ) {
                 if (faculty && faculty !== '') {
                   let fac = 0
@@ -766,6 +879,11 @@ class Form extends React.Component {
                     major1.length >= 1
                   ) {
                     fac = 1
+                  } else if (
+                    this.checkFaculty(faculty) < 0 &&
+                    major1.length >= 3
+                  ) {
+                    fac = 1
                   } else {
                     addErrorMsg(
                       "Fill the empty fields in 'Faculty and Courses Details' Section"
@@ -774,64 +892,178 @@ class Form extends React.Component {
                   }
 
                   if (fac == 1 && this.checkJSONfields(documents) <= 0) {
+                    // ug 1, pg 1, law- llm 1, llb 1
                     let naCCount = 0,
                       nccCount = 0,
                       nSSCount = 0,
-                      otherCount = 0
+                      otherCount = 0,
+                      otherCertCount = 0,
+                      rangeRoverCount = 0,
+                      validation = 0
                     if (
-                      (!nationalCompetition ||
-                        nationalCompetition == 'none,0') &&
-                      !nationalCertificate
+                      (courseType == '#ug1UG' && admissionYear == '1') ||
+                      (courseType == 'law4LAW' &&
+                        admissionYear == '1' &&
+                        major1.length >= 1 &&
+                        major1[0].subjectId == '$22ballb')
                     ) {
-                      naCCount = 1
+                      validation = 1
+                      if (
+                        (!nationalCompetition ||
+                          nationalCompetition == 'none,0') &&
+                        !nationalCertificate
+                      ) {
+                        naCCount = 1
+                      } else if (
+                        nationalCompetition !== 'none,0' &&
+                        nationalCertificate
+                      ) {
+                        naCCount = 1
+                      } else {
+                        addErrorMsg(
+                          'Upload "Participation in Zone / National Competition" Certificate'
+                        )
+                        return
+                      }
+
+                      if ((!ncc || ncc == 'none,0') && !nccCertificate) {
+                        nccCount = 1
+                      } else if (ncc !== 'none,0' && nccCertificate) {
+                        nccCount = 1
+                      } else {
+                        addErrorMsg('Upload "NCC/Cadet" Certificate')
+                        return
+                      }
+
+                      if (!nationalSevaScheme) {
+                        nSSCount = 1
+                      } else if (nationalSevaScheme && nssDocument) {
+                        nSSCount = 1
+                      } else {
+                        addErrorMsg('Upload "NSS" Document')
+                        return
+                      }
+
+                      if ((!other || other == 'none,0') && !uploadExtraMark) {
+                        otherCount = 1
+                      } else if (other !== 'none,0' && uploadExtraMark) {
+                        otherCount = 1
+                      } else {
+                        addErrorMsg(
+                          'Upload "Other Details / Extra Marks" Certificate'
+                        )
+                        return
+                      }
+
+                      if (
+                        naCCount == 1 &&
+                        nccCount == 1 &&
+                        nSSCount == 1 &&
+                        otherCount == 1
+                      ) {
+                      } else {
+                        return
+                      }
                     } else if (
-                      nationalCompetition !== 'none,0' &&
-                      nationalCertificate
+                      (courseType == '#pg2PG' && admissionYear == '1') ||
+                      (courseType == 'law4LAW' && admissionYear == '1')
                     ) {
-                      naCCount = 1
-                    } else {
-                      addErrorMsg(
-                        'Upload "Participation in Zone / National Competition" Certificate'
-                      )
-                      return
+                      validation = 1
+                      if (
+                        (!nationalCompetition ||
+                          nationalCompetition == 'none,0') &&
+                        !nationalCertificate
+                      ) {
+                        naCCount = 1
+                      } else if (
+                        nationalCompetition !== 'none,0' &&
+                        nationalCertificate
+                      ) {
+                        naCCount = 1
+                      } else {
+                        addErrorMsg(
+                          'Upload "Participation in Zone / National Competition" Certificate'
+                        )
+                        return
+                      }
+
+                      if (
+                        (!otherCompetition || otherCompetition == 'none,0') &&
+                        !otherCertificate
+                      ) {
+                        otherCertCount = 1
+                      } else if (
+                        otherCompetition !== 'none,0' &&
+                        otherCertificate
+                      ) {
+                        otherCertCount = 1
+                      } else {
+                        addErrorMsg(
+                          'Upload "Participation in Zone / National Competition" from Other University'
+                        )
+                        return
+                      }
+
+                      if (
+                        (!roverRanger || roverRanger == 'none,0') &&
+                        !rrDocument
+                      ) {
+                        rangeRoverCount = 1
+                      } else if (roverRanger !== 'none,0' && rrDocument) {
+                        rangeRoverCount = 1
+                      } else if (otherRoverRanger) {
+                        rangeRoverCount = 1
+                      } else {
+                        addErrorMsg(
+                          'Please upload certificate or checkbox for range rover'
+                        )
+                        return
+                      }
+
+                      if ((!ncc || ncc == 'none,0') && !nccCertificate) {
+                        nccCount = 1
+                      } else if (ncc !== 'none,0' && nccCertificate) {
+                        nccCount = 1
+                      } else {
+                        addErrorMsg('Upload "NCC/Cadet" Certificate')
+                        return
+                      }
+
+                      if (!nationalSevaScheme) {
+                        nSSCount = 1
+                      } else if (nationalSevaScheme && nssDocument) {
+                        nSSCount = 1
+                      } else {
+                        addErrorMsg('Upload "NSS" Document')
+                        return
+                      }
+
+                      if ((!other || other == 'none,0') && !uploadExtraMark) {
+                        otherCount = 1
+                      } else if (other !== 'none,0' && uploadExtraMark) {
+                        otherCount = 1
+                      } else {
+                        addErrorMsg(
+                          'Upload "Other Details / Extra Marks" Certificate'
+                        )
+                        return
+                      }
+
+                      if (
+                        naCCount == 1 &&
+                        otherCertCount == 1 &&
+                        rangeRoverCount == 1 &&
+                        naCCount == 1 &&
+                        nccCount == 1 &&
+                        nSSCount == 1 &&
+                        otherCount == 1
+                      ) {
+                      } else {
+                        return
+                      }
                     }
 
-                    if ((!ncc || ncc == 'none,0') && !nccCertificate) {
-                      nccCount = 1
-                    } else if (ncc !== 'none,0' && nccCertificate) {
-                      nccCount = 1
-                    } else {
-                      addErrorMsg('Upload "NCC/Cadet" Certificate')
-                      return
-                    }
-
-                    if (!nationalSevaScheme) {
-                      nSSCount = 1
-                    } else if (nationalSevaScheme && nssDocument) {
-                      nSSCount = 1
-                    } else {
-                      addErrorMsg('Upload "NSS" Document')
-                      return
-                    }
-
-                    if ((!other || other == 'none,0') && !uploadExtraMark) {
-                      otherCount = 1
-                    } else if (other !== 'none,0' && uploadExtraMark) {
-                      otherCount = 1
-                    } else {
-                      addErrorMsg(
-                        'Upload "Other Details / Extra Marks" Certificate'
-                      )
-                      return
-                    }
-
-                    if (
-                      naCCount == 1 &&
-                      nccCount == 1 &&
-                      nSSCount == 1 &&
-                      otherCount == 1 &&
-                      signature
-                    ) {
+                    if (signature) {
                       if (token) {
                         tryToSubmit = 1
                       } else {
@@ -847,7 +1079,7 @@ class Form extends React.Component {
                   }
                 } else {
                   addErrorMsg(
-                    "Fill the empty fields in 'Faculty and Courses Details' Section"
+                    "Choose the faculty in 'Faculty and Courses Details' Section"
                   )
                 }
               } else {
@@ -877,9 +1109,25 @@ class Form extends React.Component {
       FormApi.submitForm(data).then((response) => {
         if (response.data) {
           if (btnValue === 1) {
-            errorDialog('Your application is submitted successfully', 'Form')
             LocalStorage.setUser(response.data)
-            redirectUrl('sFormSubmit', 1)
+            let payment = handleCalculateFees(
+              admissionYear,
+              faculty,
+              gender,
+              major1
+            )
+            if (payment !== null) {
+              // Take "parameterId" and "amount" from  'payment' variable.
+              // And Proceed for Payment Process.
+              deleteBox(
+                `Your application is submitted successfully. 
+                You have to pay the fees of Rs. ${payment.amount} for your applied course`,
+                this.handleCourseFees
+              )
+            } else {
+              errorDialog('Your application is submitted successfully', 'Form')
+              redirectUrl('sFormSubmit', 1)
+            }
           } else {
             const user = jwtDecode(response.data).data
             errorDialog(
@@ -893,6 +1141,11 @@ class Form extends React.Component {
         }
       })
     }
+  }
+
+  handleCourseFees = () => {
+    console.log('Sab Bhadiya')
+    redirectUrl('sCourseFee', 1)
   }
 
   // 0: not null, >1: null
@@ -923,8 +1176,24 @@ class Form extends React.Component {
   }
 
   handleMultiDropDownData = (event, value) => {
-    const { faculty } = this.state
-    if (this.state.major1.length > value.length || value.length === 0) {
+    let { major1, faculty, academicDetails, documents } = this.state
+    if (major1.length > value.length || value.length === 0) {
+      if (major1[0].subjectName === 'LLM' && value.length === 0) {
+        academicDetails.splice(2, 1)
+        academicDetails.splice(2, 1)
+        documents.splice(2, 1)
+        documents.splice(2, 1)
+      } else if (major1[0].subjectName === 'LLB' && value.length === 0) {
+        academicDetails.splice(2, 1)
+        documents.splice(2, 1)
+      }
+      academicDetails.map((item) => {
+        if (
+          Object.keys(item).find((key) => key === 'major1' || key === 'faculty')
+        ) {
+          item.major1 = value
+        }
+      })
       this.setState({
         major1: value,
         major2: '',
@@ -932,17 +1201,157 @@ class Form extends React.Component {
         major4: '',
         vocationalSem1: '',
         vocationalSem2: '',
+        academicDetails,
+        documents,
+        nationalCompetition: '',
+        nationalCertificate: '',
+        otherCompetition: '',
+        otherCertificate: '',
+        ncc: '',
+        uploadExtraMark: null,
+        nccCertificate: '',
+        freedomFighter: false,
+        nationalSevaScheme: false,
+        nssDocument: '',
+        roverRanger: '',
+        otherRoverRanger: false,
+        rrDocument: '',
+        bcom: false,
+        other: '',
+        totalMerit: {
+          ...meritCalculateData,
+        },
+        totalMeritCount: 0,
       })
     } else {
       if (this.checkFaculty(faculty) > 0) {
         if (value.length <= 1) {
-          this.setState({ major1: value })
+          if (value[0].subjectName === 'LLM') {
+            academicDetails.splice(
+              2,
+              0,
+              academicDetailsStatic.GraduationDegree,
+              academicDetailsStatic.LLB
+            )
+            documents.splice(
+              2,
+              0,
+              documentsStatic.GraduationDegree,
+              documentsStatic.LLB
+            )
+          } else if (value[0].subjectName === 'LLB') {
+            academicDetails.splice(2, 0, academicDetailsStatic.GraduationDegree)
+            documents.splice(2, 0, documentsStatic.GraduationDegree)
+          }
+          academicDetails.map((item) => {
+            if (
+              Object.keys(item).find(
+                (key) => key === 'major1' || key === 'faculty'
+              )
+            ) {
+              item.major1 = value
+            }
+          })
+          this.setState({
+            major1: value,
+            academicDetails,
+            documents,
+            nationalCompetition: '',
+            nationalCertificate: '',
+            otherCompetition: '',
+            otherCertificate: '',
+            ncc: '',
+            uploadExtraMark: null,
+            nccCertificate: '',
+            freedomFighter: false,
+            nationalSevaScheme: false,
+            nssDocument: '',
+            roverRanger: '',
+            otherRoverRanger: false,
+            rrDocument: '',
+            bcom: false,
+            other: '',
+            totalMerit: {
+              ...meritCalculateData,
+            },
+            totalMeritCount: 0,
+          })
         } else {
           addErrorMsg('You can select only 1 subjects.')
         }
+      } else if (this.checkFaculty(faculty) === -1) {
+        if (value.length <= 3) {
+          let combination = ['s43HindiLit', 's44SanskritLit', 's45EnglishLit']
+          value.map((item) => {
+            if (combination.includes(item.subjectId)) {
+              combination.splice(combination.indexOf(item.subjectId), 1)
+            }
+          })
+          if (combination.length === 0) {
+            addErrorMsg('This Combination is Not Allowed')
+          } else {
+            academicDetails.map((item) => {
+              if (Object.keys(item).find((key) => key === 'major1')) {
+                item.major1 = value
+              }
+            })
+            this.setState({
+              major1: value,
+              academicDetails,
+              nationalCompetition: '',
+              nationalCertificate: '',
+              otherCompetition: '',
+              otherCertificate: '',
+              ncc: '',
+              uploadExtraMark: null,
+              nccCertificate: '',
+              freedomFighter: false,
+              nationalSevaScheme: false,
+              nssDocument: '',
+              roverRanger: '',
+              otherRoverRanger: false,
+              rrDocument: '',
+              bcom: false,
+              other: '',
+              totalMerit: {
+                ...meritCalculateData,
+              },
+              totalMeritCount: 0,
+            })
+          }
+        } else {
+          addErrorMsg('You can select only 3 subjects.')
+        }
       } else {
         if (value.length <= 2) {
-          this.setState({ major1: value })
+          academicDetails.map((item) => {
+            if (Object.keys(item).find((key) => key === 'major1')) {
+              item.major1 = value
+            }
+          })
+          this.setState({
+            major1: value,
+            academicDetails,
+            nationalCompetition: '',
+            nationalCertificate: '',
+            otherCompetition: '',
+            otherCertificate: '',
+            ncc: '',
+            uploadExtraMark: null,
+            nccCertificate: '',
+            freedomFighter: false,
+            nationalSevaScheme: false,
+            nssDocument: '',
+            roverRanger: '',
+            otherRoverRanger: false,
+            rrDocument: '',
+            bcom: false,
+            other: '',
+            totalMerit: {
+              ...meritCalculateData,
+            },
+            totalMeritCount: 0,
+          })
         } else {
           addErrorMsg('You can select only 2 subjects.')
         }
@@ -955,16 +1364,29 @@ class Form extends React.Component {
   }
 
   checkFaculty = (facultyId) => {
-    //single course selection faculty
+    // Faculty wise course selection
     if (
       facultyId == 'f5foc' ||
       facultyId == 'f6fom' ||
       facultyId == 'f7fols' ||
-      facultyId == 'f8fobt'
+      facultyId == 'f8fobt' ||
+      facultyId == 'f9foj' ||
+      facultyId == 'f12MA' ||
+      facultyId == 'f13MSC' ||
+      facultyId == 'f14BCOM' ||
+      facultyId == 'f17BioTech' ||
+      facultyId == 'f15BBA' ||
+      facultyId == 'f16BCA'
     ) {
-      return 1
+      return 1 // For Single Selection
+    } else if (
+      facultyId == 'f1ScienceBio' ||
+      facultyId == 'f1ScienceMaths' ||
+      facultyId == 'f12BA'
+    ) {
+      return -1 // For 3 Selections
     } else {
-      return 0
+      return 0 // For 2 Selections
     }
   }
 
@@ -1031,7 +1453,8 @@ class Form extends React.Component {
   }
 
   filterMajorSubjects = () => {
-    const { faculty, major1, major2, academicDetails } = this.state
+    const { faculty, major1, major2, academicDetails, admissionYear } =
+      this.state
     if (
       academicDetails &&
       academicDetails.length > 0 &&
@@ -1040,6 +1463,7 @@ class Form extends React.Component {
       let subjects = majorSubjectsData.filter(
         (item) =>
           item.streamId.includes(academicDetails[1].stream) &&
+          item.year.includes(admissionYear) &&
           item.facultyId === faculty
       )
       major1.map((item) => {
@@ -1079,6 +1503,7 @@ class Form extends React.Component {
   render() {
     const { classes } = this.props
     const {
+      admissionYear,
       faculty,
       courseType,
       photo,
@@ -1283,6 +1708,38 @@ class Form extends React.Component {
                 select
                 fullWidth
                 variant={preview ? 'standard' : 'outlined'}
+                name="admissionYear"
+                label={mandatoryField('Admission Year')}
+                value={admissionYear}
+                onChange={this.handleChangeFields}
+              >
+                {courseType &&
+                  yearsStatic.map(
+                    (item, i) =>
+                      item.courseType.includes(courseType) && (
+                        <MenuItem key={i} value={item.yearId}>
+                          {item.year}
+                        </MenuItem>
+                      )
+                  )}
+              </TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                InputLabelProps={{
+                  classes: {
+                    root: classes.labelRoot,
+                  },
+                }}
+                InputProps={{
+                  classes: {
+                    disabled: classes.disabled,
+                  },
+                }}
+                disabled={preview}
+                select
+                fullWidth
+                variant={preview ? 'standard' : 'outlined'}
                 name="mediumOfInstitution"
                 label={mandatoryField('Medium of Teaching')}
                 value={mediumOfInstitution}
@@ -1336,18 +1793,26 @@ class Form extends React.Component {
             <Grid item md={6} xs={12}>
               <Grid container alignItems="center">
                 <Grid item xs={12}>
-                  <Typography>
-                    Enter (WRN Number) university web registration no and upload
-                    certification (in PDF or Image)
-                    <br />
-                    (*Mandatory to upload)
-                  </Typography>
+                  {!admissionYear || admissionYear === '1' ? (
+                    <Typography>
+                      Enter (WRN Number) university web registration no and
+                      upload certification (in PDF or Image)
+                      <br />
+                      (*Mandatory to upload)
+                    </Typography>
+                  ) : (
+                    <Typography>(*University Exam Roll No.)</Typography>
+                  )}
                   <CustomInput
                     isMandatory={true}
                     minLength={Validation['wrn']['minLength']}
                     maxLength={Validation['wrn']['maxLength']}
                     smallLabel
-                    labelText={mandatoryField('Web Registration No.')}
+                    labelText={mandatoryField(
+                      !admissionYear || admissionYear === '1'
+                        ? 'Web Registration No.'
+                        : 'Roll No.'
+                    )}
                     formControlProps={{
                       fullWidth: true,
                     }}
@@ -1355,14 +1820,17 @@ class Form extends React.Component {
                       name: 'wrn',
                       value: wrn,
                       disabled: preview,
-                      helperText: 'For Ex: WRN21*********',
+                      helperText:
+                        !admissionYear || admissionYear === '1'
+                          ? 'For Ex: WRN21*********'
+                          : '',
                     }}
                     handleChange={this.handleChangeFields}
                   />
                 </Grid>
                 <Grid container item xs={12} justifyContent="center">
                   <div className="alignCenter">
-                    {!preview && (
+                    {!preview && admissionYear === '1' && (
                       <FileUploader
                         buttonLabel="Upload Form"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -2081,7 +2549,8 @@ class Form extends React.Component {
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">Academic Details</Typography>
             </Grid>
-            {courseType !== '' &&
+            {courseType &&
+            admissionYear &&
             academicDetails &&
             academicDetails.length > 0 ? (
               <Grid item xs={12}>
@@ -2101,45 +2570,121 @@ class Form extends React.Component {
                           inputProps={{
                             name: 'nameOfExam',
                             value: item.nameOfExam,
-                            disabled: i < 2,
+                            disabled: item.isDelete === 0,
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                       </Grid>
-                      <Grid item md={2} xs={12}>
-                        <CustomInput
-                          isMandatory={true}
-                          minLength={Validation['board']['minLength']}
-                          maxLength={Validation['board']['maxLength']}
-                          smallLabel
-                          labelText={mandatoryField('Name of Board')}
-                          formControlProps={{
-                            fullWidth: true,
-                          }}
-                          inputProps={{
-                            name: 'board',
-                            value: item.board,
-                            disabled: preview,
-                          }}
-                          handleChange={(e) => this.handleInputChange(e, i)}
-                        />
-                        <CustomInput
-                          isMandatory={true}
-                          minLength={Validation['institution']['minLength']}
-                          maxLength={Validation['institution']['maxLength']}
-                          smallLabel
-                          labelText={mandatoryField('Name of Institution')}
-                          formControlProps={{
-                            fullWidth: true,
-                          }}
-                          inputProps={{
-                            name: 'institution',
-                            value: item.institution,
-                            disabled: preview,
-                          }}
-                          handleChange={(e) => this.handleInputChange(e, i)}
-                        />
-                      </Grid>
+                      {Object.keys(item).find((key) => key === 'faculty') ? (
+                        <Grid item md={3} xs={12}>
+                          <TextField
+                            disabled={preview}
+                            InputLabelProps={{
+                              classes: {
+                                root: classes.labelRoot,
+                              },
+                            }}
+                            InputProps={{
+                              classes: {
+                                disabled: classes.disabled,
+                              },
+                            }}
+                            fullWidth
+                            select
+                            label={mandatoryField('Select Faculty')}
+                            value={item.faculty}
+                            onChange={(e) => this.handleInputChange(e, i)}
+                            variant={preview ? 'standard' : 'outlined'}
+                            name="faculty"
+                          >
+                            {academicDetails[1].stream !== '' &&
+                              facultyData.map(
+                                (itm, key) =>
+                                  itm.year.includes(admissionYear) &&
+                                  itm.courseType === courseType && (
+                                    <MenuItem
+                                      key={key}
+                                      disabled={
+                                        ((academicDetails[1].stream ===
+                                          '$s2Commerce' ||
+                                          academicDetails[1].stream ===
+                                            '$s3Arts') &&
+                                          itm.facultyId === 'f1Science') ||
+                                        ((academicDetails[1].stream ===
+                                          '$s2Commerce' ||
+                                          academicDetails[1].stream ===
+                                            '$s3Arts' ||
+                                          academicDetails[1].stream ===
+                                            '$s1Science') &&
+                                          itm.facultyId === 'f8fobt')
+                                      }
+                                      value={itm.facultyId}
+                                    >
+                                      {itm.faculty}
+                                    </MenuItem>
+                                  )
+                              )}
+                          </TextField>
+                          <Box pt="5px">
+                            <Autocomplete
+                              disabled={preview}
+                              value={item.major1}
+                              onChange={(e, value) =>
+                                this.handleInputChange(e, i, value)
+                              }
+                              multiple
+                              name="major1"
+                              options={this.filterMajorSubjects(item.major1)}
+                              getOptionLabel={(option) => option.subjectName}
+                              filterSelectedOptions
+                              renderInput={(params) => (
+                                <TextField
+                                  label={mandatoryField(
+                                    'Select Subject / Course'
+                                  )}
+                                  {...params}
+                                  variant="outlined"
+                                />
+                              )}
+                            />
+                          </Box>
+                        </Grid>
+                      ) : (
+                        <Grid item md={2} xs={12}>
+                          <CustomInput
+                            isMandatory={true}
+                            minLength={Validation['board']['minLength']}
+                            maxLength={Validation['board']['maxLength']}
+                            smallLabel
+                            labelText={mandatoryField('Name of Board')}
+                            formControlProps={{
+                              fullWidth: true,
+                            }}
+                            inputProps={{
+                              name: 'board',
+                              value: item.board,
+                              disabled: preview,
+                            }}
+                            handleChange={(e) => this.handleInputChange(e, i)}
+                          />
+                          <CustomInput
+                            isMandatory={true}
+                            minLength={Validation['institution']['minLength']}
+                            maxLength={Validation['institution']['maxLength']}
+                            smallLabel
+                            labelText={mandatoryField('Name of Institution')}
+                            formControlProps={{
+                              fullWidth: true,
+                            }}
+                            inputProps={{
+                              name: 'institution',
+                              value: item.institution,
+                              disabled: preview,
+                            }}
+                            handleChange={(e) => this.handleInputChange(e, i)}
+                          />
+                        </Grid>
+                      )}
                       <Grid item md={1} xs={6}>
                         <CustomInput
                           isMandatory={true}
@@ -2191,7 +2736,7 @@ class Form extends React.Component {
                             name: 'totalMarks',
                             value: item.totalMarks,
                             type: 'number',
-                            disabled: preview,
+                            disabled: preview || item.promoted,
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
@@ -2208,7 +2753,7 @@ class Form extends React.Component {
                             name: 'marksObtained',
                             value: item.marksObtained,
                             type: 'number',
-                            disabled: preview,
+                            disabled: preview || item.promoted,
                           }}
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
@@ -2231,28 +2776,58 @@ class Form extends React.Component {
                           handleChange={(e) => this.handleInputChange(e, i)}
                         />
                       </Grid>
-                      <Grid item md={1} xs={12}>
-                        <CustomInput
-                          isMandatory={true}
-                          minLength={Validation['subjects']['minLength']}
-                          maxLength={Validation['subjects']['maxLength']}
-                          smallLabel
-                          labelText={mandatoryField('Subjects')}
-                          formControlProps={{
-                            fullWidth: true,
-                          }}
-                          inputProps={{
-                            name: 'subjects',
-                            value: item.subjects,
-                            disabled: preview,
-                          }}
-                          handleChange={(e) => this.handleInputChange(e, i)}
-                        />
+                      <Grid
+                        item
+                        md={
+                          Object.keys(item).find(
+                            (key) => key === 'stream' || key === 'faculty'
+                          )
+                            ? 1
+                            : item.isDelete === 0
+                            ? 3
+                            : 2
+                        }
+                        xs={
+                          Object.keys(item).find((key) => key === 'stream')
+                            ? 6
+                            : 12
+                        }
+                      >
+                        {Object.keys(item).find((key) => key === 'promoted') ? (
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                value="5"
+                                checked={item.promoted}
+                                onChange={(e) => this.handleInputChange(e, i)}
+                                name="promoted"
+                                color="primary"
+                                disabled={preview}
+                              />
+                            }
+                            label="Promoted?"
+                          />
+                        ) : (
+                          <CustomInput
+                            isMandatory={true}
+                            minLength={Validation['subjects']['minLength']}
+                            maxLength={Validation['subjects']['maxLength']}
+                            smallLabel
+                            labelText={mandatoryField('Subjects')}
+                            formControlProps={{
+                              fullWidth: true,
+                            }}
+                            inputProps={{
+                              name: 'subjects',
+                              value: item.subjects,
+                              disabled: preview,
+                            }}
+                            handleChange={(e) => this.handleInputChange(e, i)}
+                          />
+                        )}
                       </Grid>
-                      {item.stream ||
-                      item.stream === '' ||
-                      item.stream === null ? (
-                        <Grid item md={1} xs={8}>
+                      {Object.keys(item).find((key) => key === 'stream') ? (
+                        <Grid item md={2} xs={6}>
                           <TextField
                             InputLabelProps={{
                               classes: {
@@ -2327,7 +2902,8 @@ class Form extends React.Component {
             ) : (
               <Grid container item xs={12} justifyContent="center">
                 <Typography variant="subtitle1">
-                  Select <b>"course type"</b> to view this content.
+                  Select <b>"course type"</b> and <b>"admission year"</b> to
+                  view this content.
                 </Typography>
               </Grid>
             )}
@@ -2353,7 +2929,7 @@ class Form extends React.Component {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                disabled={preview}
+                disabled={preview || admissionYear !== '1'}
                 InputLabelProps={{
                   classes: {
                     root: classes.labelRoot,
@@ -2375,23 +2951,27 @@ class Form extends React.Component {
                 {academicDetails &&
                   academicDetails.length > 1 &&
                   academicDetails[1].stream !== '' &&
-                  facultyData.map((item, key) => (
-                    <MenuItem
-                      key={key}
-                      disabled={
-                        ((academicDetails[1].stream === '$s2Commerce' ||
-                          academicDetails[1].stream === '$s3Arts') &&
-                          item.facultyId === 'f1Science') ||
-                        ((academicDetails[1].stream === '$s2Commerce' ||
-                          academicDetails[1].stream === '$s3Arts' ||
-                          academicDetails[1].stream === '$s1Science') &&
-                          item.facultyId === 'f8fobt')
-                      }
-                      value={item.facultyId}
-                    >
-                      {item.faculty}
-                    </MenuItem>
-                  ))}
+                  facultyData.map(
+                    (item, key) =>
+                      item.year.includes(admissionYear) &&
+                      item.courseType === courseType && (
+                        <MenuItem
+                          key={key}
+                          disabled={
+                            ((academicDetails[1].stream === '$s2Commerce' ||
+                              academicDetails[1].stream === '$s3Arts') &&
+                              item.facultyId === 'f1Science') ||
+                            ((academicDetails[1].stream === '$s2Commerce' ||
+                              academicDetails[1].stream === '$s3Arts' ||
+                              academicDetails[1].stream === '$s1Science') &&
+                              item.facultyId === 'f8fobt')
+                          }
+                          value={item.facultyId}
+                        >
+                          {item.faculty}
+                        </MenuItem>
+                      )
+                  )}
               </TextField>
             </Grid>
             <Grid item xs={12}>
@@ -2401,13 +2981,15 @@ class Form extends React.Component {
               <Typography variant="caption">
                 {this.checkFaculty(faculty) > 0
                   ? 'You can select an option from the list'
-                  : 'You can select any two subjects from the list'}
+                  : this.checkFaculty(faculty) == 0
+                  ? 'You can select any two subjects from the list'
+                  : ''}
               </Typography>
               <Divider />
             </Grid>
             <Grid item xs={12}>
               <Autocomplete
-                disabled={preview}
+                disabled={preview || admissionYear !== '1'}
                 value={major1}
                 onChange={this.handleMultiDropDownData}
                 multiple
@@ -2424,7 +3006,9 @@ class Form extends React.Component {
                 )}
               />
             </Grid>
-            {this.checkFaculty(faculty) == 0 && (
+            {this.checkFaculty(faculty) == 0 &&
+            admissionYear === '1' &&
+            courseType === '#ug1UG' ? (
               <Grid container spacing={2} item xs={12}>
                 <Grid item xs={12}>
                   <Typography variant="subtitle1" component="div" gutterBottom>
@@ -2695,13 +3279,13 @@ class Form extends React.Component {
                   />
                 </Grid>
               </Grid>
-            )}
+            ) : null}
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">
                 Upload Documents <b>(allowed jpg,png,jpeg or pdf only.)</b>
               </Typography>
             </Grid>
-            {courseType !== '' ? (
+            {courseType && admissionYear ? (
               <Grid item xs={12}>
                 {documents.map((item, i) => (
                   <Box p={1} key={i}>
@@ -2795,25 +3379,43 @@ class Form extends React.Component {
             ) : (
               <Grid container item xs={12} justifyContent="center">
                 <Typography variant="subtitle1">
-                  Select course type to view this content.
+                  Select <b>"course type"</b> and <b>"admission year"</b> to
+                  view this content.
                 </Typography>
               </Grid>
             )}
-            <Grid item xs={12} className="headBg">
-              <Typography variant="subtitle1">
-                Other Details <b>(For More Details Read the Prospectus)</b>
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              {courseType === '' ? (
-                <Grid container item xs={12} justifyContent="center">
+            {admissionYear === '1' &&
+              major1.length > 0 &&
+              (courseType === '#ug1UG' ||
+                courseType === '#pg2PG' ||
+                courseType === 'law4LAW') && (
+                <Grid item xs={12} className="headBg">
                   <Typography variant="subtitle1">
-                    Select course type to view this content.
+                    Other Details <b>(For More Details Read the Prospectus)</b>
                   </Typography>
                 </Grid>
-              ) : (
+              )}
+            {admissionYear === '1' &&
+            major1.length > 0 &&
+            (courseType === '#ug1UG' ||
+              courseType === '#pg2PG' ||
+              courseType === 'law4LAW') ? (
+              <Grid item xs={12}>
+                {courseType === '#pg2PG' ||
+                major1[0].subjectName === 'LLM' ||
+                major1[0].subjectName === 'LLB' ? (
+                  <Typography>
+                    विश्वविद्यालय की टीम के सदस्य के रुप में अन्तर्विश्वविद्यालय
+                    प्रतियोगिता में भाग लेने के लिए
+                  </Typography>
+                ) : (
+                  <Typography>
+                    उत्तर क्षेत्रीय स्तर की टीम सदस्य के रुप में राज्यस्तरीय
+                    राष्ट्रीय प्रतियोगिता में भाग लेने के लिए{' '}
+                  </Typography>
+                )}
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item md={6} xs={12}>
+                  <Grid item xs={12}>
                     <TextField
                       InputLabelProps={{
                         classes: {
@@ -2830,7 +3432,7 @@ class Form extends React.Component {
                       fullWidth
                       variant={preview ? 'standard' : 'outlined'}
                       name="nationalCompetition"
-                      label="Participation in Zone / State Level National Competition"
+                      label="Participation in Zone / National Competition"
                       value={nationalCompetition}
                       onChange={this.handleCalculateMerit}
                     >
@@ -2841,10 +3443,11 @@ class Form extends React.Component {
                       <MenuItem value="Participant,2">Participant</MenuItem>
                     </TextField>
                   </Grid>
+
                   {nationalCompetition &&
                     nationalCompetition !== 'none,0' &&
                     !preview && (
-                      <Grid item md={3} xs={6}>
+                      <Grid item xs={6}>
                         <FileUploader
                           buttonLabel="Upload Document"
                           accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -2855,14 +3458,20 @@ class Form extends React.Component {
                         />
                       </Grid>
                     )}
-                  <Grid item md={3} xs={6}>
-                    {nationalCertificate !== '' &&
-                    nationalCertificate !== null ? (
+
+                  {nationalCertificate && (
+                    <Grid item xs={6}>
                       <Success>Uploaded.</Success>
-                    ) : null}
-                  </Grid>
-                  {courseType === '#pg2PG' && (
-                    <Grid item md={6} xs={12}>
+                    </Grid>
+                  )}
+                  {courseType === '#pg2PG' ||
+                  major1[0].subjectName === 'LLM' ||
+                  major1[0].subjectName === 'LLB' ? (
+                    <Grid item xs={12}>
+                      <Typography>
+                        विश्वविद्यालय की टीम के सदस्य के रुप में राष्ट्रीय
+                        प्रतियोगिता में भाग लेने
+                      </Typography>
                       <TextField
                         InputLabelProps={{
                           classes: {
@@ -2879,7 +3488,7 @@ class Form extends React.Component {
                         fullWidth
                         variant={preview ? 'standard' : 'outlined'}
                         name="otherCompetition"
-                        label="Participation in Competition from University"
+                        label="Participation in Zone / National Competition from Other University"
                         value={otherCompetition}
                         onChange={this.handleCalculateMerit}
                       >
@@ -2890,9 +3499,10 @@ class Form extends React.Component {
                         <MenuItem value="participant,3">Participant</MenuItem>
                       </TextField>
                     </Grid>
-                  )}
-                  {courseType === '#pg2PG' && !preview && (
-                    <Grid item md={3} xs={6}>
+                  ) : null}
+
+                  {otherCompetition && (
+                    <Grid item xs={6}>
                       <FileUploader
                         buttonLabel="Upload Document"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -2903,14 +3513,14 @@ class Form extends React.Component {
                       />
                     </Grid>
                   )}
-                  {courseType === '#pg2PG' && (
-                    <Grid item md={3} xs={6}>
-                      {otherCertificate !== '' && otherCertificate !== null ? (
-                        <Success>Uploaded.</Success>
-                      ) : null}
+
+                  {otherCertificate && (
+                    <Grid item xs={6}>
+                      <Success>Uploaded.</Success>
                     </Grid>
                   )}
-                  <Grid item md={6} xs={12}>
+
+                  <Grid item xs={12}>
                     <TextField
                       InputLabelProps={{
                         classes: {
@@ -2941,7 +3551,7 @@ class Form extends React.Component {
                     </TextField>
                   </Grid>
                   {ncc && ncc !== 'none,0' && !preview && (
-                    <Grid item md={3} xs={6}>
+                    <Grid item xs={6}>
                       <FileUploader
                         buttonLabel="Upload Document"
                         accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -2952,12 +3562,13 @@ class Form extends React.Component {
                       />
                     </Grid>
                   )}
-                  <Grid item md={3} xs={6}>
-                    {nccCertificate !== '' && nccCertificate !== null ? (
+                  {nccCertificate && (
+                    <Grid item xs={6}>
                       <Success>Uploaded.</Success>
-                    ) : null}
-                  </Grid>
-                  {courseType === '#ug1UG' && (
+                    </Grid>
+                  )}
+                  {courseType === '#ug1UG' ||
+                  major1[0].subjectName === 'B.A. LLB' ? (
                     <Grid item xs={12}>
                       <FormControlLabel
                         control={
@@ -2982,7 +3593,7 @@ class Form extends React.Component {
                         label="Freedom Fighter ?"
                       />
                     </Grid>
-                  )}
+                  ) : null}
                   <Grid item md={4} xs={12}>
                     <FormControlLabel
                       control={
@@ -3020,11 +3631,11 @@ class Form extends React.Component {
                     )}
                   </Grid>
                   <Grid item md={5} xs={6}>
-                    {nssDocument !== '' && nssDocument !== null ? (
-                      <Success>Uploaded.</Success>
-                    ) : null}
+                    {nssDocument && <Success>Uploaded.</Success>}
                   </Grid>
-                  {courseType === '#pg2PG' && (
+                  {(courseType === '#pg2PG' ||
+                    major1[0].subjectName === 'LLM' ||
+                    major1[0].subjectName === 'LLB') && (
                     <Grid item md={6} xs={12}>
                       <TextField
                         InputLabelProps={{
@@ -3055,9 +3666,11 @@ class Form extends React.Component {
                       </TextField>
                     </Grid>
                   )}
-                  {courseType === '#pg2PG' && (
-                    <Grid item md={2} xs={6}>
-                      {!otherRoverRanger && !preview && (
+                  {!otherRoverRanger &&
+                    roverRanger &&
+                    roverRanger !== 'none,0' &&
+                    !preview && (
+                      <Grid item md={3} xs={6}>
                         <FileUploader
                           buttonLabel="Upload Document"
                           accept="image/jpg,image/jpeg,image/png,application/pdf"
@@ -3066,22 +3679,23 @@ class Form extends React.Component {
                           id={'roverRanger'}
                           name="rrDocument"
                         />
-                      )}
-                    </Grid>
-                  )}
-                  {courseType === '#pg2PG' && (
-                    <Grid item md={4} xs={6}>
-                      {rrDocument !== '' && rrDocument !== null ? (
-                        <Success>Uploaded.</Success>
-                      ) : null}
-                    </Grid>
-                  )}
-                  {courseType === '#pg2PG' && (
+                      </Grid>
+                    )}
+                  <Grid item md={3} xs={6}>
+                    {rrDocument && !otherRoverRanger && (
+                      <Success>Uploaded.</Success>
+                    )}
+                  </Grid>
+                  {courseType === '#pg2PG' ||
+                  major1[0].subjectName === 'LLM' ||
+                  major1[0].subjectName === 'LLB' ? (
                     <Grid container item xs={12} justifyContent="center">
                       <Typography>OR</Typography>
                     </Grid>
-                  )}
-                  {courseType === '#pg2PG' && (
+                  ) : null}
+                  {courseType === '#pg2PG' ||
+                  major1[0].subjectName === 'LLM' ||
+                  major1[0].subjectName === 'LLB' ? (
                     <Grid item xs={12}>
                       <FormControlLabel
                         control={
@@ -3106,8 +3720,9 @@ class Form extends React.Component {
                         label="Team Members of Rover Rangers to Participate in Rally from Other University"
                       />
                     </Grid>
-                  )}
-                  {courseType === '#ug1UG' && (
+                  ) : null}
+                  {courseType === '#ug1UG' ||
+                  major1[0].subjectName === 'B.A. LLB' ? (
                     <Grid item xs={12}>
                       <FormControlLabel
                         control={
@@ -3132,89 +3747,90 @@ class Form extends React.Component {
                         label="Inter 10+2 with Commerce ?"
                       />
                     </Grid>
-                  )}
+                  ) : null}
                 </Grid>
-              )}
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                InputLabelProps={{
-                  classes: {
-                    root: classes.labelRoot,
-                  },
-                }}
-                InputProps={{
-                  classes: {
-                    disabled: classes.disabled,
-                  },
-                }}
-                disabled={preview}
-                select
-                fullWidth
-                variant={preview ? 'standard' : 'outlined'}
-                name="other"
-                label="Other Details / Marks"
-                value={other}
-                onChange={this.handleCalculateMerit}
-              >
-                <MenuItem value="none,0">None</MenuItem>
-                <MenuItem
-                  value="डॉ. भीमराव आंबेडकर विश्वविद्यालय और सम्बद्ध महाविद्यालयों में
+                <Grid item xs={12}>
+                  <TextField
+                    InputLabelProps={{
+                      classes: {
+                        root: classes.labelRoot,
+                      },
+                    }}
+                    InputProps={{
+                      classes: {
+                        disabled: classes.disabled,
+                      },
+                    }}
+                    disabled={preview}
+                    select
+                    fullWidth
+                    variant={preview ? 'standard' : 'outlined'}
+                    name="other"
+                    label="Other Details / Marks"
+                    value={other}
+                    onChange={this.handleCalculateMerit}
+                  >
+                    <MenuItem value="none,0">None</MenuItem>
+                    <MenuItem
+                      value="डॉ. भीमराव आंबेडकर विश्वविद्यालय और सम्बद्ध महाविद्यालयों में
                 सेवारत एवं स्ववित पोषित संस्थान के विश्वविद्यालय द्वारा अनुमोदित
                 अनु बन्धित प्रवक्ता तथा अवकाश प्राप्त केवल स्थायी
                 अध्यापको एवं कर्मचारियों के पति/पत्नी/पुत्री तथा कृषि संकाय में
                 स्थायी परियोजना के स्थायी परियोजनाओं के स्थायी कर्मचारियों के
                 पति/पत्नी/पुत्री/पुत्र।,17"
-                >
-                  डॉ. भीमराव आंबेडकर विश्वविद्यालय और सम्बद्ध महाविद्यालयों में
-                  सेवारत एवं स्ववित पोषित संस्थान के विश्वविद्यालय द्वारा
-                  अनुमोदित अनु बन्धित प्रवक्ता तथा अवकाश प्राप्त <br /> केवल
-                  स्थायी अध्यापको एवं कर्मचारियों के पति/पत्नी/पुत्री तथा कृषि
-                  संकाय में स्थायी परियोजना के स्थायी परियोजनाओं के स्थायी
-                  कर्मचारियों के पति/पत्नी/पुत्री/पुत्र।
-                </MenuItem>
-                <MenuItem
-                  value="भारतीय सेना में सेवारत अथवा अवकाश प्राप्त अधिकारियों या अन्य
+                    >
+                      डॉ. भीमराव आंबेडकर विश्वविद्यालय और सम्बद्ध महाविद्यालयों
+                      में सेवारत एवं स्ववित पोषित संस्थान के विश्वविद्यालय
+                      द्वारा अनुमोदित अनु बन्धित प्रवक्ता तथा अवकाश प्राप्त{' '}
+                      <br /> केवल स्थायी अध्यापको एवं कर्मचारियों के
+                      पति/पत्नी/पुत्री तथा कृषि संकाय में स्थायी परियोजना के
+                      स्थायी परियोजनाओं के स्थायी कर्मचारियों के
+                      पति/पत्नी/पुत्री/पुत्र।
+                    </MenuItem>
+                    <MenuItem
+                      value="भारतीय सेना में सेवारत अथवा अवकाश प्राप्त अधिकारियों या अन्य
                 रैंक के केवल पति/पत्नी/पुत्री/पुत्र (अविवाहित),10"
-                >
-                  भारतीय सेना में सेवारत अथवा अवकाश प्राप्त अधिकारियों या अन्य
-                  रैंक के केवल पति/पत्नी/पुत्री/पुत्र (अविवाहित)
-                </MenuItem>
-                <MenuItem
-                  value="भारतीय सेना पैरा/मिलट्री फोर्स/अर्ध सैनिक बल (पुलिस/पीएसी) में
+                    >
+                      भारतीय सेना में सेवारत अथवा अवकाश प्राप्त अधिकारियों या
+                      अन्य रैंक के केवल पति/पत्नी/पुत्री/पुत्र (अविवाहित)
+                    </MenuItem>
+                    <MenuItem
+                      value="भारतीय सेना पैरा/मिलट्री फोर्स/अर्ध सैनिक बल (पुलिस/पीएसी) में
                 कार्य करते हुये विजय के शहीदों के पुत्र/पुत्री/विधवाओं को प्रवेश
                 में,17"
-                >
-                  भारतीय सेना पैरा/मिलट्री फोर्स/अर्ध सैनिक बल (पुलिस/पीएसी) में
-                  कार्य करते हुये विजय के शहीदों के पुत्र/पुत्री/विधवाओं को
-                  प्रवेश में
-                </MenuItem>
-              </TextField>
-              {other && other !== 'none,0' && (
-                <FileUploader
-                  buttonLabel="Upload Certificate for Extra Merit Marks"
-                  accept="image/jpg,image/jpeg,image/png,application/pdf"
-                  maxSize={1}
-                  handleChange={this.handleUpload}
-                  id="uploadExtraMark"
-                  name="uploadExtraMark"
-                />
-              )}
-              <Grid item md={4} xs={6}>
-                {uploadExtraMark !== '' && uploadExtraMark !== null ? (
-                  <Success>Uploaded.</Success>
-                ) : null}
+                    >
+                      भारतीय सेना पैरा/मिलट्री फोर्स/अर्ध सैनिक बल (पुलिस/पीएसी)
+                      में कार्य करते हुये विजय के शहीदों के पुत्र/पुत्री/विधवाओं
+                      को प्रवेश में
+                    </MenuItem>
+                  </TextField>
+                  {other && other !== 'none,0' && (
+                    <FileUploader
+                      buttonLabel="Upload Certificate for Extra Merit Marks"
+                      accept="image/jpg,image/jpeg,image/png,application/pdf"
+                      maxSize={1}
+                      handleChange={this.handleUpload}
+                      id="uploadExtraMark"
+                      name="uploadExtraMark"
+                    />
+                  )}
+                  <Grid item md={4} xs={6}>
+                    {uploadExtraMark !== '' && uploadExtraMark !== null ? (
+                      <Success>Uploaded.</Success>
+                    ) : null}
+                  </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography>
+                    Extra Marks: <b>{totalMeritCount}</b>
+                  </Typography>
+                  <br />
+                  <Typography variant="caption">
+                    <b>Note:-</b> Allowed maximum 17 marks.
+                  </Typography>
+                </Grid>
               </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography>
-                Extra Marks: <b>{totalMeritCount}</b>
-              </Typography>
-              <br />
-              <Typography variant="caption">
-                <b>Note:-</b> Allowed maximum 17 marks.
-              </Typography>
-            </Grid>
+            ) : null}
             <Grid item xs={12} className="headBg">
               <Typography variant="subtitle1">Declaration</Typography>
             </Grid>
@@ -3255,10 +3871,7 @@ class Form extends React.Component {
             {!preview && !isView && (
               <Grid container item xs={12} justifyContent="center">
                 <ReCAPTCHA
-                  //prod key
-                  sitekey="6LdIozEcAAAAAFh_c4g4xLAygUWBo2V9sIrhZyoC"
-                  // -- test key
-                  // sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                  sitekey={config.CAPTCHA}
                   onChange={(token) => this.handleReCaptcha(token)}
                   onExpired={() => this.handleReCaptcha('')}
                 />

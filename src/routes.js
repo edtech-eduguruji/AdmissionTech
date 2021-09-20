@@ -9,6 +9,7 @@ import Summary from './views/StudentSrc/Summary'
 const FormSubmitted = asyncComponent(() =>
   import('./views/StudentSrc/FormSubmitted')
 )
+const CourseFee = asyncComponent(() => import('./views/StudentSrc/CourseFee'))
 const NewForms = asyncComponent(() => import('./views/AdminSrc/Forms/NewForms'))
 
 const dashboardRoutes = [
@@ -62,6 +63,17 @@ const dashboardRoutes = [
     id: 'sFormSubmit',
     icon: DynamicFeedIcon,
     component: FormSubmitted,
+    layout: '/student',
+    role: [ROLES_KEY.STUDENT],
+    isSidebar: false,
+    isNavbar: false,
+  },
+  {
+    path: '/coursefee',
+    name: 'Course Fee',
+    id: 'sCourseFee',
+    icon: DynamicFeedIcon,
+    component: CourseFee,
     layout: '/student',
     role: [ROLES_KEY.STUDENT],
     isSidebar: false,

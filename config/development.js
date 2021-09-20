@@ -7,4 +7,5 @@ module.exports = {
   PAYMENTAPI: 'https://uat.billdesk.com/pgidsk/PGIMerchantPayment',
   RESPONSEURL: 'https://eduguruji.com/admission/api/payment.php',
   QUERYAPI: 'https://uat.billdesk.com/pgidsk/PGIQueryController',
+  CAPTCHA: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
 }

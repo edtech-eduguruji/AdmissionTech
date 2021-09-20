@@ -10,6 +10,7 @@ import FormDialog from '../common/FormDialog'
 import LocalStorage from '../common/LocalStorage'
 import PromptBox from '../common/PromptBox'
 import dashboardRoutes from '../routes'
+import feesStatic from '../views/StudentSrc/StaticData/fees.json'
 import Snackbar from './../components/Snackbar/Snackbar'
 import history from './history'
 
@@ -444,4 +445,38 @@ export function downloadPdf(formId, fname) {
       pdf.save(LocalStorage.getUser().user_id + '_' + fname + '.pdf')
     })
   } catch (error) {}
+}
+
+export function handleCalculateFees(admissionYear, faculty, gender, major1) {
+  // return 0 - Means Applied for 1st Year
+  // Type 0  (Default Case With No Any Constraint)
+  // Type 1  (Same faculty For All Years)
+  // Type 2  (Same faculty with Gender Constraint)
+  // Type 3  (Gender and Practical Constraint)
+  if (admissionYear !== '1') {
+    let fees = feesStatic[faculty]
+    if (fees.type === 0) {
+      return { parameterId: fees.parameterId, amount: fees.fee }
+    } else if (fees.type === 1) {
+      return { parameterId: fees.parameterId, amount: fees[gender] }
+    } else if (fees.type === 2) {
+      return {
+        parameterId: fees.parameterId,
+        amount: fees[major1[0].subjectId][gender],
+      }
+    } else if (fees.type === 3) {
+      let count = 0
+      major1.map((item) => {
+        if (fees.practicalSubjects.includes(item.subjectId)) {
+          count++
+        }
+      })
+      return {
+        parameterId: fees.parameterId,
+        amount: fees.fee[count][gender],
+      }
+    }
+  } else {
+    return null
+  }
 }
