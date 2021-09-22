@@ -111,13 +111,32 @@ class Login extends Component {
                         admissionagracollege@gmail.com
                       </li>
                       <li>
+                        You can apply below courses for all(1st,2nd,3rd,4th,5th)
+                        years
+                      </li>
+                      <li>
                         <Typography color="error">
-                          You can apply for these courses{' '}
-                          <b>
-                            BSc, BA, BCOM, BBA, BBA, BCA, Bsc(BioTech), B.A.LLB
-                          </b>{' '}
-                          for 1st year and last date for online application is{' '}
-                          <b>20-Sep-2021</b>
+                          Undergraduate Courses
+                          <b>B.Sc, BA, BCOM, BBA, BCA, Bsc(BioTech)</b> last
+                          date for online application is <b>25-Sep-2021</b>
+                        </Typography>
+                      </li>
+                      <li>
+                        <Typography>
+                          PG Courses
+                          <b>M.A., M.Sc.</b>
+                        </Typography>
+                      </li>
+                      <li>
+                        <Typography>
+                          PG Diploma
+                          <b>Journalism</b>
+                        </Typography>
+                      </li>
+                      <li>
+                        <Typography>
+                          Law
+                          <b>LLB, LLM, B.A. LLB</b>
                         </Typography>
                       </li>
                     </ul>

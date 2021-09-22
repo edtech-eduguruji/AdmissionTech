@@ -192,6 +192,7 @@ class Form extends React.Component {
       coCurriculumSem2: '',
       token: '',
       paymentDetails: [],
+      courseFeeDetails: null,
       registrationNo: null,
       uploadExtraMark: null,
     }
@@ -207,7 +208,10 @@ class Form extends React.Component {
         if (payResponse.data) {
           this.setState({
             ...data,
-            paymentDetails: jwtDecode(payResponse.data).data,
+            paymentDetails: jwtDecode(payResponse.data.payment).data,
+            courseFeeDetails: payResponse.data.courseFee
+              ? jwtDecode(payResponse.data.courseFee).data
+              : null,
           })
         }
       })
@@ -222,7 +226,10 @@ class Form extends React.Component {
             FormApi.fetchPaymentDetails(data).then((payResponse) => {
               if (payResponse.data) {
                 this.setState({
-                  paymentDetails: jwtDecode(payResponse.data).data,
+                  paymentDetails: jwtDecode(payResponse.data.payment).data,
+                  courseFeeDetails: payResponse.data.courseFee
+                    ? jwtDecode(payResponse.data.courseFee).data
+                    : null,
                 })
               }
 
@@ -1106,40 +1113,57 @@ class Form extends React.Component {
     }
 
     if (tryToSubmit === 1) {
-      FormApi.submitForm(data).then((response) => {
-        if (response.data) {
-          if (btnValue === 1) {
-            LocalStorage.setUser(response.data)
-            let payment = handleCalculateFees(
-              admissionYear,
-              faculty,
-              gender,
-              major1
-            )
-            if (payment !== null) {
-              // Take "parameterId" and "amount" from  'payment' variable.
-              // And Proceed for Payment Process.
-              deleteBox(
-                `Your application is submitted successfully. 
-                You have to pay the fees of Rs. ${payment.amount} for your applied course`,
-                this.handleCourseFees
+      if (
+        admissionYear &&
+        courseType &&
+        new Date().getTime() >
+          yearsStatic.find((item) => item.yearId === admissionYear).lastDate[
+            courseType
+          ]
+      ) {
+        errorDialog(
+          'According to your selected course and year, registration are closed now.',
+          'Notice'
+        )
+      } else {
+        FormApi.submitForm(data).then((response) => {
+          if (response.data) {
+            if (btnValue === 1) {
+              LocalStorage.setUser(response.data)
+              let payment = handleCalculateFees(
+                admissionYear,
+                faculty,
+                gender,
+                major1
               )
+              if (payment !== null) {
+                // Take "parameterId" and "amount" from  'payment' variable.
+                // And Proceed for Payment Process.
+                deleteBox(
+                  `Your application is submitted successfully. 
+                You have to pay the fees of Rs. ${payment.amount} for your applied course`,
+                  this.handleCourseFees
+                )
+              } else {
+                errorDialog(
+                  'Your application is submitted successfully',
+                  'Form'
+                )
+                redirectUrl('sFormSubmit', 1)
+              }
             } else {
-              errorDialog('Your application is submitted successfully', 'Form')
-              redirectUrl('sFormSubmit', 1)
+              const user = jwtDecode(response.data).data
+              errorDialog(
+                'Your application is saved. Your registration no. is : ' +
+                  user.user_id,
+                'Form'
+              )
+              LocalStorage.removeUser()
+              redirectUrl('/login')
             }
-          } else {
-            const user = jwtDecode(response.data).data
-            errorDialog(
-              'Your application is saved. Your registration no. is : ' +
-                user.user_id,
-              'Form'
-            )
-            LocalStorage.removeUser()
-            redirectUrl('/login')
           }
-        }
-      })
+        })
+      }
     }
   }
 
@@ -1570,6 +1594,7 @@ class Form extends React.Component {
       coCurriculumSem1,
       coCurriculumSem2,
       paymentDetails,
+      courseFeeDetails,
       registrationNo,
       uploadExtraMark,
     } = this.state
@@ -3043,8 +3068,14 @@ class Form extends React.Component {
                       academicDetails.length > 1 &&
                       major1.length === 2 &&
                       majorSubjectsData.map((item, key) =>
+                        facultyData.find(
+                          (itm) => itm.facultyId === item.facultyId
+                        ).courseType === courseType &&
+                        item.year.includes(admissionYear) &&
                         item.subjectId !== '$20Bcom' &&
-                        item.subjectId !== '$21Bba' ? (
+                        item.subjectId !== '$21Bba' &&
+                        item.subjectId !== '$23Bca' &&
+                        item.subjectId !== '$24bscbt' ? (
                           <MenuItem
                             disabled={
                               major1.some(
@@ -3898,7 +3929,13 @@ class Form extends React.Component {
               </Grid>
             )}
             {preview || isView ? (
-              <PaymentInfo paymentDetails={paymentDetails} />
+              <React.Fragment>
+                <PaymentInfo paymentDetails={paymentDetails} />
+                <br />
+                {courseFeeDetails && (
+                  <PaymentInfo paymentDetails={courseFeeDetails} />
+                )}
+              </React.Fragment>
             ) : null}
           </Grid>
           {preview || isView ? (

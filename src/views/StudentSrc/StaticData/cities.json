@@ -6113,5 +6113,15 @@
         "id": "1223",
         "name": "Dholpur",
         "state": "RJ"
+    },
+    {
+        "id": "1224",
+        "name": "Hathras",
+        "state": "UP"
+    },
+    {
+        "id": "1225",
+        "name": "Mainpuri",
+        "state": "UP"
     }
 ]

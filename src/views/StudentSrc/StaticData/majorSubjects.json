@@ -151,7 +151,7 @@
         "subjectId": "$20Bcom",
         "streamId": ["$s2Commerce","$s1.3PCMB","$s1.2PCB","$s1Science","$s3Arts"],
         "subjectName": "B.Com",
-        "year": ["1","2"]
+        "year": ["1"]
     },
     {
         "facultyId": "f6fom",
