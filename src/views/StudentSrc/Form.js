@@ -192,6 +192,7 @@ class Form extends React.Component {
       coCurriculumSem2: '',
       token: '',
       paymentDetails: [],
+      courseFeeDetails: null,
       registrationNo: null,
       uploadExtraMark: null,
     }
@@ -207,7 +208,10 @@ class Form extends React.Component {
         if (payResponse.data) {
           this.setState({
             ...data,
-            paymentDetails: jwtDecode(payResponse.data).data,
+            paymentDetails: jwtDecode(payResponse.data.payment).data,
+            courseFeeDetails: payResponse.data.courseFee
+              ? jwtDecode(payResponse.data.courseFee).data
+              : null,
           })
         }
       })
@@ -222,7 +226,10 @@ class Form extends React.Component {
             FormApi.fetchPaymentDetails(data).then((payResponse) => {
               if (payResponse.data) {
                 this.setState({
-                  paymentDetails: jwtDecode(payResponse.data).data,
+                  paymentDetails: jwtDecode(payResponse.data.payment).data,
+                  courseFeeDetails: payResponse.data.courseFee
+                    ? jwtDecode(payResponse.data.courseFee).data
+                    : null,
                 })
               }
 
@@ -1587,6 +1594,7 @@ class Form extends React.Component {
       coCurriculumSem1,
       coCurriculumSem2,
       paymentDetails,
+      courseFeeDetails,
       registrationNo,
       uploadExtraMark,
     } = this.state
@@ -3921,7 +3929,13 @@ class Form extends React.Component {
               </Grid>
             )}
             {preview || isView ? (
-              <PaymentInfo paymentDetails={paymentDetails} />
+              <React.Fragment>
+                <PaymentInfo paymentDetails={paymentDetails} />
+                <br />
+                {courseFeeDetails && (
+                  <PaymentInfo paymentDetails={courseFeeDetails} />
+                )}
+              </React.Fragment>
             ) : null}
           </Grid>
           {preview || isView ? (
