@@ -759,10 +759,15 @@ class Form extends React.Component {
     data.append('vocationalSem2', vocationalSem2)
     data.append('coCurriculumSem1', coCurriculumSem1)
     data.append('coCurriculumSem2', coCurriculumSem2)
-    documents.map(
-      (item, index) =>
-        item.document !== '' && data.append('document' + index, item.document)
-    )
+    documents &&
+      documents.length > 0 &&
+      documents.map(
+        (item, index) =>
+          item.document &&
+          item.document !== '' &&
+          typeof item.document === 'object' &&
+          data.append('document' + index, item.document)
+      )
     data.append('guardianName', guardianName)
     data.append('relationOfApplicant', relationOfApplicant)
     data.append('nationalCompetition', nationalCompetition)
