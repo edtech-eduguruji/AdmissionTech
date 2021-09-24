@@ -4,6 +4,7 @@ import { ROLES_KEY } from './constants/Constants'
 import asyncComponent from './layouts/AsyncComponent'
 import Form from './views/StudentSrc/Form'
 import MakePayment from './views/StudentSrc/MakePayment'
+import PaymentHistory from './views/StudentSrc/PaymentHistory'
 import Summary from './views/StudentSrc/Summary'
 
 const FormSubmitted = asyncComponent(() =>
@@ -74,6 +75,17 @@ const dashboardRoutes = [
     id: 'sCourseFee',
     icon: DynamicFeedIcon,
     component: CourseFee,
+    layout: '/student',
+    role: [ROLES_KEY.STUDENT],
+    isSidebar: false,
+    isNavbar: false,
+  },
+  {
+    path: '/paymenthistory',
+    name: 'Payment History',
+    id: 'sPaymentHistory',
+    icon: DynamicFeedIcon,
+    component: PaymentHistory,
     layout: '/student',
     role: [ROLES_KEY.STUDENT],
     isSidebar: false,

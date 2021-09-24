@@ -7,9 +7,10 @@ import RegularButton from '../../components/CustomButtons/Button'
 import { ASSETS } from '../../constants/Constants'
 import { redirectUrl } from '../../utils/Utils'
 class Summary extends React.Component {
-  handleNext = () => {
-    redirectUrl('sForm', 1)
+  handleNext = (value) => () => {
+    redirectUrl(value, 1)
   }
+
   render() {
     return (
       <div className="childContainer">
@@ -60,8 +61,16 @@ class Summary extends React.Component {
               </Typography>
             </Grid>
             <Grid container item xs={12} justifyContent="center">
-              <RegularButton onClick={this.handleNext} color="primary">
+              <RegularButton onClick={this.handleNext('sForm')} color="primary">
                 Next
+              </RegularButton>
+              <br />
+              <br />
+              <RegularButton
+                color="primary"
+                onClick={this.handleNext('sPaymentHistory')}
+              >
+                Payment History
               </RegularButton>
             </Grid>
           </Grid>
