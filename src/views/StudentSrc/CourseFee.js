@@ -10,6 +10,7 @@ import Success from '../../components/Typography/Success'
 import {
   errorDialog,
   handleCalculateFees,
+  redirectUrl,
   validateUser,
 } from '../../utils/Utils'
 
@@ -143,6 +144,14 @@ class CourseFee extends React.Component {
                 disabled={!admissionYear && !faculty && !gender && !courseFee}
               >
                 Pay Course Fee
+              </RegularButton>
+              <br />
+              <br />
+              <RegularButton
+                color="primary"
+                onClick={() => redirectUrl('sPaymentHistory', 1)}
+              >
+                Payment History
               </RegularButton>
             </Grid>
           </Grid>

@@ -14,7 +14,10 @@ function withRouteLayout(
     handleRedirects = () => {
       const user = LocalStorage.getUser()
       if (user.payment == '0' && user.submitted === '0') {
-        if (currentRoute.layout + currentRoute.path == '/student/payment') {
+        if (
+          currentRoute.layout + currentRoute.path == '/student/payment' ||
+          currentRoute.layout + currentRoute.path == '/student/paymenthistory'
+        ) {
           return (
             <WrappedComponent
               currentRoute={currentRoute}
@@ -29,7 +32,8 @@ function withRouteLayout(
       } else if (user.payment == '1' && user.submitted === '0') {
         if (
           currentRoute.layout + currentRoute.path == '/student/summary' ||
-          currentRoute.layout + currentRoute.path == '/student/form'
+          currentRoute.layout + currentRoute.path == '/student/form' ||
+          currentRoute.layout + currentRoute.path == '/student/paymenthistory'
         ) {
           return (
             <WrappedComponent
@@ -53,8 +57,8 @@ function withRouteLayout(
           user.courseFee == '1')
       ) {
         if (
-          currentRoute.layout + currentRoute.path ==
-          '/student/formsubmitted'
+          currentRoute.layout + currentRoute.path == '/student/formsubmitted' ||
+          currentRoute.layout + currentRoute.path == '/student/paymenthistory'
         ) {
           return (
             <WrappedComponent
@@ -73,7 +77,10 @@ function withRouteLayout(
         user.admissionYear !== '1' &&
         user.courseFee == '0'
       ) {
-        if (currentRoute.layout + currentRoute.path == '/student/coursefee') {
+        if (
+          currentRoute.layout + currentRoute.path == '/student/coursefee' ||
+          currentRoute.layout + currentRoute.path == '/student/paymenthistory'
+        ) {
           return (
             <WrappedComponent
               currentRoute={currentRoute}
