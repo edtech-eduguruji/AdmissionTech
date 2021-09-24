@@ -39,10 +39,10 @@ class PaymentHistory extends React.Component {
         item.TxnType,
         item.TxnDate,
         item.AuthMsg,
-        item.RefundStatus,
-        item.TotalRefundAmount,
-        item.LastRefundDate,
-        item.LastRefundRefNo,
+        // item.RefundStatus,
+        // item.TotalRefundAmount,
+        // item.LastRefundDate,
+        // item.LastRefundRefNo,
       ]
     })
     return formatted
@@ -73,10 +73,6 @@ class PaymentHistory extends React.Component {
                     'TxnType',
                     'TxnDate',
                     'Status',
-                    'Refund Status',
-                    'Total RefundAmount',
-                    'Refund Date',
-                    'Refund No',
                   ]}
                   tableData={this.formatData(paymentSummary)}
                 />
