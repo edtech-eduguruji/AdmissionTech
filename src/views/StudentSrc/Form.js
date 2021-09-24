@@ -203,6 +203,7 @@ class Form extends React.Component {
     if (isView) {
       const dt = {
         registrationNo: data.registrationNo,
+        receipt: '1',
       }
       FormApi.fetchPaymentDetails(dt).then((payResponse) => {
         if (payResponse.data) {
@@ -220,6 +221,7 @@ class Form extends React.Component {
         const data = {
           registrationNo:
             LocalStorage.getUser() && LocalStorage.getUser().user_id,
+          receipt: '1',
         }
         FormApi.getForm(data).then((response) => {
           if (response.data) {
@@ -749,25 +751,10 @@ class Form extends React.Component {
     data.append('subCategory', subCategory)
     data.append('categoryCertificate', categoryCertificate)
     data.append('subCategoryCertificate', subCategoryCertificate)
-    data.append('academicDetails', JSON.stringify(academicDetails))
-    data.append('documents', JSON.stringify(documents))
-    data.append('major1', JSON.stringify(major1))
-    data.append('major2', JSON.stringify(major2))
-    data.append('major3', major3)
-    data.append('major4', major4)
     data.append('vocationalSem1', vocationalSem1)
     data.append('vocationalSem2', vocationalSem2)
     data.append('coCurriculumSem1', coCurriculumSem1)
     data.append('coCurriculumSem2', coCurriculumSem2)
-    documents &&
-      documents.length > 0 &&
-      documents.map(
-        (item, index) =>
-          item.document &&
-          item.document !== '' &&
-          typeof item.document === 'object' &&
-          data.append('document' + index, item.document)
-      )
     data.append('guardianName', guardianName)
     data.append('relationOfApplicant', relationOfApplicant)
     data.append('nationalCompetition', nationalCompetition)
@@ -788,6 +775,24 @@ class Form extends React.Component {
     data.append('signature', signature)
     data.append('submit', btnValue)
     data.append('uploadExtraMark', uploadExtraMark)
+
+    data.append('academicDetails', JSON.stringify(academicDetails))
+    data.append('documents', JSON.stringify(documents))
+    data.append('major1', JSON.stringify(major1))
+    data.append('major2', JSON.stringify(major2))
+    data.append('major3', major3)
+    data.append('major4', major4)
+
+    documents &&
+      documents.length > 0 &&
+      documents.map(
+        (item, index) =>
+          item.document &&
+          item.document !== '' &&
+          typeof item.document === 'object' &&
+          data.append('document' + index, item.document)
+      )
+
     let tryToSubmit = 0
     if (btnValue === 0) {
       if (dob === '') {
