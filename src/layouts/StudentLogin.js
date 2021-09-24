@@ -116,27 +116,24 @@ class Login extends Component {
                       </li>
                       <li>
                         <Typography color="error">
-                          Undergraduate Courses
+                          Undergraduate Courses{' '}
                           <b>B.Sc, BA, BCOM, BBA, BCA, Bsc(BioTech)</b> last
                           date for online application is <b>25-Sep-2021</b>
                         </Typography>
                       </li>
                       <li>
                         <Typography>
-                          PG Courses
-                          <b>M.A., M.Sc.</b>
+                          PG Courses <b>M.A., M.Sc.</b>
                         </Typography>
                       </li>
                       <li>
                         <Typography>
-                          PG Diploma
-                          <b>Journalism</b>
+                          PG Diploma <b>Journalism</b>
                         </Typography>
                       </li>
                       <li>
                         <Typography>
-                          Law
-                          <b>LLB, LLM, B.A. LLB</b>
+                          Law <b>LLB, LLM, B.A. LLB</b>
                         </Typography>
                       </li>
                     </ul>
