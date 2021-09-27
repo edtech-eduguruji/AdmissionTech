@@ -480,3 +480,76 @@ export function handleCalculateFees(admissionYear, faculty, gender, major1) {
     return null
   }
 }
+
+export function calculateMerit(
+  courseType,
+  admissionYear,
+  academicDetails,
+  totalMeritCount,
+  isFormSubmitted
+) {
+  let merit = 0,
+    highSchool,
+    inter,
+    graduation
+  let meritCount = totalMeritCount === '' ? 0 : totalMeritCount
+  if (admissionYear === '1' && courseType !== 'pgd3PGD') {
+    if (isFormSubmitted === '1') {
+      if (academicDetails.length === 2) {
+        highSchool = academicDetails[0].percentage
+          ? parseFloat(academicDetails[0].percentage.split('%')[0] / 2)
+          : 0
+        inter = academicDetails[1].percentage
+          ? parseFloat(academicDetails[1].percentage.split('%')[0])
+          : 0
+        merit = (highSchool + inter + parseInt(meritCount)).toFixed(2)
+      } else if (academicDetails.length > 2) {
+        inter = academicDetails[1].percentage
+          ? parseFloat(academicDetails[1].percentage.split('%')[0] / 2)
+          : 0
+        graduation = academicDetails[2].percentage
+          ? parseFloat(academicDetails[2].percentage.split('%')[0])
+          : 0
+        merit = (inter + graduation + parseInt(meritCount)).toFixed(2)
+      } else {
+        return 0
+      }
+      return merit
+    } else {
+      return 'Incomplete Form'
+    }
+  } else {
+    return 'N/A'
+  }
+}
+
+export function checkFaculty(facultyId) {
+  // Faculty wise course selection
+  if (
+    facultyId == 'f5foc' ||
+    facultyId == 'f6fom' ||
+    facultyId == 'f7fols' ||
+    facultyId == 'f8fobt' ||
+    facultyId == 'f9foj' ||
+    facultyId == 'f12MA' ||
+    facultyId == 'f13MSC' ||
+    facultyId == 'f14BCOM' ||
+    facultyId == 'f17BioTech' ||
+    facultyId == 'f15BBA' ||
+    facultyId == 'f16BCA'
+  ) {
+    return 1 // For Single Selection
+  } else if (
+    facultyId == 'f1ScienceBio' ||
+    facultyId == 'f1ScienceMaths' ||
+    facultyId == 'f12BA'
+  ) {
+    return -1 // For 3 Selections
+  } else {
+    return 0 // For 2 Selections
+  }
+}
+
+export function verifyString(text) {
+  return text.replace(/[\n\r\s\t]+/g, ' ')
+}

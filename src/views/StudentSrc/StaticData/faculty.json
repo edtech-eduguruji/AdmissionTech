@@ -54,12 +54,6 @@
         "courseType": "pgd3PGD"   
     },
     {
-        "facultyId": "f12MA",
-        "faculty": "MA",
-        "year": ["1","2"],
-        "courseType": "#pg2PG"    
-    },
-    {
         "facultyId": "f17BioTech",
         "faculty": "B.Sc. BioTech",
         "year": ["2","3"],
@@ -82,6 +76,12 @@
         "faculty": "BA",
         "year": ["2","3"],
         "courseType": "#ug1UG"    
+    },
+    {
+        "facultyId": "f12MA",
+        "faculty": "MA",
+        "year": ["1","2"],
+        "courseType": "#pg2PG"    
     },
     {
         "facultyId": "f13MSC",
