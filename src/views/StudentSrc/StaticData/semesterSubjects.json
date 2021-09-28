@@ -43,6 +43,13 @@
     },
     {
         "facultyId": "f2Arts",
+        "semester": 2,
+        "subjectId": "$s7dss",
+        "paperId": "$p35",
+        "subjectName": "Military History of India"
+    },
+    {
+        "facultyId": "f2Arts",
         "semester": 1,
         "subjectId": "$s7dss",
         "paperId": "$p7",
@@ -103,6 +110,13 @@
         "subjectId": "$16English",
         "paperId": "$p16",
         "subjectName": "English Prose and Writing Skills"
+    },
+    {
+        "facultyId": "f3Language",
+        "semester": 2,
+        "subjectId": "$15Hindi",
+        "paperId": "$p44",
+        "subjectName": "कार्यालयी हिन्दी और कम्प्यूटर"
     },
     {
         "facultyId": "f3Language",
@@ -236,13 +250,6 @@
         "subjectId": "$s6Zoology",
         "paperId": "$p34",
         "subjectName": "Biochemistry and Physiology"
-    },
-    {
-        "facultyId": "f2Arts",
-        "semester": 2,
-        "subjectId": "$s7dss",
-        "paperId": "$p35",
-        "subjectName": "Military History of India"
     },
     {
         "facultyId": "f2Arts",
