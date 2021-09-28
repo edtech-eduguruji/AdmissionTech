@@ -432,7 +432,7 @@
         "subjectId": "s60Maths",
         "streamId": ["$s1.3PCMB","$s1Science"],
         "subjectName": "Mathematics",
-        "year": ["2"]
+        "year": ["1", "2"]
     },
     {
         "facultyId": "f12MA",

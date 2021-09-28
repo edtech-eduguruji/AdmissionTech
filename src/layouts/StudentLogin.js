@@ -107,18 +107,21 @@ class Login extends Component {
                         online
                       </li>
                       <li>
-                        Any form related issue kindly email at
-                        admissionagracollege@gmail.com
+                        <Typography color="textPrimary">
+                          Any form related issue kindly email at
+                          admissionagracollege@gmail.com with your registration
+                          no and dob
+                        </Typography>
                       </li>
                       <li>
-                        You can apply below courses for all(1st,2nd,3rd,4th,5th)
-                        years
+                        You can apply below courses for all
+                        (1st,2nd,3rd,4th,5th) years
                       </li>
                       <li>
                         <Typography color="error">
                           Undergraduate Courses{' '}
                           <b>B.Sc, BA, BCOM, BBA, BCA, Bsc(BioTech)</b> last
-                          date for online application is <b>28-Sep-2021</b> for
+                          date for online application is <b>02-Oct-2021</b> for
                           1st year only.
                         </Typography>
                       </li>
@@ -137,6 +140,19 @@ class Login extends Component {
                           Law <b>LLB, LLM, B.A. LLB</b>
                         </Typography>
                       </li>
+                    </ul>
+                  </Typography>
+                </CardBody>
+              </Card>
+            </Grid>
+            <Grid item xs={12}>
+              <Card cardFullHeight>
+                <CardBody>
+                  <Typography variant="h6">Announcement</Typography>
+                  <Typography>
+                    <ul>
+                      All students who submitted online application form please
+                      download the form and take print out.
                     </ul>
                   </Typography>
                 </CardBody>
