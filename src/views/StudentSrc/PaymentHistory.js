@@ -7,16 +7,28 @@ import LocalStorage from '../../common/LocalStorage'
 import CustomTable from '../../components/Table/Table'
 
 class PaymentHistory extends React.Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
       paymentSummary: [],
     }
   }
 
   componentDidMount() {
+    this.fetchPayment(this.props.userId)
+  }
+
+  componentWillReceiveProps(props) {
+    if (this.props.userId !== props.userId) {
+      this.fetchPayment(props.userId)
+    }
+  }
+
+  fetchPayment = (userId) => {
     const data = {
-      registrationNo: LocalStorage.getUser() && LocalStorage.getUser().user_id,
+      registrationNo: userId
+        ? userId
+        : LocalStorage.getUser() && LocalStorage.getUser().user_id,
       receipt: '0',
     }
     FormApi.fetchPaymentDetails(data).then((payResponse) => {

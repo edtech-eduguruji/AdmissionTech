@@ -7,6 +7,7 @@ import RegularButton from '../../../components/CustomButtons/Button'
 import CustomTable from '../../../components/Table/Table'
 import { formDialog, verifyString } from '../../../utils/Utils'
 import Form from '../../StudentSrc/Form'
+import PaymentHistory from '../../StudentSrc/PaymentHistory'
 import facultyData from '../../StudentSrc/StaticData/faculty.json'
 import Filters from '../Filters'
 
@@ -108,6 +109,19 @@ function NewForms() {
             onClick={() => formDialog(<Form isView data={item} />, true)}
           >
             EDIT
+          </RegularButton>
+          <RegularButton
+            size="md"
+            color="danger"
+            onClick={() =>
+              formDialog(
+                <PaymentHistory userId={item.registrationNo} />,
+                true,
+                'Payment History'
+              )
+            }
+          >
+            Payment History
           </RegularButton>
         </div>,
       ]
