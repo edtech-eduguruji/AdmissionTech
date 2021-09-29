@@ -41,6 +41,7 @@ import {
   mandatoryField,
   redirectUrl,
   validateUser,
+  verifyString,
 } from '../../utils/Utils'
 import PaymentInfo from './PaymentInfo'
 import academicDetailsStatic from './StaticData/academic.json'
@@ -288,7 +289,7 @@ class Form extends React.Component {
                   }
                 })
                 response.data.academicDetails = response.data.academicDetails
-                  ? JSON.parse(this.verifyString(response.data.academicDetails))
+                  ? JSON.parse(verifyString(response.data.academicDetails))
                   : []
                 response.data.documents = response.data.documents
                   ? JSON.parse(response.data.documents)
@@ -1173,7 +1174,7 @@ class Form extends React.Component {
           if (response.data) {
             if (btnValue === 1) {
               if (isView) {
-                addSuccessMsg('Form Altered Successfully.')
+                addSuccessMsg('Form Submitted Successfully.')
                 closeDialog()
               } else {
                 LocalStorage.setUser(response.data)
@@ -1201,7 +1202,7 @@ class Form extends React.Component {
               }
             } else {
               if (isView) {
-                addSuccessMsg('Form Altered Successfully.')
+                addSuccessMsg('Form Saved Successfully.')
                 closeDialog()
               } else {
                 const user = jwtDecode(response.data).data
@@ -3950,7 +3951,7 @@ class Form extends React.Component {
                 />
               </Grid>
             ) : null}
-            {!preview && submitted !== '1' && (
+            {!preview && (
               <Grid container item xs={6} justifyContent="flex-end">
                 <RegularButton
                   color="primary"
@@ -3961,12 +3962,7 @@ class Form extends React.Component {
               </Grid>
             )}
             {!preview ? (
-              <Grid
-                container
-                item
-                xs={submitted === '1' ? 12 : 6}
-                justifyContent={submitted === '1' ? 'center' : 'flex-start'}
-              >
+              <Grid item xs={6}>
                 <RegularButton
                   color="primary"
                   onClick={this.handleSubmitForm(1)}
