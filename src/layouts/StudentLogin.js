@@ -121,7 +121,7 @@ class Login extends Component {
                         <Typography color="error">
                           Undergraduate Courses{' '}
                           <b>B.Sc, BA, BCOM, BBA, BCA, Bsc(BioTech)</b> last
-                          date for online application is <b>02-Oct-2021</b> for
+                          date for online application is <b>03-Oct-2021</b> for
                           1st year only.
                         </Typography>
                       </li>

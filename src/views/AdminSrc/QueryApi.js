@@ -12,15 +12,18 @@ class QueryApi extends React.Component {
     this.state = {
       checksumVal: null,
       tId: null,
+      uRId: null,
       registrationNo: null,
       queryOutput: null,
+      formDetails: null,
     }
   }
 
   componentDidMount() {}
 
-  handleSubmit = (inputVal) => () => {
-    const { registrationNo } = this.state
+  handleSubmit = (inputVal) => (event) => {
+    debugger
+    const { registrationNo, formDetails } = this.state
     if (inputVal == 0) {
       const f = new FormData()
       f.append('requestType', '0122')
@@ -29,6 +32,7 @@ class QueryApi extends React.Component {
         'time',
         createdDateTime(new Date().getTime(), 1, 'yyyymmddhhmmss')
       )
+      f.append('updateForm', '0')
       FormApi.queryPayment(f)
         .then((res) => {
           this.setState({ queryOutput: res.data })
@@ -36,7 +40,7 @@ class QueryApi extends React.Component {
         .catch((err) => {
           console.log(err)
         })
-    } else {
+    } else if (inputVal == 1) {
       FormApi.queryPayment({ registrationNo }, 'GET')
         .then((res) => {
           this.setState({ queryOutput: res.data })
@@ -44,7 +48,28 @@ class QueryApi extends React.Component {
         .catch((err) => {
           console.log(err)
         })
+    } else if (inputVal == 2) {
+      if (JSON.parse(formDetails)) {
+        const formInput = JSON.parse(formDetails)
+        let fdata = new FormData()
+        fdata.append('kushal', 'jain')
+        for (var i in formInput) {
+          fdata.append(`${i}`, this.verifyString(formInput[i]))
+        }
+        fdata.append('updateForm', '1')
+        FormApi.queryPayment(fdata)
+          .then((res) => {
+            // this.setState({ queryOutput: res.data })
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      }
     }
+  }
+
+  verifyString = (text) => {
+    return text.replace(/[\n\r\s\t']+/g, ' ')
   }
 
   handleChange = (event) => {
@@ -52,7 +77,7 @@ class QueryApi extends React.Component {
   }
 
   render() {
-    const { tId, queryOutput, registrationNo } = this.state
+    const { tId, uRId, queryOutput, registrationNo, formDetails } = this.state
     return (
       <div className="childContainer">
         <CardContainer heading="Payment">
@@ -90,6 +115,33 @@ class QueryApi extends React.Component {
           </Grid>
           <label>Output</label> <br />
           {queryOutput}
+        </CardContainer>
+        <br />
+        <CardContainer heading="Payment">
+          <Grid container spacing={2}>
+            <Grid item lg={6}>
+              <label>Enter Registration no to check details</label>
+              <input
+                name="tId"
+                value={uRId}
+                placeholder="Enter user reg id"
+                onChange={this.handleChange}
+              />
+              <textarea
+                rows={6}
+                name="formDetails"
+                value={formDetails}
+                placeholder="Enter json form"
+                onChange={this.handleChange}
+              />
+              <Grid container item xs={12} justifyContent="center">
+                <RegularButton color="primary" onClick={this.handleSubmit(2)}>
+                  Submit
+                </RegularButton>
+              </Grid>
+              <br />
+            </Grid>
+          </Grid>
         </CardContainer>
       </div>
     )

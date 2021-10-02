@@ -795,6 +795,7 @@ class Form extends React.Component {
     data.append('coCurriculumSem1', coCurriculumSem1)
     data.append('coCurriculumSem2', coCurriculumSem2)
     data.append('guardianName', guardianName)
+
     data.append('relationOfApplicant', relationOfApplicant)
     data.append('nationalCompetition', nationalCompetition)
     data.append('nationalCertificate', nationalCertificate)

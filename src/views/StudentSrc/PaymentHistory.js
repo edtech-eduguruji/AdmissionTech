@@ -15,11 +15,13 @@ class PaymentHistory extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchPayment(this.props.userId)
+    if (this.props.userId) {
+      this.fetchPayment(this.props.userId)
+    }
   }
 
   componentWillReceiveProps(props) {
-    if (this.props.userId !== props.userId) {
+    if (this.props.userId !== props.userId && props.userId) {
       this.fetchPayment(props.userId)
     }
   }
