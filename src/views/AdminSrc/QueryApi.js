@@ -37,7 +37,7 @@ class QueryApi extends React.Component {
           console.log(err)
         })
     } else {
-      FormApi.queryPayment({ registrationNo })
+      FormApi.queryPayment({ registrationNo }, 'GET')
         .then((res) => {
           this.setState({ queryOutput: res.data })
         })
