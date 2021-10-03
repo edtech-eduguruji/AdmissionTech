@@ -3,7 +3,7 @@
         "yearId": "1",
         "year": "1st Year (New Admission)",
         "courseType": ["#ug1UG","#pg2PG","pgd3PGD","law4LAW"],
-        "lastDate": {"#ug1UG": 1633285795000,"#pg2PG": 1648751340000, "pgd3PGD": 1648751340000, "law4LAW": 1648751340000}
+        "lastDate": {"#ug1UG": 1633371955000,"#pg2PG": 1648751340000, "pgd3PGD": 1648751340000, "law4LAW": 1648751340000}
     },
     {
         "yearId": "2",

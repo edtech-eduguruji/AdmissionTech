@@ -46,7 +46,7 @@ function NewForms() {
         offset: offset,
         courseType: courseType,
         admissionYear: year,
-        category: category,
+        category: category === 'all' ? null : category,
         status: status,
         faculty: faculty,
         major1: major1,

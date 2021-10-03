@@ -481,38 +481,63 @@ export function handleCalculateFees(admissionYear, faculty, gender, major1) {
   }
 }
 
+// "courseType" - To identify the student applied in (Graduation or Post-Graduation) or for cross-checking.
+// "admissionYear" - To cross-check because (we are calculating merit of only 1st year students).
+// "academicDetails" - For merit calculation (High School or Inter or Graduation) Percentage.
+// "totalMeritCount" - Merit Points
+// "major1" - In "Law" Course Type there is (Graduation & Post-Graduation) both course available
+// So using "major1" we can identify the course.
+// "bcom" - To check the 5 merit points to be added in only on students applied in Bcom
 export function calculateMerit(
   courseType,
   admissionYear,
   academicDetails,
   totalMeritCount,
-  isFormSubmitted
+  major1,
+  bcom
 ) {
   let merit = 0,
     highSchool,
     inter,
-    graduation
+    graduation,
+    meritPoints
   let meritCount = totalMeritCount === '' ? 0 : totalMeritCount
-  if (admissionYear === '1' && courseType !== 'pgd3PGD') {
-    if (isFormSubmitted === '1') {
-      if (academicDetails.length === 2) {
-        highSchool = academicDetails[0].percentage
-          ? parseFloat(academicDetails[0].percentage.split('%')[0] / 2)
-          : 0
-        inter = academicDetails[1].percentage
-          ? parseFloat(academicDetails[1].percentage.split('%')[0])
-          : 0
-        merit = (highSchool + inter + parseInt(meritCount)).toFixed(2)
-      } else if (academicDetails.length > 2) {
-        inter = academicDetails[1].percentage
-          ? parseFloat(academicDetails[1].percentage.split('%')[0] / 2)
-          : 0
-        graduation = academicDetails[2].percentage
-          ? parseFloat(academicDetails[2].percentage.split('%')[0])
-          : 0
-        merit = (inter + graduation + parseInt(meritCount)).toFixed(2)
+  if (admissionYear === '1' && courseType !== 'PG Diploma') {
+    if (
+      (academicDetails.length === 2 &&
+        academicDetails[0].percentage &&
+        academicDetails[0].percentage &&
+        major1.length > 0) ||
+      (academicDetails.length > 2 &&
+        academicDetails[1].percentage &&
+        academicDetails[2].percentage &&
+        major1.length > 0)
+    ) {
+      meritPoints =
+        bcom === 'YES' && major1[0].subjectId !== '$20Bcom'
+          ? parseInt(meritCount - 5)
+          : parseInt(meritCount)
+      if (
+        academicDetails.length >= 2 &&
+        (courseType === 'Under Graduate' ||
+          (courseType === 'Law' && major1[0].subjectId === '$22ballb'))
+      ) {
+        highSchool = parseFloat(academicDetails[0].percentage.split('%')[0] / 2)
+        inter = parseFloat(academicDetails[1].percentage.split('%')[0])
+
+        merit = (highSchool + inter + meritPoints).toFixed(2)
+      } else if (
+        academicDetails.length > 2 &&
+        (courseType === 'Post Graduate' ||
+          (courseType === 'Law' &&
+            (major1[0].subjectId === 'llm26LLM' ||
+              major1[0].subjectId === 'llb27LLB')))
+      ) {
+        inter = parseFloat(academicDetails[1].percentage.split('%')[0] / 2)
+        graduation = parseFloat(academicDetails[2].percentage.split('%')[0])
+        merit = (inter + graduation + meritPoints).toFixed(2)
       } else {
-        return 0
+        merit = 'Incomplete Form'
       }
       return merit
     } else {
