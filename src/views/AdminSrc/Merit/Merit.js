@@ -5,6 +5,7 @@ import CardContainer from '../../../common/CardContainer'
 import { ExcelExport } from '../../../common/ExcelExport'
 import {
   calculateMerit,
+  checkFaculty,
   deleteEachKeyPair,
   replaceKey,
   verifyString,
@@ -35,7 +36,7 @@ function NewForms() {
       const data = {
         courseType: courseType,
         admissionYear: year,
-        category: category,
+        category: category === 'all' ? null : category,
         status: status,
         faculty: faculty,
         major1: major1,
@@ -143,22 +144,23 @@ function NewForms() {
             }
           })
         })
-      subitem.major1 &&
-        subitem.major1.length > 0 &&
-        (subitem.major1.length === 1
-          ? (subitem.major1 = subitem.major1[0].subjectName)
-          : (subitem.major1 =
-              subitem.major1[0].subjectName +
-              ', ' +
-              subitem.major1[1].subjectName))
+      if (subitem.major1 && subitem.major1.length > 0) {
+        let subs = []
+        subitem.major1.map((mj1) => {
+          subs.push(mj1.subjectName)
+        })
+        subitem.major1 = subs.toString()
+      }
       subitem.major2 && (subitem.major2 = subitem.major2.subjectName)
       subitem.major3 &&
         (subitem.major3 = semesterSubjectsData.find(
           (val) => val.paperId === subitem.major3
         ).subjectName)
       subitem.major4 &&
+        subitem.major4 !== '""' &&
         (subitem.major4 = semesterSubjectsData.find(
-          (val) => val.subjectId === subitem.major4
+          (val) =>
+            val.subjectId === subitem.major4 || val.paperId === subitem.major4
         ).subjectName)
       subitem.nationalCompetition &&
         (subitem.nationalCompetition =
@@ -187,8 +189,26 @@ function NewForms() {
           subitem.admissionYear,
           subitem.academicDetails,
           subitem.totalMeritCount,
-          subitem.submitted
+          subitem.major1,
+          subitem.bcom
         ))
+      subitem.admissionYear !== '1' &&
+        subitem.AuthStatusCode &&
+        subitem.AuthStatusCode === '0300' &&
+        ((subitem.Course_Fees = subitem.TxnAmount),
+        (subitem.Payment_ID = subitem.paymentId))
+      subitem.coCurriculumSem1 =
+        checkFaculty(subitem.faculty) === 0 &&
+        subitem.admissionYear === '1' &&
+        subitem.courseType === '#ug1UG'
+          ? subitem.coCurriculumSem1
+          : ''
+      subitem.coCurriculumSem2 =
+        checkFaculty(subitem.faculty) === 0 &&
+        subitem.admissionYear === '1' &&
+        subitem.courseType === '#ug1UG'
+          ? subitem.coCurriculumSem2
+          : ''
       return subitem
     })
     filteredData = replaceKey(filteredData, 'Vaccinated', 'vaccinated')
@@ -320,6 +340,9 @@ function NewForms() {
     filteredData = deleteEachKeyPair(filteredData, 'admissionYear')
     filteredData = deleteEachKeyPair(filteredData, 'uploadExtraMark')
     filteredData = deleteEachKeyPair(filteredData, 'totalMeritCount')
+    filteredData = deleteEachKeyPair(filteredData, 'TxnAmount')
+    filteredData = deleteEachKeyPair(filteredData, 'AuthStatusCode')
+    filteredData = deleteEachKeyPair(filteredData, 'paymentId')
     return filteredData
   }
 

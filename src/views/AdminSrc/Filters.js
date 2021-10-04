@@ -105,7 +105,7 @@ class Filters extends Component {
         category,
         status,
         faculty,
-        major1.length > 0 ? major1[0].subjectId : '',
+        major1.length > 0 ? major1[0].subjectId : null,
         regNo,
         fromDate,
         toDate
