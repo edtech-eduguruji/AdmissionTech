@@ -39,6 +39,7 @@ import {
   errorDialog,
   handleCalculateFees,
   mandatoryField,
+  modifyKeys,
   redirectUrl,
   validateUser,
   verifyString,
@@ -288,9 +289,16 @@ class Form extends React.Component {
                     response.data[item] = ''
                   }
                 })
+                debugger
                 response.data.academicDetails = response.data.academicDetails
-                  ? JSON.parse(verifyString(response.data.academicDetails))
+                  ? JSON.parse(
+                      verifyString(response.data.academicDetails),
+                      (key, value) => {
+                        return typeof value === 'string' ? value.trim() : value
+                      }
+                    )
                   : []
+                modifyKeys(response.data.academicDetails)
                 response.data.documents = response.data.documents
                   ? JSON.parse(response.data.documents)
                   : []

@@ -65,7 +65,6 @@ function NewForms() {
               obj[item] = ''
             }
           })
-          debugger
           obj.academicDetails = obj.academicDetails
             ? JSON.parse(verifyString(obj.academicDetails), (key, value) => {
                 return typeof value === 'string' ? value.trim() : value
