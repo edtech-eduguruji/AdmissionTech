@@ -52,7 +52,6 @@ class QueryApi extends React.Component {
       if (JSON.parse(formDetails)) {
         const formInput = JSON.parse(formDetails)
         let fdata = new FormData()
-        fdata.append('kushal', 'jain')
         for (var i in formInput) {
           fdata.append(`${i}`, this.verifyString(formInput[i]))
         }

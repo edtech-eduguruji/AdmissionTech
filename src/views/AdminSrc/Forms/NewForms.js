@@ -5,7 +5,7 @@ import CardContainer from '../../../common/CardContainer'
 import CustomPagination from '../../../common/CustomPagination'
 import RegularButton from '../../../components/CustomButtons/Button'
 import CustomTable from '../../../components/Table/Table'
-import { formDialog, verifyString } from '../../../utils/Utils'
+import { formDialog, modifyKeys, verifyString } from '../../../utils/Utils'
 import Form from '../../StudentSrc/Form'
 import PaymentHistory from '../../StudentSrc/PaymentHistory'
 import facultyData from '../../StudentSrc/StaticData/faculty.json'
@@ -65,9 +65,13 @@ function NewForms() {
               obj[item] = ''
             }
           })
+          debugger
           obj.academicDetails = obj.academicDetails
-            ? JSON.parse(verifyString(obj.academicDetails))
+            ? JSON.parse(verifyString(obj.academicDetails), (key, value) => {
+                return typeof value === 'string' ? value.trim() : value
+              })
             : []
+          modifyKeys(obj.academicDetails)
           obj.documents = obj.documents ? JSON.parse(obj.documents) : []
           obj.major1 = obj.major1 ? JSON.parse(obj.major1) : []
           obj.major2 = obj.major2 ? JSON.parse(obj.major2) : ''

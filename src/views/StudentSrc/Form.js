@@ -3973,7 +3973,7 @@ class Form extends React.Component {
               </Grid>
             ) : null}
           </Grid>
-          {preview && isView && (
+          {(preview || isView) && (
             <Grid container item xs={12} justifyContent="center">
               <Box p={2}>
                 <RegularButton

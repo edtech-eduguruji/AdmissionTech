@@ -54,7 +54,9 @@ function NewForms() {
           })
           obj.academicDetails =
             obj.academicDetails && obj.academicDetails.length > 0
-              ? JSON.parse(verifyString(obj.academicDetails))
+              ? JSON.parse(verifyString(obj.academicDetails), (key, value) => {
+                  return value.trim()
+                })
               : []
           obj.documents = obj.documents ? JSON.parse(obj.documents) : []
           obj.major1 = obj.major1 ? JSON.parse(obj.major1) : []

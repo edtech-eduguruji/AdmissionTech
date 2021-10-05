@@ -576,5 +576,19 @@ export function checkFaculty(facultyId) {
 }
 
 export function verifyString(text) {
-  return text.replace(/[\n\r\s\t]+/g, ' ')
+  return text.replace(/[\n\r\s\t']+/g, ' ')
+}
+
+export function modifyKeys(arr) {
+  if (arr && arr.length > 0) {
+    return arr.map((obj) => {
+      Object.keys(obj).forEach((key) => {
+        obj[`${key.trim()}`] = obj[key]
+        delete obj[key]
+        if (typeof obj[`${key}`] === 'object') {
+          modifyKeys(obj[`${key}`])
+        }
+      })
+    })
+  }
 }
