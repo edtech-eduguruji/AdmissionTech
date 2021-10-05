@@ -7,6 +7,7 @@ import {
   calculateMerit,
   checkFaculty,
   deleteEachKeyPair,
+  modifyKeys,
   replaceKey,
   verifyString,
 } from '../../../utils/Utils'
@@ -52,12 +53,12 @@ function NewForms() {
               obj[item] = ''
             }
           })
-          obj.academicDetails =
-            obj.academicDetails && obj.academicDetails.length > 0
-              ? JSON.parse(verifyString(obj.academicDetails), (key, value) => {
-                  return value.trim()
-                })
-              : []
+          obj.academicDetails = obj.academicDetails
+            ? JSON.parse(verifyString(obj.academicDetails), (key, value) => {
+                return typeof value === 'string' ? value.trim() : value
+              })
+            : []
+          modifyKeys(obj.academicDetails)
           obj.documents = obj.documents ? JSON.parse(obj.documents) : []
           obj.major1 = obj.major1 ? JSON.parse(obj.major1) : []
           obj.major2 = obj.major2 ? JSON.parse(obj.major2) : ''
@@ -180,12 +181,12 @@ function NewForms() {
       subitem.admissionYear &&
         subitem.courseType &&
         subitem.admissionYear === '1' &&
-        subitem.courseType !== 'pgd3PGD' &&
+        subitem.courseType !== 'PG Diploma' &&
         (subitem.Merit_Points = subitem.totalMeritCount)
       subitem.admissionYear &&
         subitem.courseType &&
         subitem.admissionYear === '1' &&
-        subitem.courseType !== 'pgd3PGD' &&
+        subitem.courseType !== 'PG Diploma' &&
         (subitem.Total_Merit = calculateMerit(
           subitem.courseType,
           subitem.admissionYear,
@@ -202,13 +203,13 @@ function NewForms() {
       subitem.coCurriculumSem1 =
         checkFaculty(subitem.faculty) === 0 &&
         subitem.admissionYear === '1' &&
-        subitem.courseType === '#ug1UG'
+        subitem.courseType === 'Under Graduate'
           ? subitem.coCurriculumSem1
           : ''
       subitem.coCurriculumSem2 =
         checkFaculty(subitem.faculty) === 0 &&
         subitem.admissionYear === '1' &&
-        subitem.courseType === '#ug1UG'
+        subitem.courseType === 'Under Graduate'
           ? subitem.coCurriculumSem2
           : ''
       return subitem
