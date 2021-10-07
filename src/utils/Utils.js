@@ -6,9 +6,12 @@ import { jsPDF } from 'jspdf'
 import config from 'myconfig'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import DocumentView from '../common/DocumentView'
 import FormDialog from '../common/FormDialog'
 import LocalStorage from '../common/LocalStorage'
 import PromptBox from '../common/PromptBox'
+import Success from '../components/Typography/Success'
+import { ASSETS } from '../constants/Constants'
 import dashboardRoutes from '../routes'
 import feesStatic from '../views/StudentSrc/StaticData/fees.json'
 import Snackbar from './../components/Snackbar/Snackbar'
@@ -152,6 +155,10 @@ export function formDialog(component, fullscreen, title, width, action) {
 
 export function closeDialog() {
   ReactDOM.unmountComponentAtNode(document.getElementById('form'))
+}
+
+export function closeFileViewerDialog() {
+  ReactDOM.unmountComponentAtNode(document.getElementById('fileViewer'))
 }
 
 export function getAxios() {
@@ -587,4 +594,29 @@ export function modifyKeys(arr) {
       })
     })
   }
+}
+
+export function viewFile(fileLink) {
+  ReactDOM.render(
+    <DocumentView
+      withDownload
+      handleClose={() => closeFileViewerDialog()}
+      aria-labelledby="customized-dialog-title"
+      isOpen={true}
+      fileLink={ASSETS.url + fileLink}
+    />,
+    document.getElementById('fileViewer')
+  )
+}
+
+export function uploadViewer(fileLink) {
+  let isStudent = getUserRole() === 'STUDENT' ? true : false
+  return (
+    <Success
+      linkable={!isStudent}
+      onClick={!isStudent ? () => viewFile(fileLink) : null}
+    >
+      {isStudent ? 'Uploaded' : 'View Uploaded File'}
+    </Success>
+  )
 }

@@ -27,7 +27,6 @@ import FileUploader from '../../common/FileUploader/FileUploader'
 import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import CustomInput from '../../components/CustomInput/CustomInput'
-import Success from '../../components/Typography/Success'
 import { ASSETS } from '../../constants/Constants'
 import {
   addErrorMsg,
@@ -41,6 +40,7 @@ import {
   mandatoryField,
   modifyKeys,
   redirectUrl,
+  uploadViewer,
   validateUser,
   verifyString,
 } from '../../utils/Utils'
@@ -1903,9 +1903,7 @@ class Form extends React.Component {
                   </div>
                 </Grid>
                 <Grid container item xs={12} justifyContent="center">
-                  {form !== '' && form !== null ? (
-                    <Success>Uploaded.</Success>
-                  ) : null}
+                  {form !== '' && form !== null ? uploadViewer(form) : null}
                 </Grid>
               </Grid>
             </Grid>
@@ -2132,9 +2130,9 @@ class Form extends React.Component {
                     name="categoryCertificate"
                   />
                 )}
-                {categoryCertificate !== '' && categoryCertificate !== null ? (
-                  <Success>Uploaded.</Success>
-                ) : null}
+                {categoryCertificate !== '' && categoryCertificate !== null
+                  ? uploadViewer(categoryCertificate)
+                  : null}
               </div>
             </Grid>
             <Grid container item md={6} xs={12} justifyContent="center">
@@ -2150,9 +2148,9 @@ class Form extends React.Component {
                   />
                 )}
                 {subCategoryCertificate !== '' &&
-                subCategoryCertificate !== null ? (
-                  <Success>Uploaded.</Success>
-                ) : null}
+                subCategoryCertificate !== null
+                  ? uploadViewer(subCategoryCertificate)
+                  : null}
               </div>
             </Grid>
             <Grid item xs={6}>
@@ -3406,9 +3404,9 @@ class Form extends React.Component {
                         </Grid>
                       )}
                       <Grid item md={4} xs={12}>
-                        {item.document !== '' && item.document !== null ? (
-                          <Success>Uploaded.</Success>
-                        ) : null}
+                        {item.document !== '' && item.document !== null
+                          ? uploadViewer(item.document)
+                          : null}
                       </Grid>
                       <Grid item md={1} xs={12}>
                         {item.isDelete === 1 && !preview && (
@@ -3535,7 +3533,7 @@ class Form extends React.Component {
 
                   {nationalCertificate && (
                     <Grid item xs={6}>
-                      <Success>Uploaded.</Success>
+                      {uploadViewer(nationalCertificate)}
                     </Grid>
                   )}
                   {courseType === '#pg2PG' ||
@@ -3590,7 +3588,7 @@ class Form extends React.Component {
 
                   {otherCertificate && (
                     <Grid item xs={6}>
-                      <Success>Uploaded.</Success>
+                      {uploadViewer(otherCertificate)}
                     </Grid>
                   )}
 
@@ -3638,7 +3636,7 @@ class Form extends React.Component {
                   )}
                   {nccCertificate && (
                     <Grid item xs={6}>
-                      <Success>Uploaded.</Success>
+                      {uploadViewer(nccCertificate)}
                     </Grid>
                   )}
                   {courseType === '#ug1UG' ||
@@ -3705,7 +3703,7 @@ class Form extends React.Component {
                     )}
                   </Grid>
                   <Grid item md={5} xs={6}>
-                    {nssDocument && <Success>Uploaded.</Success>}
+                    {nssDocument && uploadViewer(nssDocument)}
                   </Grid>
                   {(courseType === '#pg2PG' ||
                     major1[0].subjectName === 'LLM' ||
@@ -3756,9 +3754,9 @@ class Form extends React.Component {
                       </Grid>
                     )}
                   <Grid item md={3} xs={6}>
-                    {rrDocument && !otherRoverRanger && (
-                      <Success>Uploaded.</Success>
-                    )}
+                    {rrDocument &&
+                      !otherRoverRanger &&
+                      uploadViewer(rrDocument)}
                   </Grid>
                   {courseType === '#pg2PG' ||
                   major1[0].subjectName === 'LLM' ||
@@ -3889,9 +3887,9 @@ class Form extends React.Component {
                     />
                   )}
                   <Grid item md={4} xs={6}>
-                    {uploadExtraMark !== '' && uploadExtraMark !== null ? (
-                      <Success>Uploaded.</Success>
-                    ) : null}
+                    {uploadExtraMark !== '' && uploadExtraMark !== null
+                      ? uploadViewer(uploadExtraMark)
+                      : null}
                   </Grid>
                 </Grid>
                 <Grid item xs={12}>
