@@ -157,13 +157,14 @@ function NewForms() {
       subitem.major2 && (subitem.major2 = subitem.major2.subjectName)
       subitem.major3 &&
         (subitem.major3 = semesterSubjectsData.find(
-          (val) => val.paperId === subitem.major3
+          (val) => val.semester === 1 && val.paperId === subitem.major3
         ).subjectName)
       subitem.major4 &&
         subitem.major4 !== '""' &&
         (subitem.major4 = semesterSubjectsData.find(
           (val) =>
-            val.subjectId === subitem.major4 || val.paperId === subitem.major4
+            val.semester === 2 &&
+            (val.paperId === subitem.major4 || val.subjectId === subitem.major4)
         ).subjectName)
       subitem.nationalCompetition &&
         (subitem.nationalCompetition =
