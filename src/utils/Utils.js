@@ -509,7 +509,11 @@ export function calculateMerit(
     graduation,
     meritPoints
   let meritCount = totalMeritCount === '' ? 0 : parseInt(totalMeritCount)
-  if (admissionYear === '1' && courseType !== 'PG Diploma') {
+  if (
+    admissionYear === '1' &&
+    courseType !== 'PG Diploma' &&
+    courseType !== 'pgd3PGD'
+  ) {
     if (
       (academicDetails.length === 2 &&
         academicDetails[0].percentage &&
@@ -521,13 +525,17 @@ export function calculateMerit(
         major1.length > 0)
     ) {
       meritPoints =
-        bcom === 'YES' && major1 !== 'B.Com'
+        (bcom === 'YES' || bcom === 'true') &&
+        major1 !== 'B.Com' &&
+        major1[0].subjectId !== '$20Bcom'
           ? parseInt(meritCount - 5)
           : parseInt(meritCount)
       if (
         academicDetails.length >= 2 &&
         (courseType === 'Under Graduate' ||
-          (courseType === 'Law' && major1 === 'B.A. LLB'))
+          courseType === '#ug1UG' ||
+          ((courseType === 'Law' || courseType === 'law4LAW') &&
+            (major1 === 'B.A. LLB' || major1[0].subjectId === '$22ballb')))
       ) {
         highSchool = parseFloat(academicDetails[0].percentage.split('%')[0] / 2)
         inter = parseFloat(academicDetails[1].percentage.split('%')[0])
@@ -535,7 +543,12 @@ export function calculateMerit(
       } else if (
         academicDetails.length > 2 &&
         (courseType === 'Post Graduate' ||
-          (courseType === 'Law' && (major1 === 'LLM' || major1 === 'LLB')))
+          courseType === '#pg2PG' ||
+          ((courseType === 'Law' || courseType === 'law4LAW') &&
+            (major1 === 'LLM' ||
+              major1 === 'LLB' ||
+              major1[0].subjectId === 'llb27LLB' ||
+              major1[0].subjectId === 'llm26LLM')))
       ) {
         inter = parseFloat(academicDetails[1].percentage.split('%')[0] / 2)
         graduation = parseFloat(academicDetails[2].percentage.split('%')[0])

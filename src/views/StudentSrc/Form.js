@@ -27,10 +27,12 @@ import FileUploader from '../../common/FileUploader/FileUploader'
 import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import CustomInput from '../../components/CustomInput/CustomInput'
+import Success from '../../components/Typography/Success'
 import { ASSETS } from '../../constants/Constants'
 import {
   addErrorMsg,
   addSuccessMsg,
+  calculateMerit,
   checkFaculty,
   closeDialog,
   deleteBox,
@@ -1720,6 +1722,27 @@ class Form extends React.Component {
               <Typography variant="h6" component="div" gutterBottom>
                 Your registration no: {registrationNo}
               </Typography>
+              <Success>
+                <Typography variant="h6" component="div" gutterBottom>
+                  {admissionYear &&
+                    courseType &&
+                    admissionYear === '1' &&
+                    courseType !== 'pgd3PGD' &&
+                    courseType !== 'law4LAW' &&
+                    courseType !== '#pg2PG' &&
+                    faculty !== 'f8fobt' &&
+                    faculty !== 'f6fom' &&
+                    'Your merit is: ' +
+                      calculateMerit(
+                        courseType,
+                        admissionYear,
+                        academicDetails,
+                        totalMeritCount,
+                        major1,
+                        bcom
+                      )}
+                </Typography>
+              </Success>
               <Divider />
               <br />
               <br />
