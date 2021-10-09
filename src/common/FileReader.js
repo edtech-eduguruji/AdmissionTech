@@ -7,7 +7,9 @@ import {
   ZoomOut,
 } from '@material-ui/icons'
 import GetAppIcon from '@material-ui/icons/GetApp'
+import PrintIcon from '@material-ui/icons/Print'
 import RegularButton from 'components/CustomButtons/Button'
+import { saveAs } from 'file-saver'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Document, Page, pdfjs } from 'react-pdf'
@@ -105,6 +107,15 @@ class FileReader extends React.Component {
                 <GetAppIcon />
               </RegularButton>
             )}
+            <RegularButton
+              size="sm"
+              justIcon
+              color="primary"
+              variant="contained"
+              onClick={() => window.print()}
+            >
+              <PrintIcon />
+            </RegularButton>
             <RegularButton
               size="sm"
               justIcon
