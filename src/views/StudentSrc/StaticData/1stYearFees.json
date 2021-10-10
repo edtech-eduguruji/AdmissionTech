@@ -45,8 +45,7 @@
         "type" : 4,
         "parameterId" : "F1SCIENCE",
         "practicalSubjects" : ["s65DP","s58Psychology"],
-        "fee" : 
-        {
+        "fee" :  {
             "0" : {"male" : 3812.50, "female" : 3632.50, "transgender" : 3812.50}, 
             "1" : {"male" : 4302.50, "female" : 4122.50, "transgender" : 4302.50}
         }
@@ -56,8 +55,7 @@
         "type" : 4,
         "parameterId" : "F1SCIENCE",
         "practicalSubjects" : ["s54Maths","s53DP","s52MS","s51Psychology","s55BAPhyEdu"],
-        "fee" : 
-        {
+        "fee" : {
             "0" : {"male" : 3557.00, "female" : 3425.00, "transgender" : 3557.00}, 
             "1" : {"male" : 4022.00, "female" : 3890.00, "transgender" : 4022.00},
             "2" : {"male" : 4262.00, "female" : 4130.00, "transgender" : 4262.00}
@@ -68,7 +66,9 @@
     {
         "type" : 5,
         "parameterId" : "F1SCIENCE",
-        "BIO" : {"male": 4512.00 ,"female": 4380.00, "transgender": 4512.00},
-        "MATHS" : {"male": 4272.00 ,"female": 4140.00, "transgender": 4272.00}
+        "fee": {
+            "BIO" : {"male": 4512.00 ,"female": 4380.00, "transgender": 4512.00},
+            "MATHS" : {"male": 4272.00 ,"female": 4140.00, "transgender": 4272.00}
+        }
     }
 }

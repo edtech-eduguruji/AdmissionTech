@@ -13,7 +13,6 @@ function withRouteLayout(
   return class extends React.Component {
     handleRedirects = () => {
       const user = LocalStorage.getUser()
-      debugger
       if (user.payment == '0' && user.submitted === '0') {
         if (
           currentRoute.layout + currentRoute.path == '/student/payment' ||

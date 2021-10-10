@@ -540,24 +540,22 @@ export function calculateFirstYearFees(
         amount: fees.fee[count][gender],
       }
     } else if (fees.type === 5) {
-      let subject
+      let subject = null
+      major2 = typeof major2 == 'string' ? JSON.parse(major2) : major2
       let bioSub = ['$sf17BALLBZoology', '$s6Zoology', '$s1Botany']
-      major1.map((item) => {
-        if (bioSub.includes(item.subjectId)) {
-          bioSub.splice(bioSub.indexOf(item.subjectId), 1)
-        }
+      let bioCheck = major1.some((item) => {
+        return (
+          bioSub.includes(item.subjectId) || bioSub.includes(major2.subjectId)
+        )
       })
-      if (bioSub.includes(major2.subjectId)) {
-        bioSub.splice(bioSub.indexOf(item.subjectId), 1)
-      }
-      if (bioSub.length === 1) {
+      if (bioCheck) {
         subject = 'BIO'
       } else {
         subject = 'MATHS'
       }
       return {
         parameterId: fees.parameterId,
-        amount: fees[subject][gender],
+        amount: fees.fee[subject][gender],
       }
     }
   } else {
