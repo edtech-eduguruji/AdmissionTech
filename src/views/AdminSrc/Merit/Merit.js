@@ -28,16 +28,18 @@ function NewForms() {
   const handleGetForms = (
     courseType,
     year,
+    selection,
     category,
     status,
     faculty,
     major1
   ) => {
-    if (courseType && year && category && status && faculty) {
+    if (courseType && year && faculty) {
       const data = {
         courseType: courseType,
         admissionYear: year,
-        category: category === 'all' ? null : category,
+        selection: selection,
+        category: category,
         status: status,
         faculty: faculty,
         major1: major1,
@@ -196,11 +198,12 @@ function NewForms() {
           subitem.major1,
           subitem.bcom
         ))
-      subitem.admissionYear !== '1' &&
-        subitem.AuthStatusCode &&
+      subitem.AuthStatusCode &&
         subitem.AuthStatusCode === '0300' &&
         ((subitem.Course_Fees = subitem.TxnAmount),
         (subitem.Payment_ID = subitem.paymentId))
+      subitem.admissionYear === '1' &&
+        (subitem.selection = subitem.selection === '1' ? 'SELECTED' : '')
       subitem.coCurriculumSem1 =
         checkFaculty(subitem.faculty) === 0 &&
         subitem.admissionYear === '1' &&
@@ -353,13 +356,22 @@ function NewForms() {
   const handleUpdate = (
     courseType,
     year,
+    selection,
     category,
     status,
     faculty,
     major1
   ) => {
     setFields({ formsData: [] })
-    handleGetForms(courseType, year, category, status, faculty, major1)
+    handleGetForms(
+      courseType,
+      year,
+      selection,
+      category,
+      status,
+      faculty,
+      major1
+    )
   }
 
   return (

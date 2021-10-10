@@ -14,16 +14,16 @@
     "f15BBA" : 
     {
         "type" : 0,
-        "fee" : 17129.00,
+        "fee" : 14829.00,
         "parameterId" : "F6FOM"
     },
     "f16BCA" : 
     {
         "type" : 0,
-        "fee" : 17329.00,
+        "fee" : 15029.00,
         "parameterId" : "F6FOM"
     },
-    "f7fols" : 
+    "f7fols" :  
     {
         "type" : 2,
         "parameterId" : "F7LAW",
@@ -53,7 +53,7 @@
         "parameterId" : "F1SCIENCE",
         "male": 4302.00,
         "female": 4122.50,
-        "transgender": 4272.00
+        "transgender": 4302.00
     },
     "f12BA" : 
     {
@@ -76,7 +76,7 @@
         "fee" : 
         {
             "0" : {"male" : 3812.50, "female" : 3632.50, "transgender" : 3812.50}, 
-            "1" : {"male" : 4312.50, "female" : 4122.50, "transgender" : 4312.50}
+            "1" : {"male" : 4302.50, "female" : 4122.50, "transgender" : 4302.50}
         }
     }
 }
