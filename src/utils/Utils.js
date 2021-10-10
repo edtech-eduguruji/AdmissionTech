@@ -504,7 +504,13 @@ export function calculateFirstYearFees(
   // Type 4 (Gender and Practical Subject Constraint)
   // Type 5 (Bio/Maths and Gender Constraint)
   if (admissionYear === '1') {
-    let fees = feesFirstStatic[faculty]
+    let isArts =
+      faculty === 'f2Arts' ||
+      faculty === 'f3Language' ||
+      faculty === 'f4fineArt'
+        ? true
+        : false
+    let fees = isArts ? feesFirstStatic['BA'] : feesFirstStatic[faculty]
     if (fees.type === 0) {
       return { parameterId: fees.parameterId, amount: fees.fee }
     } else if (fees.type === 1) {
