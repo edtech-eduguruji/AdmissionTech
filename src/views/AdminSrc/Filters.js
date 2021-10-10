@@ -26,6 +26,7 @@ class Filters extends Component {
       year: new Date().getFullYear(),
       courseType: '',
       admissionYear: '',
+      selection: '',
       category: '',
       regNo: '',
       fromDate: '',
@@ -41,6 +42,7 @@ class Filters extends Component {
       {
         courseType: '',
         admissionYear: '',
+        selection: '',
         category: '',
         regNo: '',
         fromDate: '',
@@ -81,6 +83,7 @@ class Filters extends Component {
     const {
       courseType,
       admissionYear,
+      selection,
       category,
       regNo,
       fromDate,
@@ -92,7 +95,7 @@ class Filters extends Component {
     if (
       !this.props.excel ||
       (courseType &&
-        admissionYear &&
+        ((admissionYear === '1' && selection) || admissionYear !== '1') &&
         faculty &&
         status &&
         category &&
@@ -102,8 +105,9 @@ class Filters extends Component {
       this.props.handleUpdate(
         courseType,
         admissionYear,
-        category,
-        status,
+        selection === 'all' ? null : selection,
+        category === 'all' ? null : category,
+        status === 'all' ? null : status,
         faculty,
         major1.length > 0 ? major1[0].subjectId : null,
         regNo,
@@ -112,7 +116,7 @@ class Filters extends Component {
       )
     } else {
       addErrorMsg(
-        'Please Select Course Type, Admission Year, Faculty/Course, Form Status and Category'
+        'Please Select Course Type, Admission Year, Selection Type, Faculty/Course, Form Status and Category'
       )
     }
   }
@@ -197,6 +201,7 @@ class Filters extends Component {
       month,
       courseType,
       admissionYear,
+      selection,
       category,
       regNo,
       fromDate,
@@ -295,6 +300,28 @@ class Filters extends Component {
             />
           </Grid>
         )}
+        {admissionYear === '1' && (
+          <Grid item xs={12}>
+            <TextField
+              select
+              fullWidth
+              variant="outlined"
+              name="selection"
+              label="Select Student Selection Type"
+              value={selection}
+              onChange={this.handleChangeFields(0)}
+            >
+              <MenuItem value="all">All</MenuItem>
+              <MenuItem value="selectedWithPayment">
+                Selected students those done the course payment
+              </MenuItem>
+              <MenuItem value="selectedWithoutPayment">
+                Selected students those not done the course payment
+              </MenuItem>
+              <MenuItem value="nonSelected">Non-selected students</MenuItem>
+            </TextField>
+          </Grid>
+        )}
         <Grid item xs={6}>
           <TextField
             select
@@ -305,6 +332,7 @@ class Filters extends Component {
             value={status}
             onChange={this.handleChangeFields(0)}
           >
+            <MenuItem value="all">All</MenuItem>
             {admissionYear &&
               statusStatic.map(
                 (item, i) =>

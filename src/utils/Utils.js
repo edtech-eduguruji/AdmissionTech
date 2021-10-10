@@ -455,7 +455,7 @@ export function downloadPdf(formId, fname) {
 }
 
 export function handleCalculateFees(admissionYear, faculty, gender, major1) {
-  // return 0 - Means Applied for 1st Year
+  // return null - Means Applied for 1st Year
   // Type 0  (Default Case With No Any Constraint)
   // Type 1  (Same faculty For All Years)
   // Type 2  (Same faculty with Gender Constraint)
@@ -481,6 +481,76 @@ export function handleCalculateFees(admissionYear, faculty, gender, major1) {
       return {
         parameterId: fees.parameterId,
         amount: fees.fee[count][gender],
+      }
+    }
+  } else {
+    return null
+  }
+}
+
+export function calculateFirstYearFees(
+  admissionYear,
+  faculty,
+  gender,
+  major1,
+  major2
+) {
+  // return null - Means Not Applied for 1st Year
+  // Type 0  (Default Case With No Any Constraint)
+  // Type 1  (Same faculty For All Years)
+  // Type 2  (Same faculty with Gender Constraint)
+  // Type 3  (Gender Constraint Only)
+  // Type 4 (Gender and Practical Subject Constraint)
+  // Type 5 (Bio/Maths and Gender Constraint)
+  if (admissionYear === '1') {
+    let fees = feesStatic[faculty]
+    if (fees.type === 0) {
+      return { parameterId: fees.parameterId, amount: fees.fee }
+    } else if (fees.type === 1) {
+      return {
+        parameterId: fees.parameterId,
+        amount: fees[major1[0].subjectId],
+      }
+    } else if (fees.type === 2) {
+      return {
+        parameterId: fees.parameterId,
+        amount: fees[major1[0].subjectId][gender],
+      }
+    } else if (fees.type === 3) {
+      return {
+        parameterId: fees.parameterId,
+        amount: fees[gender],
+      }
+    } else if (fees.type === 4) {
+      let count = 0
+      major1.map((item) => {
+        if (fees.practicalSubjects.includes(item.subjectId)) {
+          count++
+        }
+      })
+      return {
+        parameterId: fees.parameterId,
+        amount: fees.fee[count][gender],
+      }
+    } else if (fees.type === 5) {
+      let subject
+      let bioSub = ['$sf17BALLBZoology', '$s6Zoology', '$s1Botany']
+      major1.map((item) => {
+        if (bioSub.includes(item.subjectId)) {
+          bioSub.splice(bioSub.indexOf(item.subjectId), 1)
+        }
+      })
+      if (bioSub.includes(major2.subjectId)) {
+        bioSub.splice(bioSub.indexOf(item.subjectId), 1)
+      }
+      if (bioSub.length === 1) {
+        subject = 'BIO'
+      } else {
+        subject = 'MATHS'
+      }
+      return {
+        parameterId: fees.parameterId,
+        amount: fees[subject][gender],
       }
     }
   } else {

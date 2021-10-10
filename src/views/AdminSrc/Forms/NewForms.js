@@ -1,11 +1,18 @@
-import { Grid } from '@material-ui/core'
+import { Grid, Switch } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import FormApi from '../../../apis/FormApi'
 import CardContainer from '../../../common/CardContainer'
 import CustomPagination from '../../../common/CustomPagination'
 import RegularButton from '../../../components/CustomButtons/Button'
 import CustomTable from '../../../components/Table/Table'
-import { formDialog, modifyKeys, verifyString } from '../../../utils/Utils'
+import {
+  addSuccessMsg,
+  errorDialog,
+  formDialog,
+  modifyKeys,
+  updateInList,
+  verifyString,
+} from '../../../utils/Utils'
 import Form from '../../StudentSrc/Form'
 import PaymentHistory from '../../StudentSrc/PaymentHistory'
 import facultyData from '../../StudentSrc/StaticData/faculty.json'
@@ -22,6 +29,7 @@ function NewForms() {
   const handleGetForms = (
     courseType,
     year,
+    selection,
     category,
     status,
     faculty,
@@ -33,6 +41,7 @@ function NewForms() {
     if (
       courseType ||
       year ||
+      selection ||
       category ||
       status ||
       faculty ||
@@ -46,7 +55,8 @@ function NewForms() {
         offset: offset,
         courseType: courseType,
         admissionYear: year,
-        category: category === 'all' ? null : category,
+        selection: selection,
+        category: category,
         status: status,
         faculty: faculty,
         major1: major1,
@@ -115,7 +125,6 @@ function NewForms() {
           </RegularButton>
           <RegularButton
             size="md"
-            color="danger"
             onClick={() =>
               formDialog(
                 <PaymentHistory userId={item.registrationNo} />,
@@ -126,10 +135,46 @@ function NewForms() {
           >
             Payment History
           </RegularButton>
+          {item.admissionYear === '1' && item.payment === '1' && (
+            <Switch
+              checked={item.selection === '1'}
+              onChange={handleStudentSelection(
+                item.selection === '1' ? '0' : '1',
+                item.registrationNo
+              )}
+            />
+          )}
         </div>,
       ]
     })
     return formatted
+  }
+
+  const handleStudentSelection = (value, regNo) => () => {
+    const data = new FormData()
+    data.append('value', value)
+    data.append('registrationNo', regNo)
+    FormApi.studentSelection(data).then((res) => {
+      if (res.status === 200) {
+        if (!res.data.isError) {
+          addSuccessMsg(
+            value === '0'
+              ? 'Student removed from selection list.'
+              : 'Student added in selection list.'
+          )
+          setFields({
+            ...fields,
+            formsData: updateInList(
+              formsData,
+              { keyName: 'registrationNo', keyValue: regNo },
+              { keyName: 'selection', keyValue: value }
+            ),
+          })
+        } else {
+          errorDialog(res.data.Response, 'Failed')
+        }
+      }
+    })
   }
 
   const handlePagination = (limit, offset) => {
@@ -139,6 +184,7 @@ function NewForms() {
   const handleUpdate = (
     courseType,
     year,
+    selection,
     category,
     status,
     faculty,
@@ -147,10 +193,10 @@ function NewForms() {
     fromDate,
     toDate
   ) => {
-    setFields({ ...fields, formsData: [] })
     handleGetForms(
       courseType,
       year,
+      selection,
       category,
       status,
       faculty,

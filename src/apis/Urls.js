@@ -11,6 +11,7 @@ const URLS = {
   FETCHPAYMENTDETAILS: API_URL + 'studentapi/fetchPaymentDetails.php',
   CHECKSUM: API_URL + 'checksum.php',
   QUERYAPI: API_URL + 'queryapi.php',
+  STUDENTSELECTION: API_URL + 'studentSelection.php',
 }
 
 export default URLS
