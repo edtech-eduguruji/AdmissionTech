@@ -8,6 +8,7 @@ import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import Success from '../../components/Typography/Success'
 import {
+  calculateFirstYearFees,
   errorDialog,
   handleCalculateFees,
   redirectUrl,
@@ -40,12 +41,25 @@ class CourseFee extends React.Component {
             ? JSON.parse(response.data.major1)
             : []
 
-          let payment = handleCalculateFees(
-            response.data.admissionYear,
-            response.data.faculty,
-            response.data.gender,
-            response.data.major1
-          )
+          let payment = null
+
+          if (response.data.admissionYear == '1') {
+            payment = calculateFirstYearFees(
+              response.data.admissionYear,
+              response.data.faculty,
+              response.data.gender,
+              response.data.major1,
+              response.data.major2
+            )
+          } else {
+            payment = handleCalculateFees(
+              response.data.admissionYear,
+              response.data.faculty,
+              response.data.gender,
+              response.data.major1
+            )
+          }
+
           if (payment != null) {
             this.setState({
               ...response,

@@ -13,6 +13,7 @@ import PromptBox from '../common/PromptBox'
 import Success from '../components/Typography/Success'
 import { ASSETS } from '../constants/Constants'
 import dashboardRoutes from '../routes'
+import feesFirstStatic from '../views/StudentSrc/StaticData/1stYearFees.json'
 import feesStatic from '../views/StudentSrc/StaticData/fees.json'
 import Snackbar from './../components/Snackbar/Snackbar'
 import history from './history'
@@ -503,7 +504,7 @@ export function calculateFirstYearFees(
   // Type 4 (Gender and Practical Subject Constraint)
   // Type 5 (Bio/Maths and Gender Constraint)
   if (admissionYear === '1') {
-    let fees = feesStatic[faculty]
+    let fees = feesFirstStatic[faculty]
     if (fees.type === 0) {
       return { parameterId: fees.parameterId, amount: fees.fee }
     } else if (fees.type === 1) {

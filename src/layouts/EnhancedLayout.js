@@ -13,6 +13,7 @@ function withRouteLayout(
   return class extends React.Component {
     handleRedirects = () => {
       const user = LocalStorage.getUser()
+      debugger
       if (user.payment == '0' && user.submitted === '0') {
         if (
           currentRoute.layout + currentRoute.path == '/student/payment' ||
@@ -50,10 +51,16 @@ function withRouteLayout(
         (user.payment == '1' &&
           user.submitted === '1' &&
           user.admissionYear === '1' &&
-          user.courseFee == '0') ||
+          user.courseFee == '0' &&
+          user.selection == '0') ||
         (user.payment == '1' &&
           user.submitted === '1' &&
           user.admissionYear !== '1' &&
+          user.courseFee == '1') ||
+        (user.payment == '1' &&
+          user.submitted === '1' &&
+          user.admissionYear === '1' &&
+          user.selection == '1' &&
           user.courseFee == '1')
       ) {
         if (
@@ -74,8 +81,8 @@ function withRouteLayout(
       } else if (
         user.payment == '1' &&
         user.submitted === '1' &&
-        user.admissionYear !== '1' &&
-        user.courseFee == '0'
+        ((user.admissionYear !== '1' && user.courseFee == '0') ||
+          (user.selection == '1' && user.courseFee == '0'))
       ) {
         if (
           currentRoute.layout + currentRoute.path == '/student/coursefee' ||
