@@ -382,7 +382,13 @@ class Filters extends Component {
             <Typography variant="overline">To Date</Typography>
             <DateBuilder
               name="toDate"
-              minDate={new Date(year, month, new Date(fromDate).getDate())}
+              minDate={
+                new Date(
+                  year,
+                  new Date(fromDate).getMonth(),
+                  new Date(fromDate).getDate()
+                )
+              }
               selected={toDate}
               showMonthDropdown
               showYearDropdown

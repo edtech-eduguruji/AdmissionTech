@@ -2993,7 +2993,6 @@ class Form extends React.Component {
                 Faculty & Courses Details
               </Typography>
             </Grid>
-
             <Grid item xs={12}>
               <Typography variant="subtitle1" component="div" gutterBottom>
                 Selection of Faculty
@@ -3212,7 +3211,15 @@ class Form extends React.Component {
                                     item.facultyId === 'f1Science') ||
                                   item.subjectId === major1[0].subjectId ||
                                   item.subjectId === major1[1].subjectId ||
-                                  item.subjectId === major2.subjectId
+                                  item.subjectId === major2.subjectId ||
+                                  (major1[0].subjectId ===
+                                    '$sf17BALLBZoology' &&
+                                    (item.paperId === '$p6' ||
+                                      item.paperId === '$p34')) ||
+                                  (major1[1].subjectId ===
+                                    '$sf17BALLBZoology' &&
+                                    (item.paperId === '$p6' ||
+                                      item.paperId === '$p34'))
                                 }
                                 value={item.paperId}
                               >
@@ -3262,7 +3269,13 @@ class Form extends React.Component {
                                     item.facultyId === 'f1Science') ||
                                   item.subjectId === major1[0].subjectId ||
                                   item.subjectId === major1[1].subjectId ||
-                                  item.subjectId === major2.subjectId
+                                  item.subjectId === major2.subjectId ||
+                                  (major1[0].subjectId ===
+                                    '$sf17BALLBZoology' &&
+                                    item.subjectId === '$s6Zoology') ||
+                                  (major1[1].subjectId ===
+                                    '$sf17BALLBZoology' &&
+                                    item.subjectId === '$s6Zoology')
                                 }
                                 value={item.subjectId}
                               >
