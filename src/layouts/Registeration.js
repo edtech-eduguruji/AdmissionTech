@@ -99,7 +99,7 @@ class Registeration extends Component {
                     <CustomInput
                       isMandatory={true}
                       minLength={5}
-                      maxLength={20}
+                      maxLength={50}
                       labelText="Name"
                       formControlProps={{
                         fullWidth: true,

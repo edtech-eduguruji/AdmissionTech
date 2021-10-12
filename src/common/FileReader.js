@@ -7,7 +7,9 @@ import {
   ZoomOut,
 } from '@material-ui/icons'
 import GetAppIcon from '@material-ui/icons/GetApp'
+import PrintIcon from '@material-ui/icons/Print'
 import RegularButton from 'components/CustomButtons/Button'
+import { saveAs } from 'file-saver'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Document, Page, pdfjs } from 'react-pdf'
@@ -92,70 +94,8 @@ class FileReader extends React.Component {
     const { fileLink, withDownload, handleClose } = this.props
     return (
       <React.Fragment>
-        {checkExtension(fileLink) === 'pdf' ? (
-          <center>
-            {withDownload && (
-              <RegularButton
-                size="sm"
-                justIcon
-                color="primary"
-                variant="contained"
-                onClick={this.download}
-              >
-                <GetAppIcon />
-              </RegularButton>
-            )}
-            <RegularButton
-              size="sm"
-              justIcon
-              color="primary"
-              variant="contained"
-              onClick={this.setZoomIn}
-            >
-              <ZoomIn />
-            </RegularButton>
-            <RegularButton
-              size="sm"
-              justIcon
-              color="primary"
-              variant="contained"
-              onClick={this.setZoomOut}
-            >
-              <ZoomOut />
-            </RegularButton>
-            <RegularButton
-              size="sm"
-              justIcon
-              color="primary"
-              variant="contained"
-              onClick={this.goToPrevPage}
-            >
-              <NavigateBefore />
-            </RegularButton>
-            <Typography component="span" variant="caption">
-              Page {pageNumber} of {numPages}
-            </Typography>
-            <RegularButton
-              size="sm"
-              justIcon
-              color="primary"
-              variant="contained"
-              onClick={this.goToNextPage}
-            >
-              <NavigateNext />
-            </RegularButton>
-            <RegularButton
-              size="sm"
-              justIcon
-              color="rose"
-              variant="contained"
-              onClick={handleClose}
-            >
-              <Close />
-            </RegularButton>
-          </center>
-        ) : (
-          <center>
+        <center>
+          {withDownload && (
             <RegularButton
               size="sm"
               justIcon
@@ -165,17 +105,90 @@ class FileReader extends React.Component {
             >
               <GetAppIcon />
             </RegularButton>
-            <RegularButton
-              size="sm"
-              justIcon
-              color="rose"
-              variant="contained"
-              onClick={handleClose}
-            >
-              <Close />
-            </RegularButton>
-          </center>
-        )}
+          )}
+          <RegularButton
+            size="sm"
+            justIcon
+            color="primary"
+            variant="contained"
+            onClick={this.setZoomIn}
+          >
+            <ZoomIn />
+          </RegularButton>
+          <RegularButton
+            size="sm"
+            justIcon
+            color="primary"
+            variant="contained"
+            onClick={this.setZoomOut}
+          >
+            <ZoomOut />
+          </RegularButton>
+          {checkExtension(fileLink) === 'pdf' ? (
+            <React.Fragment>
+              <RegularButton
+                size="sm"
+                justIcon
+                color="primary"
+                variant="contained"
+                onClick={() => window.print()}
+              >
+                <PrintIcon />
+              </RegularButton>
+              <RegularButton
+                size="sm"
+                justIcon
+                color="primary"
+                variant="contained"
+                onClick={this.goToPrevPage}
+              >
+                <NavigateBefore />
+              </RegularButton>
+              <Typography component="span" variant="caption">
+                Page {pageNumber} of {numPages}
+              </Typography>
+              <RegularButton
+                size="sm"
+                justIcon
+                color="primary"
+                variant="contained"
+                onClick={this.goToNextPage}
+              >
+                <NavigateNext />
+              </RegularButton>
+              <RegularButton
+                size="sm"
+                justIcon
+                color="rose"
+                variant="contained"
+                onClick={handleClose}
+              >
+                <Close />
+              </RegularButton>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <RegularButton
+                size="sm"
+                justIcon
+                color="primary"
+                variant="contained"
+                onClick={this.download}
+              >
+                <GetAppIcon />
+              </RegularButton>
+              <RegularButton
+                size="sm"
+                justIcon
+                color="rose"
+                variant="contained"
+                onClick={handleClose}
+              >
+                <Close />
+              </RegularButton>
+            </React.Fragment>
+          )}
+        </center>
         <Divider />
         <DialogContent dividers>
           {checkExtension(fileLink) === 'pdf' ? (
@@ -192,7 +205,13 @@ class FileReader extends React.Component {
               />
             </Document>
           ) : (
-            <img src={fileLink} />
+            <img
+              src={fileLink}
+              style={{
+                width: '500px',
+                zoom: scale == 0.5 ? 1 : parseFloat(1 + scale),
+              }}
+            />
           )}
         </DialogContent>
       </React.Fragment>

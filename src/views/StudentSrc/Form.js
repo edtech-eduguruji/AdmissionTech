@@ -31,14 +31,20 @@ import Success from '../../components/Typography/Success'
 import { ASSETS } from '../../constants/Constants'
 import {
   addErrorMsg,
+  addSuccessMsg,
+  calculateMerit,
+  checkFaculty,
   closeDialog,
   deleteBox,
   downloadPdf,
   errorDialog,
   handleCalculateFees,
   mandatoryField,
+  modifyKeys,
   redirectUrl,
+  uploadViewer,
   validateUser,
+  verifyString,
 } from '../../utils/Utils'
 import PaymentInfo from './PaymentInfo'
 import academicDetailsStatic from './StaticData/academic.json'
@@ -203,6 +209,7 @@ class Form extends React.Component {
     if (isView) {
       const dt = {
         registrationNo: data.registrationNo,
+        receipt: '1',
       }
       FormApi.fetchPaymentDetails(dt).then((payResponse) => {
         if (payResponse.data) {
@@ -212,6 +219,44 @@ class Form extends React.Component {
             courseFeeDetails: payResponse.data.courseFee
               ? jwtDecode(payResponse.data.courseFee).data
               : null,
+            totalMerit: {
+              nationalCompetition: !data.nationalCompetition
+                ? 0
+                : parseInt(data.nationalCompetition.split(',')[1]),
+              otherCompetition: !data.otherCompetition
+                ? 0
+                : parseInt(data.otherCompetition.split(',')[1]),
+              freedomFighter: !data.freedomFighter ? 0 : 5,
+              nationalSevaScheme: !data.nationalSevaScheme ? 0 : 5,
+              ncc: data.ncc ? parseInt(data.ncc.split(',')[1]) : 0,
+              roverRanger: data.roverRanger
+                ? parseInt(data.roverRanger.split(',')[1])
+                : 0,
+              otherRoverRanger: !data.otherRoverRanger ? 0 : 3,
+              bcom: !data.bcom ? 0 : 5,
+              other: !data.other ? 0 : parseInt(data.other.split(',')[1]),
+            },
+          })
+        } else {
+          this.setState({
+            ...data,
+            totalMerit: {
+              nationalCompetition: !data.nationalCompetition
+                ? 0
+                : parseInt(data.nationalCompetition.split(',')[1]),
+              otherCompetition: !data.otherCompetition
+                ? 0
+                : parseInt(data.otherCompetition.split(',')[1]),
+              freedomFighter: !data.freedomFighter ? 0 : 5,
+              nationalSevaScheme: !data.nationalSevaScheme ? 0 : 5,
+              ncc: data.ncc ? parseInt(data.ncc.split(',')[1]) : 0,
+              roverRanger: data.roverRanger
+                ? parseInt(data.roverRanger.split(',')[1])
+                : 0,
+              otherRoverRanger: !data.otherRoverRanger ? 0 : 3,
+              bcom: !data.bcom ? 0 : 5,
+              other: !data.other ? 0 : parseInt(data.other.split(',')[1]),
+            },
           })
         }
       })
@@ -220,6 +265,7 @@ class Form extends React.Component {
         const data = {
           registrationNo:
             LocalStorage.getUser() && LocalStorage.getUser().user_id,
+          receipt: '1',
         }
         FormApi.getForm(data).then((response) => {
           if (response.data) {
@@ -245,9 +291,16 @@ class Form extends React.Component {
                     response.data[item] = ''
                   }
                 })
+                debugger
                 response.data.academicDetails = response.data.academicDetails
-                  ? JSON.parse(this.verifyString(response.data.academicDetails))
+                  ? JSON.parse(
+                      verifyString(response.data.academicDetails),
+                      (key, value) => {
+                        return typeof value === 'string' ? value.trim() : value
+                      }
+                    )
                   : []
+                modifyKeys(response.data.academicDetails)
                 response.data.documents = response.data.documents
                   ? JSON.parse(response.data.documents)
                   : []
@@ -296,10 +349,6 @@ class Form extends React.Component {
         })
       }
     }
-  }
-
-  verifyString = (text) => {
-    return text.replace(/[\n\r\s\t]+/g, ' ')
   }
 
   handleUpload = (file, index, name) => {
@@ -704,13 +753,15 @@ class Form extends React.Component {
       signature,
       uploadExtraMark,
     } = this.state
-
+    const { isView } = this.props
     const data = new FormData()
     data.append(
       'registrationNo',
-      LocalStorage.getUser() && LocalStorage.getUser().user_id !== null
+      LocalStorage.getUser() &&
+        LocalStorage.getUser().user_id !== null &&
+        !isView
         ? LocalStorage.getUser().user_id
-        : ''
+        : this.props.data.registrationNo
     )
     data.append('admissionYear', admissionYear)
     data.append('faculty', faculty)
@@ -749,21 +800,12 @@ class Form extends React.Component {
     data.append('subCategory', subCategory)
     data.append('categoryCertificate', categoryCertificate)
     data.append('subCategoryCertificate', subCategoryCertificate)
-    data.append('academicDetails', JSON.stringify(academicDetails))
-    data.append('documents', JSON.stringify(documents))
-    data.append('major1', JSON.stringify(major1))
-    data.append('major2', JSON.stringify(major2))
-    data.append('major3', major3)
-    data.append('major4', major4)
     data.append('vocationalSem1', vocationalSem1)
     data.append('vocationalSem2', vocationalSem2)
     data.append('coCurriculumSem1', coCurriculumSem1)
     data.append('coCurriculumSem2', coCurriculumSem2)
-    documents.map(
-      (item, index) =>
-        item.document !== '' && data.append('document' + index, item.document)
-    )
     data.append('guardianName', guardianName)
+
     data.append('relationOfApplicant', relationOfApplicant)
     data.append('nationalCompetition', nationalCompetition)
     data.append('nationalCertificate', nationalCertificate)
@@ -783,6 +825,24 @@ class Form extends React.Component {
     data.append('signature', signature)
     data.append('submit', btnValue)
     data.append('uploadExtraMark', uploadExtraMark)
+
+    data.append('academicDetails', JSON.stringify(academicDetails))
+    data.append('documents', JSON.stringify(documents))
+    data.append('major1', JSON.stringify(major1))
+    data.append('major2', JSON.stringify(major2))
+    data.append('major3', major3)
+    data.append('major4', major4)
+
+    documents &&
+      documents.length > 0 &&
+      documents.map(
+        (item, index) =>
+          item.document &&
+          item.document !== '' &&
+          typeof item.document === 'object' &&
+          data.append('document' + index, item.document)
+      )
+
     let tryToSubmit = 0
     if (btnValue === 0) {
       if (dob === '') {
@@ -873,7 +933,7 @@ class Form extends React.Component {
                   let fac = 0
                   if (
                     //for other than bcom,bba and legal
-                    this.checkFaculty(faculty) === 0 &&
+                    checkFaculty(faculty) === 0 &&
                     major1.length >= 2 &&
                     major2 &&
                     (major3 || major4) &&
@@ -881,15 +941,9 @@ class Form extends React.Component {
                     vocationalSem2
                   ) {
                     fac = 1
-                  } else if (
-                    this.checkFaculty(faculty) > 0 &&
-                    major1.length >= 1
-                  ) {
+                  } else if (checkFaculty(faculty) > 0 && major1.length >= 1) {
                     fac = 1
-                  } else if (
-                    this.checkFaculty(faculty) < 0 &&
-                    major1.length >= 3
-                  ) {
+                  } else if (checkFaculty(faculty) < 0 && major1.length >= 3) {
                     fac = 1
                   } else {
                     addErrorMsg(
@@ -1114,6 +1168,7 @@ class Form extends React.Component {
 
     if (tryToSubmit === 1) {
       if (
+        !isView &&
         admissionYear &&
         courseType &&
         new Date().getTime() >
@@ -1129,37 +1184,47 @@ class Form extends React.Component {
         FormApi.submitForm(data).then((response) => {
           if (response.data) {
             if (btnValue === 1) {
-              LocalStorage.setUser(response.data)
-              let payment = handleCalculateFees(
-                admissionYear,
-                faculty,
-                gender,
-                major1
-              )
-              if (payment !== null) {
-                // Take "parameterId" and "amount" from  'payment' variable.
-                // And Proceed for Payment Process.
-                deleteBox(
-                  `Your application is submitted successfully. 
-                You have to pay the fees of Rs. ${payment.amount} for your applied course`,
-                  this.handleCourseFees
-                )
+              if (isView) {
+                addSuccessMsg('Form Submitted Successfully.')
+                closeDialog()
               } else {
-                errorDialog(
-                  'Your application is submitted successfully',
-                  'Form'
+                LocalStorage.setUser(response.data)
+                let payment = handleCalculateFees(
+                  admissionYear,
+                  faculty,
+                  gender,
+                  major1
                 )
-                redirectUrl('sFormSubmit', 1)
+                if (payment !== null) {
+                  // Take "parameterId" and "amount" from  'payment' variable.
+                  // And Proceed for Payment Process.
+                  deleteBox(
+                    `Your application is submitted successfully. 
+                You have to pay the fees of Rs. ${payment.amount} for your applied course`,
+                    this.handleCourseFees
+                  )
+                } else {
+                  errorDialog(
+                    'Your application is submitted successfully',
+                    'Form'
+                  )
+                  redirectUrl('sFormSubmit', 1)
+                }
               }
             } else {
-              const user = jwtDecode(response.data).data
-              errorDialog(
-                'Your application is saved. Your registration no. is : ' +
-                  user.user_id,
-                'Form'
-              )
-              LocalStorage.removeUser()
-              redirectUrl('/login')
+              if (isView) {
+                addSuccessMsg('Form Saved Successfully.')
+                closeDialog()
+              } else {
+                const user = jwtDecode(response.data).data
+                errorDialog(
+                  'Your application is saved. Your registration no. is : ' +
+                    user.user_id,
+                  'Form'
+                )
+                LocalStorage.removeUser()
+                redirectUrl('/login')
+              }
             }
           }
         })
@@ -1168,7 +1233,6 @@ class Form extends React.Component {
   }
 
   handleCourseFees = () => {
-    console.log('Sab Bhadiya')
     redirectUrl('sCourseFee', 1)
   }
 
@@ -1248,7 +1312,7 @@ class Form extends React.Component {
         totalMeritCount: 0,
       })
     } else {
-      if (this.checkFaculty(faculty) > 0) {
+      if (checkFaculty(faculty) > 0) {
         if (value.length <= 1) {
           if (value[0].subjectName === 'LLM') {
             academicDetails.splice(
@@ -1303,7 +1367,7 @@ class Form extends React.Component {
         } else {
           addErrorMsg('You can select only 1 subjects.')
         }
-      } else if (this.checkFaculty(faculty) === -1) {
+      } else if (checkFaculty(faculty) === -1) {
         if (value.length <= 3) {
           let combination = ['s43HindiLit', 's44SanskritLit', 's45EnglishLit']
           value.map((item) => {
@@ -1385,33 +1449,6 @@ class Form extends React.Component {
 
   handleReCaptcha = (token) => {
     this.setState({ token: token })
-  }
-
-  checkFaculty = (facultyId) => {
-    // Faculty wise course selection
-    if (
-      facultyId == 'f5foc' ||
-      facultyId == 'f6fom' ||
-      facultyId == 'f7fols' ||
-      facultyId == 'f8fobt' ||
-      facultyId == 'f9foj' ||
-      facultyId == 'f12MA' ||
-      facultyId == 'f13MSC' ||
-      facultyId == 'f14BCOM' ||
-      facultyId == 'f17BioTech' ||
-      facultyId == 'f15BBA' ||
-      facultyId == 'f16BCA'
-    ) {
-      return 1 // For Single Selection
-    } else if (
-      facultyId == 'f1ScienceBio' ||
-      facultyId == 'f1ScienceMaths' ||
-      facultyId == 'f12BA'
-    ) {
-      return -1 // For 3 Selections
-    } else {
-      return 0 // For 2 Selections
-    }
   }
 
   checkCombination = (subjectId) => {
@@ -1685,6 +1722,27 @@ class Form extends React.Component {
               <Typography variant="h6" component="div" gutterBottom>
                 Your registration no: {registrationNo}
               </Typography>
+              <Success>
+                <Typography variant="h6" component="div" gutterBottom>
+                  {admissionYear &&
+                    courseType &&
+                    admissionYear === '1' &&
+                    courseType !== 'pgd3PGD' &&
+                    courseType !== 'law4LAW' &&
+                    courseType !== '#pg2PG' &&
+                    faculty !== 'f8fobt' &&
+                    faculty !== 'f6fom' &&
+                    'Your merit is: ' +
+                      calculateMerit(
+                        courseType,
+                        admissionYear,
+                        academicDetails,
+                        totalMeritCount,
+                        major1,
+                        bcom
+                      )}
+                </Typography>
+              </Success>
               <Divider />
               <br />
               <br />
@@ -1868,9 +1926,7 @@ class Form extends React.Component {
                   </div>
                 </Grid>
                 <Grid container item xs={12} justifyContent="center">
-                  {form !== '' && form !== null ? (
-                    <Success>Uploaded.</Success>
-                  ) : null}
+                  {form !== '' && form !== null ? uploadViewer(form) : null}
                 </Grid>
               </Grid>
             </Grid>
@@ -2097,9 +2153,9 @@ class Form extends React.Component {
                     name="categoryCertificate"
                   />
                 )}
-                {categoryCertificate !== '' && categoryCertificate !== null ? (
-                  <Success>Uploaded.</Success>
-                ) : null}
+                {categoryCertificate !== '' && categoryCertificate !== null
+                  ? uploadViewer(categoryCertificate)
+                  : null}
               </div>
             </Grid>
             <Grid container item md={6} xs={12} justifyContent="center">
@@ -2115,9 +2171,9 @@ class Form extends React.Component {
                   />
                 )}
                 {subCategoryCertificate !== '' &&
-                subCategoryCertificate !== null ? (
-                  <Success>Uploaded.</Success>
-                ) : null}
+                subCategoryCertificate !== null
+                  ? uploadViewer(subCategoryCertificate)
+                  : null}
               </div>
             </Grid>
             <Grid item xs={6}>
@@ -3004,9 +3060,9 @@ class Form extends React.Component {
                 Selection of Major Subjects
               </Typography>
               <Typography variant="caption">
-                {this.checkFaculty(faculty) > 0
+                {checkFaculty(faculty) > 0
                   ? 'You can select an option from the list'
-                  : this.checkFaculty(faculty) == 0
+                  : checkFaculty(faculty) == 0
                   ? 'You can select any two subjects from the list'
                   : ''}
               </Typography>
@@ -3031,7 +3087,7 @@ class Form extends React.Component {
                 )}
               />
             </Grid>
-            {this.checkFaculty(faculty) == 0 &&
+            {checkFaculty(faculty) == 0 &&
             admissionYear === '1' &&
             courseType === '#ug1UG' ? (
               <Grid container spacing={2} item xs={12}>
@@ -3061,7 +3117,15 @@ class Form extends React.Component {
                     fullWidth
                     variant={preview ? 'standard' : 'outlined'}
                     name="major2"
-                    value={major2 ? JSON.stringify(major2) : ''}
+                    value={
+                      major2
+                        ? JSON.stringify(
+                            majorSubjectsData.find(
+                              (item) => item.subjectId === major2.subjectId
+                            )
+                          )
+                        : ''
+                    }
                     onChange={this.handleChangeFields}
                   >
                     {academicDetails &&
@@ -3363,9 +3427,9 @@ class Form extends React.Component {
                         </Grid>
                       )}
                       <Grid item md={4} xs={12}>
-                        {item.document !== '' && item.document !== null ? (
-                          <Success>Uploaded.</Success>
-                        ) : null}
+                        {item.document !== '' && item.document !== null
+                          ? uploadViewer(item.document)
+                          : null}
                       </Grid>
                       <Grid item md={1} xs={12}>
                         {item.isDelete === 1 && !preview && (
@@ -3492,7 +3556,7 @@ class Form extends React.Component {
 
                   {nationalCertificate && (
                     <Grid item xs={6}>
-                      <Success>Uploaded.</Success>
+                      {uploadViewer(nationalCertificate)}
                     </Grid>
                   )}
                   {courseType === '#pg2PG' ||
@@ -3547,7 +3611,7 @@ class Form extends React.Component {
 
                   {otherCertificate && (
                     <Grid item xs={6}>
-                      <Success>Uploaded.</Success>
+                      {uploadViewer(otherCertificate)}
                     </Grid>
                   )}
 
@@ -3595,7 +3659,7 @@ class Form extends React.Component {
                   )}
                   {nccCertificate && (
                     <Grid item xs={6}>
-                      <Success>Uploaded.</Success>
+                      {uploadViewer(nccCertificate)}
                     </Grid>
                   )}
                   {courseType === '#ug1UG' ||
@@ -3662,7 +3726,7 @@ class Form extends React.Component {
                     )}
                   </Grid>
                   <Grid item md={5} xs={6}>
-                    {nssDocument && <Success>Uploaded.</Success>}
+                    {nssDocument && uploadViewer(nssDocument)}
                   </Grid>
                   {(courseType === '#pg2PG' ||
                     major1[0].subjectName === 'LLM' ||
@@ -3713,9 +3777,9 @@ class Form extends React.Component {
                       </Grid>
                     )}
                   <Grid item md={3} xs={6}>
-                    {rrDocument && !otherRoverRanger && (
-                      <Success>Uploaded.</Success>
-                    )}
+                    {rrDocument &&
+                      !otherRoverRanger &&
+                      uploadViewer(rrDocument)}
                   </Grid>
                   {courseType === '#pg2PG' ||
                   major1[0].subjectName === 'LLM' ||
@@ -3846,9 +3910,9 @@ class Form extends React.Component {
                     />
                   )}
                   <Grid item md={4} xs={6}>
-                    {uploadExtraMark !== '' && uploadExtraMark !== null ? (
-                      <Success>Uploaded.</Success>
-                    ) : null}
+                    {uploadExtraMark !== '' && uploadExtraMark !== null
+                      ? uploadViewer(uploadExtraMark)
+                      : null}
                   </Grid>
                 </Grid>
                 <Grid item xs={12}>
@@ -3899,7 +3963,16 @@ class Form extends React.Component {
                 ) : null}
               </div>
             </Grid>
-            {!preview && !isView && (
+            {preview || isView ? (
+              <Grid container>
+                <PaymentInfo paymentDetails={paymentDetails} />
+                <br />
+                {courseFeeDetails && (
+                  <PaymentInfo paymentDetails={courseFeeDetails} />
+                )}
+              </Grid>
+            ) : null}
+            {!preview ? (
               <Grid container item xs={12} justifyContent="center">
                 <ReCAPTCHA
                   sitekey={config.CAPTCHA}
@@ -3907,8 +3980,8 @@ class Form extends React.Component {
                   onExpired={() => this.handleReCaptcha('')}
                 />
               </Grid>
-            )}
-            {!preview && !isView && (
+            ) : null}
+            {!preview && (
               <Grid container item xs={6} justifyContent="flex-end">
                 <RegularButton
                   color="primary"
@@ -3918,7 +3991,7 @@ class Form extends React.Component {
                 </RegularButton>
               </Grid>
             )}
-            {!preview && !isView && (
+            {!preview ? (
               <Grid item xs={6}>
                 <RegularButton
                   color="primary"
@@ -3927,18 +4000,9 @@ class Form extends React.Component {
                   Submit
                 </RegularButton>
               </Grid>
-            )}
-            {preview || isView ? (
-              <React.Fragment>
-                <PaymentInfo paymentDetails={paymentDetails} />
-                <br />
-                {courseFeeDetails && (
-                  <PaymentInfo paymentDetails={courseFeeDetails} />
-                )}
-              </React.Fragment>
             ) : null}
           </Grid>
-          {preview || isView ? (
+          {(preview || isView) && (
             <Grid container item xs={12} justifyContent="center">
               <Box p={2}>
                 <RegularButton
@@ -3949,7 +4013,7 @@ class Form extends React.Component {
                 </RegularButton>
               </Box>
             </Grid>
-          ) : null}
+          )}
         </CardContainer>
       </div>
     )

@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom'
 import CardContainer from '../../common/CardContainer'
 import RegularButton from '../../components/CustomButtons/Button'
 import Success from '../../components/Typography/Success'
+import { redirectUrl } from '../../utils/Utils'
 class FormSubmitted extends React.Component {
   render() {
     return (
@@ -53,6 +54,14 @@ class FormSubmitted extends React.Component {
                 onClick={() => this.props.history.push('/preview')}
               >
                 Download Application Form
+              </RegularButton>
+              <br />
+              <br />
+              <RegularButton
+                color="primary"
+                onClick={() => redirectUrl('sPaymentHistory', 1)}
+              >
+                Payment History
               </RegularButton>
             </Grid>
           </Grid>

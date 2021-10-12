@@ -107,38 +107,52 @@ class Login extends Component {
                         online
                       </li>
                       <li>
-                        Any form related issue kindly email at
-                        admissionagracollege@gmail.com
+                        <Typography color="textPrimary">
+                          Any form related issue kindly email at
+                          admissionagracollege@gmail.com with your registration
+                          no and dob
+                        </Typography>
                       </li>
                       <li>
-                        You can apply below courses for all(1st,2nd,3rd,4th,5th)
-                        years
+                        You can apply below courses for all
+                        (1st,2nd,3rd,4th,5th) years
                       </li>
                       <li>
                         <Typography color="error">
-                          Undergraduate Courses
+                          Undergraduate Courses{' '}
                           <b>B.Sc, BA, BCOM, BBA, BCA, Bsc(BioTech)</b> last
-                          date for online application is <b>25-Sep-2021</b>
+                          date for online application is <b>05-Oct-2021</b> for
+                          1st year only.
                         </Typography>
                       </li>
                       <li>
                         <Typography>
-                          PG Courses
-                          <b>M.A., M.Sc.</b>
+                          PG Courses <b>M.A., M.Sc.</b>
                         </Typography>
                       </li>
                       <li>
                         <Typography>
-                          PG Diploma
-                          <b>Journalism</b>
+                          PG Diploma <b>Journalism</b>
                         </Typography>
                       </li>
                       <li>
                         <Typography>
-                          Law
-                          <b>LLB, LLM, B.A. LLB</b>
+                          Law <b>LLB, LLM, B.A. LLB</b>
                         </Typography>
                       </li>
+                    </ul>
+                  </Typography>
+                </CardBody>
+              </Card>
+            </Grid>
+            <Grid item xs={12}>
+              <Card cardFullHeight>
+                <CardBody>
+                  <Typography variant="h6">Announcement</Typography>
+                  <Typography>
+                    <ul>
+                      All students who submitted online application form please
+                      download the form and take print out.
                     </ul>
                   </Typography>
                 </CardBody>

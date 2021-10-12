@@ -1,0 +1,22 @@
+[
+    {
+        "status": "Submitted Forms",
+        "value": "submittedForms",
+        "year": ["1"]
+    },
+    {
+        "status": "Forms Who Did Prospectus Payment Only",
+        "value": "prospectusPayment",
+        "year": ["1","2","3","4","5"]
+    },
+    {
+        "status": "Submitted Forms With Course Payment",
+        "value": "submittedFormsWithCourseFee",
+        "year": ["2","3","4","5"]
+    },
+    {
+        "status": "Submitted Forms With Pending Course Payment",
+        "value": "submittedFormsWithoutCourseFee",
+        "year": ["2","3","4","5"]
+    }
+]

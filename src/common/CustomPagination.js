@@ -73,6 +73,7 @@ class CustomPagination extends React.Component {
               <MenuItem value="30">30</MenuItem>
               <MenuItem value="40">40</MenuItem>
               <MenuItem value="50">50</MenuItem>
+              <MenuItem value="100">100</MenuItem>
             </TextField>
           </Box>
         )}

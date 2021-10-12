@@ -20,10 +20,21 @@ class FormApi {
       return res
     })
   }
-  queryPayment(data) {
-    return BaseApi.postFormData(URLS.QUERYAPI, data).then((res) => {
+  studentSelection(data) {
+    return BaseApi.postFormData(URLS.STUDENTSELECTION, data).then((res) => {
       return res
     })
+  }
+  queryPayment(data, methodType) {
+    if (methodType == 'GET') {
+      return BaseApi.getWithParams(URLS.QUERYAPI, data).then((res) => {
+        return res
+      })
+    } else {
+      return BaseApi.postFormData(URLS.QUERYAPI, data).then((res) => {
+        return res
+      })
+    }
   }
 }
 

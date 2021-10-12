@@ -403,7 +403,7 @@
         "subjectId": "s56HL",
         "streamId": ["$s1.3PCMB","$s1.2PCB","$s1Science","$s2Commerce","$s3Arts"],
         "subjectName": "Hindi Literature",
-        "year": ["2"]
+        "year": ["1","2"]
     },
     {
         "facultyId": "f12MA",
@@ -432,7 +432,7 @@
         "subjectId": "s60Maths",
         "streamId": ["$s1.3PCMB","$s1Science"],
         "subjectName": "Mathematics",
-        "year": ["2"]
+        "year": ["1", "2"]
     },
     {
         "facultyId": "f12MA",

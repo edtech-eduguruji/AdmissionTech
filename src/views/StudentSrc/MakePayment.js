@@ -8,6 +8,7 @@ import LocalStorage from '../../common/LocalStorage'
 import RegularButton from '../../components/CustomButtons/Button'
 import Success from '../../components/Typography/Success'
 import { downloadPdf, errorDialog, validateUser } from '../../utils/Utils'
+import PaymentHistory from './PaymentHistory'
 class MakePayment extends React.Component {
   constructor() {
     super()
@@ -162,6 +163,8 @@ class MakePayment extends React.Component {
             </Grid>
           </Grid>
         </CardContainer>
+
+        <PaymentHistory />
       </div>
     )
   }

@@ -57,6 +57,7 @@ class PaymentInfo extends React.Component {
   successPaymentData = (data) => {
     var formatted = data.map((item) => {
       return [
+        item.registrationNo ? item.registrationNo : '',
         'Online PG',
         item.TxnReferenceNo,
         '₹' + item.TxnAmount,
@@ -92,6 +93,7 @@ class PaymentInfo extends React.Component {
                       boldHeading
                       isColumn={true}
                       tableHead={[
+                        'Registration No',
                         'Payment Mode',
                         'Transaction Reference No',
                         'Transaction Amount',

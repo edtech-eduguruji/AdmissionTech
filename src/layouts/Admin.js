@@ -53,18 +53,24 @@ class Admin extends React.Component {
           (user.payment == '1' &&
             user.submitted === '1' &&
             user.admissionYear === '1' &&
-            user.courseFee == '0') ||
+            user.courseFee == '0' &&
+            user.selection == '0') ||
           (user.payment == '1' &&
             user.submitted === '1' &&
             user.admissionYear !== '1' &&
+            user.courseFee == '1') ||
+          (user.payment == '1' &&
+            user.submitted === '1' &&
+            user.admissionYear === '1' &&
+            user.selection == '1' &&
             user.courseFee == '1')
         ) {
           return <Redirect to="/student/formsubmitted"></Redirect>
         } else if (
           user.payment == '1' &&
           user.submitted === '1' &&
-          user.admissionYear !== '1' &&
-          user.courseFee == '0'
+          ((user.admissionYear !== '1' && user.courseFee == '0') ||
+            (user.selection == '1' && user.courseFee == '0'))
         ) {
           return <Redirect to="/student/coursefee"></Redirect>
         }

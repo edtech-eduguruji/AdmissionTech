@@ -6123,5 +6123,15 @@
         "id": "1225",
         "name": "Mainpuri",
         "state": "UP"
+    },
+    {
+        "id": "1226",
+        "name": "Kasganj",
+        "state": "UP"
+    },
+    {
+        "id": "1227",
+        "name": "Farrukhabad",
+        "state": "UP"
     }
 ]

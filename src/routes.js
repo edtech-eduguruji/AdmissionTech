@@ -1,9 +1,11 @@
 import DynamicFeedIcon from '@material-ui/icons/DynamicFeed'
+import FilterListIcon from '@material-ui/icons/FilterList'
 import ListAltIcon from '@material-ui/icons/ListAlt'
 import { ROLES_KEY } from './constants/Constants'
 import asyncComponent from './layouts/AsyncComponent'
 import Form from './views/StudentSrc/Form'
 import MakePayment from './views/StudentSrc/MakePayment'
+import PaymentHistory from './views/StudentSrc/PaymentHistory'
 import Summary from './views/StudentSrc/Summary'
 
 const FormSubmitted = asyncComponent(() =>
@@ -11,14 +13,26 @@ const FormSubmitted = asyncComponent(() =>
 )
 const CourseFee = asyncComponent(() => import('./views/StudentSrc/CourseFee'))
 const NewForms = asyncComponent(() => import('./views/AdminSrc/Forms/NewForms'))
+const Merit = asyncComponent(() => import('./views/AdminSrc/Merit/Merit'))
 
 const dashboardRoutes = [
   {
     path: '/registrations',
-    name: 'New Registrations',
+    name: 'Registration Forms',
     id: 'newRegistrations',
     icon: ListAltIcon,
     component: NewForms,
+    layout: '/admin',
+    role: [ROLES_KEY.ADMIN],
+    isSidebar: true,
+    isNavbar: false,
+  },
+  {
+    path: '/merit',
+    name: 'Merit - (Excel)',
+    id: 'merit',
+    icon: FilterListIcon,
+    component: Merit,
     layout: '/admin',
     role: [ROLES_KEY.ADMIN],
     isSidebar: true,
@@ -74,6 +88,17 @@ const dashboardRoutes = [
     id: 'sCourseFee',
     icon: DynamicFeedIcon,
     component: CourseFee,
+    layout: '/student',
+    role: [ROLES_KEY.STUDENT],
+    isSidebar: false,
+    isNavbar: false,
+  },
+  {
+    path: '/paymenthistory',
+    name: 'Payment History',
+    id: 'sPaymentHistory',
+    icon: DynamicFeedIcon,
+    component: PaymentHistory,
     layout: '/student',
     role: [ROLES_KEY.STUDENT],
     isSidebar: false,
