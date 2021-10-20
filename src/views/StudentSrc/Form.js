@@ -8,7 +8,7 @@ import {
   MenuItem,
   Switch,
   TextField,
-  Typography,
+  Typography
 } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import AddIcon from '@material-ui/icons/Add'
@@ -44,7 +44,7 @@ import {
   redirectUrl,
   uploadViewer,
   validateUser,
-  verifyString,
+  verifyString
 } from '../../utils/Utils'
 import PaymentInfo from './PaymentInfo'
 import academicDetailsStatic from './StaticData/academic.json'
@@ -1796,7 +1796,7 @@ class Form extends React.Component {
                 value={admissionYear}
                 onChange={this.handleChangeFields}
               >
-                {courseType &&
+                {courseType && courseType !== '' &&
                   yearsStatic.map(
                     (item, i) =>
                       item.courseType.includes(courseType) && (
