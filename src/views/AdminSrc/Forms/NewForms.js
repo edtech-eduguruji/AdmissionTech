@@ -91,6 +91,10 @@ function NewForms() {
           obj.totalMeritCount = !obj.totalMeritCount
             ? 0
             : parseInt(obj.totalMeritCount)
+          obj.coCurriculumSem1 =
+            obj.admissionYear === '1' ? 'Food, Nutrition and Hygiene' : ''
+          obj.coCurriculumSem2 =
+            obj.admissionYear === '1' ? 'First Aid and Basic health' : ''
         })
         setFields({ ...fields, formsData: response.data })
       })
