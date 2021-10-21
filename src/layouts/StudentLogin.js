@@ -101,7 +101,6 @@ class Login extends Component {
                         (mandatory)
                       </li>
                       <li>A Unique Registration Number will be Provided</li>
-                      <li>Disable Popup blocker</li>
                       <li>
                         Here registration fees Rs. 252/- will be submitted
                         online
@@ -114,30 +113,23 @@ class Login extends Component {
                         </Typography>
                       </li>
                       <li>
-                        You can apply below courses for all
-                        (1st,2nd,3rd,4th,5th) years
-                      </li>
-                      <li>
-                        <Typography color="error">
-                          Undergraduate Courses{' '}
-                          <b>B.Sc, BA, BCOM, BBA, BCA, Bsc(BioTech)</b> last
-                          date for online application is <b>05-Oct-2021</b> for
-                          1st year only.
+                        <Typography>
+                          PG Courses{' '}
+                          <b>M.A., M.Sc. (Last date is not yet decided)</b>
                         </Typography>
                       </li>
                       <li>
                         <Typography>
-                          PG Courses <b>M.A., M.Sc.</b>
+                          PG Diploma{' '}
+                          <b>Journalism (Last date is not yet decided)</b>
                         </Typography>
                       </li>
                       <li>
                         <Typography>
-                          PG Diploma <b>Journalism</b>
-                        </Typography>
-                      </li>
-                      <li>
-                        <Typography>
-                          Law <b>LLB, LLM, B.A. LLB</b>
+                          Law{' '}
+                          <b>
+                            LLB, LLM, B.A. LLB (Last date is not yet decided)
+                          </b>
                         </Typography>
                       </li>
                     </ul>
@@ -151,8 +143,28 @@ class Login extends Component {
                   <Typography variant="h6">Announcement</Typography>
                   <Typography>
                     <ul>
-                      All students who submitted online application form please
-                      download the form and take print out.
+                      <li>
+                        <Typography color="error">
+                          PLEASE DO NOT EMAIL US, IF YOU DON'T HAVE FORM RELATED
+                          ISSUE
+                        </Typography>
+                      </li>
+                      <li>
+                        <Typography color="error">
+                          1st Year admission for Undergraduate courses{' '}
+                          <b>B.Sc, BA, BCOM, BBA, BCA, Bsc(BioTech)</b> are
+                          closed now. Don't email us regarding this issue!
+                        </Typography>
+                      </li>
+                      <li>
+                        All students who submitted online application form
+                        please download the form and take print out.
+                      </li>
+                      <li>
+                        For any other general enquiry like merit issue, last
+                        date or any other problem. Kindly check with college
+                        department
+                      </li>
                     </ul>
                   </Typography>
                 </CardBody>
