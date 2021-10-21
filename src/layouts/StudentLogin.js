@@ -103,7 +103,7 @@ class Login extends Component {
                       <li>A Unique Registration Number will be Provided</li>
                       <li>
                         Here registration fees Rs. 252/- will be submitted
-                        online
+                        online and which is not refundable (in any case)
                       </li>
                       <li>
                         <Typography color="textPrimary">
