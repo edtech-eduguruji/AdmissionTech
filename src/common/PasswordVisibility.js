@@ -1,46 +1,38 @@
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
+import PropTypes from 'prop-types'
 import React from 'react'
 import RegularButton from '../components/CustomButtons/Button'
 
-class ClassDropDown extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      hidden: props.hidden,
-    }
-  }
-
-  UNSAFE_componentWillReceiveProps(props) {
-    this.setState({
-      hidden: props.hidden,
-    })
-  }
-
-  render() {
-    const { hidden } = this.state
-    return (
-      <div>
-        {hidden ? (
-          <RegularButton
-            size="sm"
-            color="transparent"
-            onClick={this.props.handleViewPassword}
-          >
-            <VisibilityOffIcon />
-          </RegularButton>
-        ) : (
-          <RegularButton
-            size="sm"
-            color="transparent"
-            onClick={this.props.handleViewPassword}
-          >
-            <VisibilityIcon />
-          </RegularButton>
-        )}
-      </div>
-    )
-  }
+function PasswordVisibility(props) {
+  return (
+    <div>
+      {props.hidden ? (
+        <RegularButton
+          justIcon
+          color="transparent"
+          size="sm"
+          onClick={props.handleViewPassword}
+        >
+          <VisibilityOffIcon />
+        </RegularButton>
+      ) : (
+        <RegularButton
+          justIcon
+          color="transparent"
+          size="sm"
+          onClick={props.handleViewPassword}
+        >
+          <VisibilityIcon />
+        </RegularButton>
+      )}
+    </div>
+  )
 }
 
-export default ClassDropDown
+PasswordVisibility.propTypes = {
+  hidden: PropTypes.bool,
+  handleViewPassword: PropTypes.func,
+}
+
+export default PasswordVisibility
