@@ -535,6 +535,10 @@ export function calculateFirstYearFees(
           count++
         }
       })
+      let maj2 = typeof major2 == 'string' ? JSON.parse(major2) : major2
+      if (fees.practicalSubjects.includes(maj2.subjectId)) {
+        count++
+      }
       return {
         parameterId: fees.parameterId,
         amount: fees.fee[count][gender],
