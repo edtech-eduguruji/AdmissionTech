@@ -54,7 +54,7 @@
     {
         "type" : 4,
         "parameterId" : "F1SCIENCE",
-        "practicalSubjects" : ["s54Maths","s53DP","s52MS","s51Psychology","s55BAPhyEdu"],
+        "practicalSubjects" : [ "$18dp","$s7dss","$13Psychology","$11pe","$s4Maths"],
         "fee" : {
             "0" : {"male" : 3557.00, "female" : 3425.00, "transgender" : 3557.00}, 
             "1" : {"male" : 4022.00, "female" : 3890.00, "transgender" : 4022.00},
