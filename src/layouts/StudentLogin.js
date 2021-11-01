@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import CakeIcon from '@material-ui/icons/Cake'
 import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber'
+import { saveAs } from 'file-saver'
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import LoginApi from '../apis/LoginApi'
@@ -14,6 +15,7 @@ import Card from '../components/Card/Card'
 import CardBody from '../components/Card/CardBody'
 import RegularButton from '../components/CustomButtons/Button'
 import CustomInput from '../components/CustomInput/CustomInput'
+import { ASSETS } from '../constants/Constants'
 
 const useStyles = (theme) => ({
   paper: {
@@ -74,6 +76,10 @@ class Login extends Component {
       ...this.state,
       [event.target.name]: event.target.value,
     })
+  }
+
+  handleDownload = () => {
+    saveAs(`./${ASSETS.STUDENTPERFORMA}`, 'STUDENTPERFORMA')
   }
 
   render() {
@@ -143,6 +149,17 @@ class Login extends Component {
                   <Typography variant="h6">Announcement</Typography>
                   <Typography>
                     <ul>
+                      <li>
+                        <a href="#">
+                          <Typography
+                            color="primary"
+                            onClick={this.handleDownload}
+                          >
+                            Student Proforma for UP Govt. Tablet/smart phone
+                            distribution scheme (NEW - 1 Nov, 2021)
+                          </Typography>
+                        </a>
+                      </li>
                       <li>
                         <Typography color="error">
                           PLEASE DO NOT EMAIL US, IF YOU DON'T HAVE FORM RELATED

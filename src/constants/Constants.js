@@ -7,6 +7,7 @@ config.ROLES.forEach(function (key) {
 const ASSETS = {
   url: config.APIURL,
   PROSPECTUS: 'Prospectus.pdf',
+  STUDENTPERFORMA: 'StudentPerforma.pdf',
 }
 const PAYMENT = {
   DONE: '1',
