@@ -124,6 +124,9 @@ function NewForms() {
           : null,
         subs,
         createdDateTime(item.lastUpdated),
+        item.payment === '1' ? 'PAID' : ' NOT PAID',
+        item.submitted === '1' ? 'SUBMITTED' : 'NOT SUBMITTED',
+        item.courseFee === '1' ? 'PAID' : '-',
         <div>
           <RegularButton
             size="md"
@@ -242,6 +245,9 @@ function NewForms() {
               'Applied in',
               'Course / Subject',
               'Submitted On',
+              'Prospectus Payment',
+              'Form Submitted',
+              'Course Payment',
               'View All Details',
             ]}
             tableData={formatData(formsData)}

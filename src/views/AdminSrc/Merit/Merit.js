@@ -122,30 +122,13 @@ function NewForms() {
         subitem.academicDetails.map((itm, i) => {
           Object.keys(itm).map((key) => {
             let p
-            // Printing all columns of 'academicDetails'
-            // if (key !== 'isDelete') {
-            //   let keyName = key + ' (' + parseInt(i + 1) + ')'
-            //   if (key === 'stream') {
-            //     subitem[keyName] = streamData.find(
-            //       (val) => val.streamId === itm.stream
-            //     ).stream
-            //   } else {
-            //     subitem[keyName] = itm[key]
-            //   }
-            // }
             if (key === 'percentage') {
               if (itm[key]) {
                 p = itm[key]
               } else {
                 p = null
               }
-              let keyName =
-                i === 0
-                  ? 'High School'
-                  : i === 1
-                  ? 'Intermediate'
-                  : 'Graduation'
-              subitem[keyName + '(Percentage)'] = p
+              subitem[itm['nameOfExam'] + '(Percentage)'] = p
             }
           })
         })
