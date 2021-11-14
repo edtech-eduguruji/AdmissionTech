@@ -9,6 +9,7 @@ import PaymentInfo from '../views/StudentSrc/PaymentInfo'
 import asyncComponent from './AsyncComponent'
 import withRouteLayout from './EnhancedLayout'
 import ForgotPassword from './ForgotPassword'
+import ShowReceipts from './ShowReceipts'
 
 const AdminLogin = asyncComponent(() => import('./AdminLogin'))
 const StudentLogin = asyncComponent(() => import('./StudentLogin'))
@@ -56,6 +57,7 @@ const App = () => {
           <Route path="/login" component={StudentLogin} />
           <Route path="/register" component={Registeration} />
           <Route path="/forgotpassword" component={ForgotPassword} />
+          <Route path="/searchreceipts" component={ShowReceipts} />
           <Route path="/student" render={() => verify()} />
           <Route path="/preview" render={() => <Form isPreview="1" />} />
           <Route path="/admin" render={() => verify()} />

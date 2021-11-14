@@ -16,6 +16,13 @@ class LoginApi {
       return response
     })
   }
+  fetchReceipts(data) {
+    return BaseApi.getWithParams(URLS.FETCHPAYMENTRECEIPTS, data).then(
+      (response) => {
+        return response
+      }
+    )
+  }
 }
 
 export default new LoginApi()
