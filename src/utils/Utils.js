@@ -443,7 +443,7 @@ export function downloadPdf(formId, fname, isCustomWidthHeight) {
         : (canvas.height * imgWidth) / canvas.width
       var heightLeft = imgHeight
       var position = 10
-      var spacing = 100
+      var spacing = isCustomWidthHeight ? 100 : 0
       pdf.addImage(imgData, 'PNG', spacing, position, imgWidth, imgHeight)
       heightLeft -= pageHeight
       while (heightLeft >= 0) {
