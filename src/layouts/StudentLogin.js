@@ -282,6 +282,26 @@ class Login extends Component {
                         Forgot Registration No.
                       </RegularButton>
                     </Grid>
+                    <Grid item xs={12}>
+                      <Divider />
+                    </Grid>
+                    <Grid container item xs={12} justifyContent="center">
+                      <Typography component="h1" variant="h6">
+                        View and Download Payment Receipts
+                      </Typography>
+                    </Grid>
+                    <Grid container item xs={12} justifyContent="center">
+                      <RegularButton
+                        color="primary"
+                        variant="contained"
+                        className="sub"
+                        onClick={() =>
+                          this.props.history.push('/searchreceipts')
+                        }
+                      >
+                        Click Here
+                      </RegularButton>
+                    </Grid>
                   </Grid>
                 </CardBody>
               </Card>
