@@ -33,6 +33,7 @@
     "local-dev-start": "webpack-dev-server --config ./webpack.config.js --env=local --mode=development",
     "start:dev": "webpack-dev-server --config ./webpack.config.js --env=development --mode=development",
     "start:prod": "webpack-dev-server --config ./webpack.config.js --env=production --mode=development",
+    "build:local": "webpack --env=local --mode=production",
     "build:development": "webpack --env=development --mode=production",
     "build:production": "webpack --env=production --mode=production"
   },
