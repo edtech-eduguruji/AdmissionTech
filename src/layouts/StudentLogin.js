@@ -168,9 +168,12 @@ class Login extends Component {
                       </li>
                       <li>
                         <Typography color="error">
-                          1st Year admission for Undergraduate courses{' '}
-                          <b>B.Sc, BA, BCOM, BBA, BCA, Bsc(BioTech)</b> are
-                          closed now. Don't email us regarding this issue!
+                          1st Year Admission for courses{' '}
+                          <b>
+                            B.Sc, BA, BCOM, BBA, BCA, Bsc(BioTech), BA.LLB, LLB
+                            and Post-Graduation
+                          </b>{' '}
+                          are closed now. Don't email us regarding this issue!
                         </Typography>
                       </li>
                       <li>
