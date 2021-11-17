@@ -15,8 +15,16 @@ class PaymentInfo extends React.Component {
     this.state = {
       showLogo: false,
       paymentDetails: props.paymentDetails,
+      id: props.id,
     }
   }
+
+  UNSAFE_componentWillReceiveProps(props) {
+    this.setState({
+      paymentDetails: props.paymentDetails,
+    })
+  }
+
   successPaymentData = (data) => {
     var formatted = data.map((item) => {
       return [
@@ -43,7 +51,7 @@ class PaymentInfo extends React.Component {
 
   handleDownload = () => {
     this.setState({ showLogo: true }, () =>
-      downloadPdf('receipt', 'Receipt', true)
+      downloadPdf(this.state.id, 'Receipt', true)
     )
     setTimeout(() => {
       this.setState({ showLogo: false })
@@ -51,20 +59,22 @@ class PaymentInfo extends React.Component {
   }
 
   render() {
-    const { showLogo, paymentDetails } = this.state
+    const { showLogo, paymentDetails, id } = this.state
     return (
       <div>
-        <div className="childContainer" id="receipt">
+        <div className="childContainer" id={id}>
           {showLogo && (
-            <div className="alignCenter">
-              <img
-                alt="logo"
-                src="agracollege.png"
-                width="100px"
-                height="100px"
-              />
-              <b>AGRA COLLEGE</b>
-            </div>
+            <Box pb="10px">
+              <div className="alignCenter">
+                <img
+                  alt="logo"
+                  src="agracollege.png"
+                  width="100px"
+                  height="100px"
+                />
+                <b>AGRA COLLEGE</b>
+              </div>
+            </Box>
           )}
           <CardContainer heading={'PAYMENT RECEIPT'} buttons={[]}>
             <Grid container item xs={12} justifyContent="center">

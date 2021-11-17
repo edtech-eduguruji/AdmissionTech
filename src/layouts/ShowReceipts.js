@@ -37,6 +37,7 @@ function ShowReceipts() {
       }
       LoginApi.fetchReceipts(data).then((response) => {
         setFields({
+          ...fields,
           receiptsData: response.data,
         })
       })
@@ -96,11 +97,17 @@ function ShowReceipts() {
           <CardBody elevation={2}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
-                <PaymentInfo2 paymentDetails={receiptsData.payment} />
+                <PaymentInfo2
+                  paymentDetails={receiptsData.payment}
+                  id="paymentSlip"
+                />
               </Grid>
               <Grid item xs={12} md={6}>
                 {receiptsData.courseFee && (
-                  <PaymentInfo2 paymentDetails={receiptsData.courseFee} />
+                  <PaymentInfo2
+                    paymentDetails={receiptsData.courseFee}
+                    id="courseFeeSlip"
+                  />
                 )}
               </Grid>
             </Grid>

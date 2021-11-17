@@ -118,26 +118,6 @@ class Login extends Component {
                           no and dob
                         </Typography>
                       </li>
-                      <li>
-                        <Typography>
-                          PG Courses{' '}
-                          <b>M.A., M.Sc. (Last date is not yet decided)</b>
-                        </Typography>
-                      </li>
-                      <li>
-                        <Typography>
-                          PG Diploma{' '}
-                          <b>Journalism (Last date is not yet decided)</b>
-                        </Typography>
-                      </li>
-                      <li>
-                        <Typography>
-                          Law{' '}
-                          <b>
-                            LLB, LLM, B.A. LLB (Last date is not yet decided)
-                          </b>
-                        </Typography>
-                      </li>
                     </ul>
                   </Typography>
                 </CardBody>
