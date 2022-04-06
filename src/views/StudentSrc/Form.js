@@ -1172,7 +1172,7 @@ class Form extends React.Component {
         admissionYear &&
         courseType &&
         major1.length > 0 &&
-        major1[0].subjectId !== 'llm26LLM' &&
+        // major1[0].subjectId !== 'llm26LLM' &&
         new Date().getTime() >
           yearsStatic.find((item) => item.yearId === admissionYear).lastDate[
             courseType
