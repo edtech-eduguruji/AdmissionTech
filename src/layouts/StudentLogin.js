@@ -141,20 +141,20 @@ class Login extends Component {
                         </a>
                       </li>
                       <li>
-                        <Typography color="error">
-                          PLEASE DO NOT EMAIL US, IF YOU DON'T HAVE FORM RELATED
-                          ISSUE
-                        </Typography>
+                        PLEASE DO NOT EMAIL US, IF YOU DON'T HAVE FORM RELATED
+                        ISSUE
                       </li>
                       <li>
-                        <Typography color="error">
-                          1st Year Admission for courses{' '}
-                          <b>
-                            B.Sc, BA, BCOM, BBA, BCA, Bsc(BioTech), BA.LLB, LLB
-                            and Post-Graduation
-                          </b>{' '}
-                          are closed now. Don't email us regarding this issue!
-                        </Typography>
+                        1st, 2nd and 3rd Year Admission for courses{' '}
+                        <b>
+                          B.Sc, BA, BCOM, BBA, BCA, Bsc(BioTech) and
+                          Post-Graduation
+                        </b>{' '}
+                        are closed now.
+                      </li>
+                      <li>
+                        1st Year Admission for courses{' '}
+                        <b>B.A.LLB, LLB and LLM</b> are closed now.
                       </li>
                       <li>
                         All students who submitted online application form
