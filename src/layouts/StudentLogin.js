@@ -16,6 +16,7 @@ import CardBody from '../components/Card/CardBody'
 import RegularButton from '../components/CustomButtons/Button'
 import CustomInput from '../components/CustomInput/CustomInput'
 import { ASSETS } from '../constants/Constants'
+import React from 'react'
 
 const useStyles = (theme) => ({
   paper: {
