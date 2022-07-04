@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography'
 import CakeIcon from '@material-ui/icons/Cake'
 import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber'
 import { saveAs } from 'file-saver'
-import React, { Component } from 'react'
+import { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import LoginApi from '../apis/LoginApi'
 import LocalStorage from '../common/LocalStorage'
@@ -90,6 +90,9 @@ class Login extends Component {
           <CssBaseline />
           <div className="center">
             <img alt="logo" src="agracollege.png" className={classes.logo} />
+            <Typography variant="h4">
+              SESSION <b>2021-22</b>
+            </Typography>
           </div>
           <Grid container spacing={2}>
             <Grid item xs={12}>
