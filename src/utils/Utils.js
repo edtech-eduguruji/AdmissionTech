@@ -166,7 +166,7 @@ export function getAxios() {
   const axios = Axios
   const userData = LocalStorage.getUser() && LocalStorage.getUser()
   if (userData) {
-    axios.defaults.headers.common['Authorization'] = `${userData.user_id}`
+    axios.defaults.headers.common['Authorization'] = `${userData.clg_id}`
     const token = LocalStorage.getUserToken()
     axios.defaults.headers['Authentication'] = `${token}`
   }
@@ -181,7 +181,7 @@ export function getUserRole() {
 export function validateUser() {
   const user = LocalStorage.getUser()
   let isValidate = false
-  if (user && user.user_id) {
+  if (user && user.clg_id) {
     isValidate = true
   }
   return isValidate
@@ -453,7 +453,7 @@ export function downloadPdf(formId, fname, isCustomWidthHeight) {
         heightLeft -= pageHeight
       }
       const fileName = LocalStorage.getUser()
-        ? LocalStorage.getUser().user_id
+        ? LocalStorage.getUser().clg_id
         : new Date().getTime()
       pdf.save(fileName + '_' + fname + '.pdf')
     })

@@ -264,7 +264,7 @@ class Form extends React.Component {
       if (validateUser()) {
         const data = {
           registrationNo:
-            LocalStorage.getUser() && LocalStorage.getUser().user_id,
+            LocalStorage.getUser() && LocalStorage.getUser().clg_id,
           receipt: '1',
         }
         FormApi.getForm(data).then((response) => {
@@ -758,9 +758,9 @@ class Form extends React.Component {
     data.append(
       'registrationNo',
       LocalStorage.getUser() &&
-        LocalStorage.getUser().user_id !== null &&
+        LocalStorage.getUser().clg_id !== null &&
         !isView
-        ? LocalStorage.getUser().user_id
+        ? LocalStorage.getUser().clg_id
         : this.props.data.registrationNo
     )
     data.append('admissionYear', admissionYear)
@@ -1221,7 +1221,7 @@ class Form extends React.Component {
                 const user = jwtDecode(response.data).data
                 errorDialog(
                   'Your application is saved. Your registration no. is : ' +
-                    user.user_id,
+                    user.clg_id,
                   'Form'
                 )
                 LocalStorage.removeUser()

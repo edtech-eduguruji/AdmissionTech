@@ -19,7 +19,7 @@ class MakePayment extends React.Component {
 
   handleMakePayment = () => {
     if (validateUser()) {
-      const userId = LocalStorage.getUser().user_id
+      const userId = LocalStorage.getUser().clg_id
       // const na = 'NA'
       // const str = `${
       //   config.MERCHANTID
@@ -76,7 +76,7 @@ class MakePayment extends React.Component {
               <div id="p1234">
                 <Typography variant="h6" component="div" className="center">
                   Your Registration ID
-                  <Success>{LocalStorage.getUser().user_id}</Success>
+                  <Success>{LocalStorage.getUser().clg_id}</Success>
                   <Typography variant="body1" component="div">
                     Please copy or download your registration id before making
                     payment.
