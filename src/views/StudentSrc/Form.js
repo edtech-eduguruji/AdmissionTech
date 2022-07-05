@@ -3413,10 +3413,9 @@ class Form extends React.Component {
                               disabled: classes.disabled,
                             },
                           }}
-                          disabled={preview}
+                          disabled={preview || item.isDelete === 0}
                           fullWidth
                           select
-                          disabled={item.isDelete === 0}
                           label={mandatoryField('Document Type')}
                           value={item.documentType}
                           onChange={(e) => this.handleInputEnclosure(e, i)}
@@ -3759,10 +3758,9 @@ class Form extends React.Component {
                             disabled: classes.disabled,
                           },
                         }}
-                        disabled={preview}
+                        disabled={preview || otherRoverRanger}
                         select
                         fullWidth
-                        disabled={otherRoverRanger}
                         variant={preview ? 'standard' : 'outlined'}
                         name="roverRanger"
                         label="Team Members of Rover Rangers to Participate in Rally from University"
