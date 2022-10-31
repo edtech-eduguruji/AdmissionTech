@@ -27,8 +27,8 @@
     {
         "type" : 2,
         "parameterId" : "F7LAW",
-        "llm26LLM" : {"male": 3974.50 ,"female": 3974.50, "transgender": 3974.50},
-        "llb27LLB" : {"male": 3307.00 ,"female": 3127.00, "transgender": 3307.00},
+        "llm26LLM" : {"male": 4114.50 ,"female": 4114.50, "transgender": 4114.50},
+        "llb27LLB" : {"male": 3507.00 ,"female": 3327.00, "transgender": 3507.00},
         "$22ballb" : {"male": 14900.00 ,"female": 14900.00,"transgender": 14900.00}
     },
     "f1ScienceBio" : 

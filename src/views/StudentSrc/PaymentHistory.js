@@ -28,7 +28,7 @@ class PaymentHistory extends React.Component {
     const data = {
       registrationNo: userId
         ? userId
-        : LocalStorage.getUser() && LocalStorage.getUser().user_id,
+        : LocalStorage.getUser() && LocalStorage.getUser().clg_id,
       receipt: '0',
     }
     FormApi.fetchPaymentDetails(data).then((payResponse) => {

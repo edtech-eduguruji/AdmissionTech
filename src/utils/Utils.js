@@ -166,7 +166,7 @@ export function getAxios() {
   const axios = Axios
   const userData = LocalStorage.getUser() && LocalStorage.getUser()
   if (userData) {
-    axios.defaults.headers.common['Authorization'] = `${userData.user_id}`
+    axios.defaults.headers.common['Authorization'] = `${userData.clg_id}`
     const token = LocalStorage.getUserToken()
     axios.defaults.headers['Authentication'] = `${token}`
   }
@@ -181,7 +181,7 @@ export function getUserRole() {
 export function validateUser() {
   const user = LocalStorage.getUser()
   let isValidate = false
-  if (user && user.user_id) {
+  if (user && user.clg_id) {
     isValidate = true
   }
   return isValidate
@@ -430,19 +430,21 @@ export function mandatoryField(string) {
   )
 }
 
-export function downloadPdf(formId, fname) {
+export function downloadPdf(formId, fname, isCustomWidthHeight) {
   try {
     const input = document.getElementById(formId)
     html2canvas(input, { useCORS: true }).then((canvas) => {
       const imgData = canvas.toDataURL('image/jpeg')
       var pdf = new jsPDF('p', 'px', 'a4')
-
-      var imgWidth = pdf.internal.pageSize.width
+      var imgWidth = isCustomWidthHeight ? 250 : pdf.internal.pageSize.width
       var pageHeight = pdf.internal.pageSize.height
-      var imgHeight = (canvas.height * imgWidth) / canvas.width
+      var imgHeight = isCustomWidthHeight
+        ? 520
+        : (canvas.height * imgWidth) / canvas.width
       var heightLeft = imgHeight
-      var position = 0
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+      var position = 10
+      var spacing = isCustomWidthHeight ? 100 : 0
+      pdf.addImage(imgData, 'PNG', spacing, position, imgWidth, imgHeight)
       heightLeft -= pageHeight
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight
@@ -450,7 +452,10 @@ export function downloadPdf(formId, fname) {
         pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
         heightLeft -= pageHeight
       }
-      pdf.save(LocalStorage.getUser().user_id + '_' + fname + '.pdf')
+      const fileName = LocalStorage.getUser()
+        ? LocalStorage.getUser().clg_id
+        : new Date().getTime()
+      pdf.save(fileName + '_' + fname + '.pdf')
     })
   } catch (error) {}
 }
@@ -535,6 +540,10 @@ export function calculateFirstYearFees(
           count++
         }
       })
+      let maj2 = typeof major2 == 'string' ? JSON.parse(major2) : major2
+      if (fees.practicalSubjects.includes(maj2.subjectId)) {
+        count++
+      }
       return {
         parameterId: fees.parameterId,
         amount: fees.fee[count][gender],

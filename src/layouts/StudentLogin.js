@@ -6,7 +6,8 @@ import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import CakeIcon from '@material-ui/icons/Cake'
 import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber'
-import React, { Component } from 'react'
+import { saveAs } from 'file-saver'
+import { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import LoginApi from '../apis/LoginApi'
 import LocalStorage from '../common/LocalStorage'
@@ -14,6 +15,8 @@ import Card from '../components/Card/Card'
 import CardBody from '../components/Card/CardBody'
 import RegularButton from '../components/CustomButtons/Button'
 import CustomInput from '../components/CustomInput/CustomInput'
+import { ASSETS } from '../constants/Constants'
+import React from 'react'
 
 const useStyles = (theme) => ({
   paper: {
@@ -76,6 +79,10 @@ class Login extends Component {
     })
   }
 
+  handleDownload = () => {
+    saveAs(`./${ASSETS.STUDENTPERFORMA}`, 'STUDENTPERFORMA')
+  }
+
   render() {
     const { classes } = this.props
     return (
@@ -84,6 +91,9 @@ class Login extends Component {
           <CssBaseline />
           <div className="center">
             <img alt="logo" src="agracollege.png" className={classes.logo} />
+            <Typography variant="h4">
+              SESSION <b>2021-22</b>
+            </Typography>
           </div>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -101,43 +111,15 @@ class Login extends Component {
                         (mandatory)
                       </li>
                       <li>A Unique Registration Number will be Provided</li>
-                      <li>Disable Popup blocker</li>
                       <li>
                         Here registration fees Rs. 252/- will be submitted
-                        online
+                        online and which is not refundable (in any case)
                       </li>
                       <li>
                         <Typography color="textPrimary">
                           Any form related issue kindly email at
                           admissionagracollege@gmail.com with your registration
                           no and dob
-                        </Typography>
-                      </li>
-                      <li>
-                        You can apply below courses for all
-                        (1st,2nd,3rd,4th,5th) years
-                      </li>
-                      <li>
-                        <Typography color="error">
-                          Undergraduate Courses{' '}
-                          <b>B.Sc, BA, BCOM, BBA, BCA, Bsc(BioTech)</b> last
-                          date for online application is <b>05-Oct-2021</b> for
-                          1st year only.
-                        </Typography>
-                      </li>
-                      <li>
-                        <Typography>
-                          PG Courses <b>M.A., M.Sc.</b>
-                        </Typography>
-                      </li>
-                      <li>
-                        <Typography>
-                          PG Diploma <b>Journalism</b>
-                        </Typography>
-                      </li>
-                      <li>
-                        <Typography>
-                          Law <b>LLB, LLM, B.A. LLB</b>
                         </Typography>
                       </li>
                     </ul>
@@ -151,8 +133,42 @@ class Login extends Component {
                   <Typography variant="h6">Announcement</Typography>
                   <Typography>
                     <ul>
-                      All students who submitted online application form please
-                      download the form and take print out.
+                      <li>
+                        <a href="#">
+                          <Typography
+                            color="primary"
+                            onClick={this.handleDownload}
+                          >
+                            Student Proforma for UP Govt. Tablet/smart phone
+                            distribution scheme (NEW - 1 Nov, 2021)
+                          </Typography>
+                        </a>
+                      </li>
+                      <li>
+                        PLEASE DO NOT EMAIL US, IF YOU DON'T HAVE FORM RELATED
+                        ISSUE
+                      </li>
+                      <li>
+                        1st, 2nd and 3rd Year Admission for courses{' '}
+                        <b>
+                          B.Sc, BA, BCOM, BBA, BCA, Bsc(BioTech) and
+                          Post-Graduation
+                        </b>{' '}
+                        are closed now.
+                      </li>
+                      <li>
+                        1st Year Admission for courses{' '}
+                        <b>B.A.LLB, LLB and LLM</b> are closed now.
+                      </li>
+                      <li>
+                        All students who submitted online application form
+                        please download the form and take print out.
+                      </li>
+                      <li>
+                        For any other general enquiry like merit issue, last
+                        date or any other problem. Kindly check with college
+                        department
+                      </li>
                     </ul>
                   </Typography>
                 </CardBody>
@@ -251,6 +267,26 @@ class Login extends Component {
                         }
                       >
                         Forgot Registration No.
+                      </RegularButton>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Divider />
+                    </Grid>
+                    <Grid container item xs={12} justifyContent="center">
+                      <Typography component="h1" variant="h6">
+                        View and Download Payment Receipts
+                      </Typography>
+                    </Grid>
+                    <Grid container item xs={12} justifyContent="center">
+                      <RegularButton
+                        color="primary"
+                        variant="contained"
+                        className="sub"
+                        onClick={() =>
+                          this.props.history.push('/searchreceipts')
+                        }
+                      >
+                        Click Here
                       </RegularButton>
                     </Grid>
                   </Grid>

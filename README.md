@@ -1,2 +1,1 @@
-# AdmissionTech
-Admission System
+# Agra College 2021-22

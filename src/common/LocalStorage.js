@@ -6,23 +6,24 @@ import jwt_decode from 'jwt-decode'
 const LocalStorage = () => {
   return {
     setUser(obj) {
-      sessionStorage.setItem('user_obj', obj)
+      sessionStorage.setItem('userInfo_obj', obj)
     },
     getUserToken() {
       return (
-        sessionStorage.getItem('user_obj') && sessionStorage.getItem('user_obj')
+        sessionStorage.getItem('userInfo_obj') &&
+        sessionStorage.getItem('userInfo_obj')
       )
     },
     getUser() {
       return (
-        sessionStorage.getItem('user_obj') &&
-        jwt_decode(sessionStorage.getItem('user_obj')).data
+        sessionStorage.getItem('userInfo_obj') &&
+        jwt_decode(sessionStorage.getItem('userInfo_obj')).data
       )
-      // isJSON(sessionStorage.getItem('user_obj')) &&
-      // JSON.parse(sessionStorage.getItem('user_obj'))
+      // isJSON(sessionStorage.getItem('userInfo_obj')) &&
+      // JSON.parse(sessionStorage.getItem('userInfo_obj'))
     },
     removeUser() {
-      sessionStorage.removeItem('user_obj')
+      sessionStorage.removeItem('userInfo_obj')
     },
     getLogout() {
       this.removeUser()

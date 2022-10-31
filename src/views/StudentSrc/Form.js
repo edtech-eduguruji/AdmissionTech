@@ -264,7 +264,7 @@ class Form extends React.Component {
       if (validateUser()) {
         const data = {
           registrationNo:
-            LocalStorage.getUser() && LocalStorage.getUser().user_id,
+            LocalStorage.getUser() && LocalStorage.getUser().clg_id,
           receipt: '1',
         }
         FormApi.getForm(data).then((response) => {
@@ -758,9 +758,9 @@ class Form extends React.Component {
     data.append(
       'registrationNo',
       LocalStorage.getUser() &&
-        LocalStorage.getUser().user_id !== null &&
+        LocalStorage.getUser().clg_id !== null &&
         !isView
-        ? LocalStorage.getUser().user_id
+        ? LocalStorage.getUser().clg_id
         : this.props.data.registrationNo
     )
     data.append('admissionYear', admissionYear)
@@ -1171,6 +1171,8 @@ class Form extends React.Component {
         !isView &&
         admissionYear &&
         courseType &&
+        major1.length > 0 &&
+        // major1[0].subjectId !== 'llm26LLM' &&
         new Date().getTime() >
           yearsStatic.find((item) => item.yearId === admissionYear).lastDate[
             courseType
@@ -1219,7 +1221,7 @@ class Form extends React.Component {
                 const user = jwtDecode(response.data).data
                 errorDialog(
                   'Your application is saved. Your registration no. is : ' +
-                    user.user_id,
+                    user.clg_id,
                   'Form'
                 )
                 LocalStorage.removeUser()
@@ -1797,6 +1799,7 @@ class Form extends React.Component {
                 onChange={this.handleChangeFields}
               >
                 {courseType &&
+                  courseType !== '' &&
                   yearsStatic.map(
                     (item, i) =>
                       item.courseType.includes(courseType) && (
@@ -2993,7 +2996,6 @@ class Form extends React.Component {
                 Faculty & Courses Details
               </Typography>
             </Grid>
-
             <Grid item xs={12}>
               <Typography variant="subtitle1" component="div" gutterBottom>
                 Selection of Faculty
@@ -3212,7 +3214,15 @@ class Form extends React.Component {
                                     item.facultyId === 'f1Science') ||
                                   item.subjectId === major1[0].subjectId ||
                                   item.subjectId === major1[1].subjectId ||
-                                  item.subjectId === major2.subjectId
+                                  item.subjectId === major2.subjectId ||
+                                  (major1[0].subjectId ===
+                                    '$sf17BALLBZoology' &&
+                                    (item.paperId === '$p6' ||
+                                      item.paperId === '$p34')) ||
+                                  (major1[1].subjectId ===
+                                    '$sf17BALLBZoology' &&
+                                    (item.paperId === '$p6' ||
+                                      item.paperId === '$p34'))
                                 }
                                 value={item.paperId}
                               >
@@ -3262,7 +3272,13 @@ class Form extends React.Component {
                                     item.facultyId === 'f1Science') ||
                                   item.subjectId === major1[0].subjectId ||
                                   item.subjectId === major1[1].subjectId ||
-                                  item.subjectId === major2.subjectId
+                                  item.subjectId === major2.subjectId ||
+                                  (major1[0].subjectId ===
+                                    '$sf17BALLBZoology' &&
+                                    item.subjectId === '$s6Zoology') ||
+                                  (major1[1].subjectId ===
+                                    '$sf17BALLBZoology' &&
+                                    item.subjectId === '$s6Zoology')
                                 }
                                 value={item.subjectId}
                               >
@@ -3397,10 +3413,9 @@ class Form extends React.Component {
                               disabled: classes.disabled,
                             },
                           }}
-                          disabled={preview}
+                          disabled={preview || item.isDelete === 0}
                           fullWidth
                           select
-                          disabled={item.isDelete === 0}
                           label={mandatoryField('Document Type')}
                           value={item.documentType}
                           onChange={(e) => this.handleInputEnclosure(e, i)}
@@ -3743,10 +3758,9 @@ class Form extends React.Component {
                             disabled: classes.disabled,
                           },
                         }}
-                        disabled={preview}
+                        disabled={preview || otherRoverRanger}
                         select
                         fullWidth
-                        disabled={otherRoverRanger}
                         variant={preview ? 'standard' : 'outlined'}
                         name="roverRanger"
                         label="Team Members of Rover Rangers to Participate in Rally from University"

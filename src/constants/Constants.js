@@ -7,6 +7,7 @@ config.ROLES.forEach(function (key) {
 const ASSETS = {
   url: config.APIURL,
   PROSPECTUS: 'Prospectus.pdf',
+  STUDENTPERFORMA: 'StudentPerforma.pdf',
 }
 const PAYMENT = {
   DONE: '1',
@@ -16,10 +17,15 @@ const FORM = {
   SUBMITTED: '1',
   NOT_SUBMITTED: '0',
 }
+const SESSION = {
+  2021: 0,
+  2022: 1,
+}
 
 module.exports = {
   ROLES_KEY: ROLES_KEY,
   ASSETS: ASSETS,
   FORM: FORM,
   PAYMENT: PAYMENT,
+  SESSION: SESSION,
 }

@@ -7,6 +7,7 @@ import RegularButton from '../../../components/CustomButtons/Button'
 import CustomTable from '../../../components/Table/Table'
 import {
   addSuccessMsg,
+  createdDateTime,
   errorDialog,
   formDialog,
   modifyKeys,
@@ -90,6 +91,10 @@ function NewForms() {
           obj.totalMeritCount = !obj.totalMeritCount
             ? 0
             : parseInt(obj.totalMeritCount)
+          obj.coCurriculumSem1 =
+            obj.admissionYear === '1' ? 'Food, Nutrition and Hygiene' : ''
+          obj.coCurriculumSem2 =
+            obj.admissionYear === '1' ? 'First Aid and Basic health' : ''
         })
         setFields({ ...fields, formsData: response.data })
       })
@@ -98,14 +103,30 @@ function NewForms() {
 
   const formatData = (data) => {
     var formatted = data.map((item) => {
+      let subs = []
+      if (item.major1 && item.major1.length > 0) {
+        item.major1.map((mj1) => {
+          subs.push(mj1.subjectName)
+        })
+        subs = subs.join(',')
+      } else {
+        subs = null
+      }
       return [
+        item.registrationNo,
         item.name,
+        item.fatherName,
         item.gender.toUpperCase(),
         item.dob,
         item.personalMobile,
         item.faculty
           ? facultyData.find((itm) => itm.facultyId === item.faculty).faculty
           : null,
+        subs,
+        createdDateTime(item.lastUpdated),
+        item.payment === '1' ? 'PAID' : ' NOT PAID',
+        item.submitted === '1' ? 'SUBMITTED' : 'NOT SUBMITTED',
+        item.courseFee === '1' ? 'PAID' : '-',
         <div>
           <RegularButton
             size="md"
@@ -215,11 +236,18 @@ function NewForms() {
           <CustomTable
             boldHeading
             tableHead={[
+              'Registration No.',
               'Student Name',
+              'Father Name',
               'Gender',
               'DOB',
               'Mobile',
               'Applied in',
+              'Course / Subject',
+              'Submitted On',
+              'Prospectus Payment',
+              'Form Submitted',
+              'Course Payment',
               'View All Details',
             ]}
             tableData={formatData(formsData)}

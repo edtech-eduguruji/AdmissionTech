@@ -49,6 +49,8 @@ export default function AdminNavbarLinks(props) {
     }
   }
 
+  let role = LocalStorage.getUser() ? LocalStorage.getUser().role : ''
+
   return (
     <div className={classes.manager}>
       <Typography variant="h6" component="span">
@@ -92,7 +94,7 @@ export default function AdminNavbarLinks(props) {
               <ClickAwayListener onClickAway={handleCloseProfile}>
                 <MenuList role="menu">
                   {routes.map((item, key) => {
-                    if (item.isNavbar) {
+                    if (!item.isSidebar && item.role.includes(role)) {
                       return (
                         <div key={key}>
                           <MenuItem

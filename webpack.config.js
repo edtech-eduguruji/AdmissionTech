@@ -1,4 +1,3 @@
-//const webpack = require('webpack')
 const path = require('path')
 const webpack = require('webpack'),
   CopyPlugin = require('copy-webpack-plugin'),
@@ -65,7 +64,6 @@ function getConfiguration(env, webpackObject) {
             : '[name].js',
         path: outFilePath,
       },
-      //mode : modeUsed,
       plugins: pluginsUsed,
       optimization: optimize,
       module: {
@@ -79,23 +77,11 @@ function getConfiguration(env, webpackObject) {
           },
           {
             test: /\.s[ac]ss$/i,
-            use: [
-              'style-loader',
-              // Translates CSS into CommonJS
-              'css-loader',
-              // Compiles Sass to CSS
-              'sass-loader',
-            ],
+            use: ['style-loader', 'css-loader', 'sass-loader'],
           },
           {
             test: /.\.css$/i,
-            use: [
-              'style-loader',
-              // Translates CSS into CommonJS
-              'css-loader',
-              // Compiles Sass to CSS
-              'sass-loader',
-            ],
+            use: ['style-loader', 'css-loader', 'sass-loader'],
           },
 
           {
@@ -136,14 +122,8 @@ function getConfiguration(env, webpackObject) {
   var finalOut = []
   if (webpackObject.mode === 'production') {
     finalOut.push(getConfigOutput())
-    //outFilePath = path.resolve(__dirname, appPath)
-    //var data = getConfigOutput()
-    //finalOut.push(data)
   } else {
     finalOut.push(getConfigOutput())
-    // var data = getConfigOutput()
-    // data.output.path = path.resolve(__dirname, appPath)
-    // finalOut.push(data)
   }
 
   return finalOut

@@ -32,8 +32,7 @@ class CourseFee extends React.Component {
   componentDidMount() {
     if (validateUser()) {
       const data = {
-        registrationNo:
-          LocalStorage.getUser() && LocalStorage.getUser().user_id,
+        registrationNo: LocalStorage.getUser() && LocalStorage.getUser().clg_id,
       }
       FormApi.getForm(data).then((response) => {
         if (response.data) {
@@ -74,7 +73,7 @@ class CourseFee extends React.Component {
 
   handleCourseFee = () => {
     if (validateUser()) {
-      const userId = LocalStorage.getUser().user_id
+      const userId = LocalStorage.getUser().clg_id
       const { parameterId, courseFee } = this.state
       const f = new FormData()
       // f.append('str', str)
