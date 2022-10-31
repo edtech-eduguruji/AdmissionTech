@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
 import Container from '@material-ui/core/Container'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Grid from '@material-ui/core/Grid'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
+import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import Card from '../components/Card/Card'
 import CardBody from '../components/Card/CardBody'
@@ -77,13 +77,14 @@ class SelectSession extends Component {
               </Grid>
               <Grid item md={6} xs={12}>
                 <RegularButton
+                  disabled
                   fullWidth
                   color="primary"
                   size="lg"
                   round
                   onClick={() => this.handleRedirect(SESSION['2021'])}
                 >
-                  2021 - 22
+                  2021 - 22 (CLOSED)
                 </RegularButton>
               </Grid>
               <Grid item md={6} xs={12}>
